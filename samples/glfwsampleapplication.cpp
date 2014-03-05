@@ -32,19 +32,19 @@
 
 void glfwError(int error, const char *desc)
 {
-	std::cerr<<"Error: "<<desc<<std::endl;
+	std::cerr << "Error: " << desc << std::endl;
 }
 
 bool GlfwSampleApplication::init(int width, int height)
 {
 	if (!glfwInit())
 	{
-		std::cerr<<"Unable to initialize glfw"<<std::endl;
+		std::cerr << "Unable to initialize glfw" << std::endl;
 		return false;
 	}
-	
+
 	glfwSetErrorCallback(glfwError);
-	
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_RESIZABLE, 0);
@@ -52,19 +52,73 @@ bool GlfwSampleApplication::init(int width, int height)
 	window = glfwCreateWindow(width, height, "Sample Application", nullptr, nullptr);
 	if (!window)
 	{
-		std::cerr<<"Unable to create glfw window."<<std::endl;
+		std::cerr << "Unable to create glfw window." << std::endl;
 		return false;
 	}
-	
+
 	glfwMakeContextCurrent(window);
-	
+	glfwSwapInterval(1);
+
 	return true;
 }
 
 void GlfwSampleApplication::run()
 {
-	for(;;)
+	for (;;)
 	{
+		glfwPollEvents();
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)return;
+
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		renderCube();
+
+		glfwSwapBuffers(window);
 	}
 }
+
+void GlfwSampleApplication::renderCube()
+{
+	const GLfloat vertices[][3] = {{ -1.0, -1.0, -1.0}, {1.0, -1.0, -1.0}, {1.0, 1.0, -1.0}, { -1.0, 1.0, -1.0}, { -1.0, -1.0, 1.0}, {1.0, -1.0, 1.0}, {1.0, 1.0, 1.0}, { -1.0, 1.0, 1.0}};
+	const GLfloat colors[][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 1.0}};
+	static float angle_x = 0, angle_y = 0;
+	
+	glDisable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(-1, 1, -1, 1, 1, 100);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0.0, 0.0, -5.0);
+	glRotatef(angle_x, 1.0, 0.0, 0.0);
+	glRotatef(angle_y, 0.0, 1.0, 0.0);
+
+#define DRAW_FACE(a,b,c,d) \
+	glBegin(GL_POLYGON); \
+	glVertex3fv(vertices[a]); \
+	glColor3fv(colors[a]); \
+	glVertex3fv(vertices[b]); \
+	glColor3fv(colors[b]); \
+	glVertex3fv(vertices[c]); \
+	glColor3fv(colors[c]); \
+	glVertex3fv(vertices[d]); \
+	glColor3fv(colors[d]); \
+	glEnd();
+	
+	DRAW_FACE(0, 3, 2, 1);
+	DRAW_FACE(2, 3, 7, 6);
+	DRAW_FACE(0, 4, 7, 3);
+	DRAW_FACE(1, 2, 6, 5);
+	DRAW_FACE(4, 5, 6, 7);
+	DRAW_FACE(0, 1, 5, 4);
+	
+#undef DRAW_FACE	
+	angle_x += 1;
+	angle_y += 1;
+
+}
+

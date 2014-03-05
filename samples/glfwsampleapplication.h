@@ -37,6 +37,7 @@ public:
 	void run();
 	bool init(int width, int height);
 private:
+	void renderCube();
 	GLFWwindow *window;
 };
 
