@@ -1,4 +1,4 @@
-project(libqgui)
+project(qglgui)
 
 cmake_minimum_required(VERSION 2.2)
 
