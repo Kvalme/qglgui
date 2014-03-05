@@ -1,0 +1,3 @@
+[submodule "libcppprofiler"]
+	path = libcppprofiler
+	url = https://github.com/Kvalme/libcppprofiler.git
