@@ -26,41 +26,43 @@
  *
  */
 
-#include "qglgui/internal/glguisinglethread.h"
-#include "qglgui/internal/qtplugin/uiworker.h"
 
-#include "libcppprofiler/src/cppprofiler.h"
+#include "glfwsampleapplication.h"
+#include "qglgui/glgui.h"
+#include "qglgui/glguirenderer.h"
+#include "basicqtapp.h"
 
 using namespace QGL;
 
-GlGuiSingleThread::GlGuiSingleThread()
+std::shared_ptr<GlGui> gui;
+
+QWidget *createWindow(const std::string &)
 {
-	PROFILE_FUNCTION
-	
-	uiWorker = std::shared_ptr<UIWorker>(new UIWorker);
+	return new BasicQtApp;
 }
 
-GlGuiSingleThread::~GlGuiSingleThread()
+void run()
 {
-	PROFILE_FUNCTION
-
+	gui->Update();
+	gui->Render();
 }
 
-void GlGuiSingleThread::CreateWindow(const std::string &name)
+void initGui()
 {
-	PROFILE_FUNCTION
-//	QWidget *widget = windowFactory(name);
+	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE);
+	gui->RegisterWindowFactory(createWindow);
+	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
+	gui->CreateWindow("");
 }
 
-void GlGuiSingleThread::Render()
+int main()
 {
-	PROFILE_FUNCTION
+	GlfwSampleApplication app;
+	if (!app.init(800, 600, run))return 1;
 
-}
+	initGui();
 
-void GlGuiSingleThread::Update()
-{
-	PROFILE_FUNCTION
+	app.run();
 
-	uiWorker->Update();
+	return 0;
 }

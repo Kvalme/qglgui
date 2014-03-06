@@ -32,7 +32,8 @@
 
 namespace QGL
 {
-	
+
+class UIWorker;
 class GlGuiSingleThread : public GlGuiInternalBase
 {
 public:
@@ -42,6 +43,8 @@ public:
 	virtual void CreateWindow(const std::string &name);
 	virtual void Render();
 	virtual void Update();
+protected:
+	std::shared_ptr<UIWorker> uiWorker;
 };
 	
 }

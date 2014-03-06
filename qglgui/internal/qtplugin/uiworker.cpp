@@ -26,41 +26,55 @@
  *
  */
 
-#include "qglgui/internal/glguisinglethread.h"
-#include "qglgui/internal/qtplugin/uiworker.h"
+#include "uiworker.h"
+
+#include <private/qguiapplication_p.h>
+#include <QtWidgets/QApplication>
+#include "QtGui/qpa/qplatformthemefactory_p.h"
+#include "QtGui/qpa/qplatformtheme.h"
+
+#include "qglgui/internal/qtplugin/uiintegration.h"
 
 #include "libcppprofiler/src/cppprofiler.h"
 
 using namespace QGL;
 
-GlGuiSingleThread::GlGuiSingleThread()
+UIWorker::UIWorker()
+{
+	PROFILE_FUNCTION
+
+	int argc = 0;
+	char **argv = nullptr;
+
+//	qputenv("QT_QPA_FONTDIR", _font_path_.c_str());
+
+	QCoreApplication::setAttribute (Qt::AA_DontUseNativeMenuBar, true);
+
+	QGuiApplicationPrivate::platform_name = new QString ("QGL");
+//	QGuiApplicationPrivate::platform_integration = new UIIntegration (_magic_ui_);
+
+	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
+	static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration)->init();
+
+	QString platformPluginPath = QLatin1String (qgetenv ("QT_QPA_PLATFORM_PLUGIN_PATH"));
+
+	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
+
+	app = new QApplication(argc, argv);
+	app->setQuitOnLastWindowClosed (false);
+	app->setStyle ("Fusion");
+}
+
+UIWorker::~UIWorker()
 {
 	PROFILE_FUNCTION
 	
-	uiWorker = std::shared_ptr<UIWorker>(new UIWorker);
+	delete app;
 }
 
-GlGuiSingleThread::~GlGuiSingleThread()
+void UIWorker::Update()
 {
 	PROFILE_FUNCTION
-
-}
-
-void GlGuiSingleThread::CreateWindow(const std::string &name)
-{
-	PROFILE_FUNCTION
-//	QWidget *widget = windowFactory(name);
-}
-
-void GlGuiSingleThread::Render()
-{
-	PROFILE_FUNCTION
-
-}
-
-void GlGuiSingleThread::Update()
-{
-	PROFILE_FUNCTION
-
-	uiWorker->Update();
+	
+	app->processEvents();
 }

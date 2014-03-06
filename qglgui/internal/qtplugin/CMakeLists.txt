@@ -8,7 +8,7 @@ find_package(Freetype REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR})
 
-set(qtplugin_SOURCES uiwindow.cpp uibackingstore.cpp uiscreen.cpp uiintegration.cpp)
+set(qtplugin_SOURCES uiwindow.cpp uibackingstore.cpp uiscreen.cpp uiintegration.cpp uiworker.cpp)
 
 add_library(qglgui_qtplugin STATIC ${qtplugin_SOURCES})
 target_link_libraries(qglgui_qtplugin Qt5PlatformSupport ${FREETYPE_LIBRARIES})

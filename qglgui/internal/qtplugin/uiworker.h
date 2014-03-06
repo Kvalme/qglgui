@@ -26,41 +26,27 @@
  *
  */
 
+#pragma once
 
-#include "glfwsampleapplication.h"
-#include "qglgui/glgui.h"
-#include "qglgui/glguirenderer.h"
+#include <memory>
 
-using namespace QGL;
+class QGuiApplication;
+class QApplication;
+class GlGuiInternalBase;
 
-std::shared_ptr<GlGui> gui;
-
-QWidget *createWindow(const std::string &)
+namespace QGL
 {
-	return nullptr;
-}
-
-void run()
-{
-	gui->Update();
-	gui->Render();
-}
-
-void initGui()
-{
-	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE);
-	gui->RegisterWindowFactory(createWindow);
-	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
-}
-
-int main()
-{
-	GlfwSampleApplication app;
-	if (!app.init(800, 600, run))return 1;
-
-	initGui();
-
-	app.run();
-
-	return 0;
+	class UIWorker
+	{
+	public:
+		UIWorker();
+		~UIWorker();
+		
+		void Update();
+	private:
+		QGuiApplication *guiApp;
+		QApplication *app;
+		std::shared_ptr<GlGuiInternalBase> gui;
+		
+	};
 }
