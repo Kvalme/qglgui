@@ -26,24 +26,21 @@
  *
  */
 
-#include "glgui.h"
-
 #include "qglgui/internal/glguimultithread.h"
-#include "qglgui/internal/glguisinglethread.h"
 
-std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode)
+using namespace QGL;
+
+GlGuiMultiThread::GlGuiMultiThread()
 {
-	std::shared_ptr<GlGuiInternalBase> instance;
-	switch (mode)
-	{
-		case THREADING_MODE::MULTI:
-			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiMultiThread);
-			break;
-		case THREADING_MODE::SINGLE:
-			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiSingleThread);
-			break;
-	}
-	
-	return instance;
+
 }
 
+GlGuiMultiThread::~GlGuiMultiThread()
+{
+
+}
+
+void GlGuiMultiThread::CreateWindow(const std::string &name)
+{
+
+}

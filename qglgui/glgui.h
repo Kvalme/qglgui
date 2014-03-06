@@ -27,9 +27,16 @@
  */
 
 #pragma once
+#include <memory>
+#include <functional>
+
+class QWidget;
 
 namespace QGL
 {
+
+class GuiWindowFactory;
+
 /**
  * Main class for GlGui. Handles GUI initialization.
  * Can work in both - multi and single thread enviroment.
@@ -37,7 +44,41 @@ namespace QGL
 class GlGui
 {
 public:
-	
+	enum class THREADING_MODE
+	{
+		SINGLE,
+		MULTI
+	};
+
+	/**
+	 * Create GlGui instance to operate in specified threading mode.
+	 * Single thread require to call update() method manually
+	 *
+	 * @param mode threading mode
+	 * @return pointer to created gui
+	 */
+	static std::shared_ptr<GlGui> Create(THREADING_MODE mode);
+
+	/**
+	 * Registers window factory.
+	 * Each call to CreateWindow will try to create window via provided factory
+	 *
+	 * @param factory pointer to the factory
+	 */
+	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory) = 0;
+
+	/**
+	 * Creates window by provided name.
+	 * GuiWindowFactory will be called to create window.
+	 *
+	 * @param name window name
+	 */
+	virtual void CreateWindow(const std::string &name) = 0;
+
+protected:
+	GlGui();
+	GlGui(GlGui &);
+	virtual ~GlGui();
 };
 
 }
