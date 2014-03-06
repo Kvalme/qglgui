@@ -41,9 +41,13 @@ public:
 	
 	virtual void CreateWindow(const std::string &name) = 0;
 	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory);
+	virtual void RegisterRenderer(std::shared_ptr<GlGuiRenderer> renderer);
+	virtual void Render() = 0;
+	virtual void Update() = 0;
 	
 protected:
 	std::function<QWidget*(const std::string &name)> windowFactory;
+	std::shared_ptr<GlGuiRenderer> guiRenderer;
 };
 
 }

@@ -44,3 +44,13 @@ void GlGuiSingleThread::CreateWindow(const std::string &name)
 {
 
 }
+
+void GlGuiSingleThread::Render()
+{
+
+}
+
+void GlGuiSingleThread::Update()
+{
+
+}

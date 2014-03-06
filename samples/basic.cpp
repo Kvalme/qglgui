@@ -28,12 +28,39 @@
 
 
 #include "glfwsampleapplication.h"
+#include "qglgui/glgui.h"
+#include "qglgui/glguirenderer.h"
+
+using namespace QGL;
+
+std::shared_ptr<GlGui> gui;
+
+QWidget *createWindow(const std::string &)
+{
+	return nullptr;
+}
+
+void run()
+{
+	gui->Update();
+	gui->Render();
+}
+
+void initGui()
+{
+	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE);
+	gui->RegisterWindowFactory(createWindow);
+	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
+}
 
 int main()
 {
 	GlfwSampleApplication app;
-	if (!app.init(800, 600))return 1;
+	if (!app.init(800, 600, run))return 1;
+
+	initGui();
+
 	app.run();
-		
+
 	return 0;
 }

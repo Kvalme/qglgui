@@ -47,3 +47,18 @@ std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode
 	return instance;
 }
 
+QGL::GlGui::GlGui()
+{
+
+}
+
+QGL::GlGui::GlGui(QGL::GlGui &)
+{
+
+}
+
+QGL::GlGui::~GlGui()
+{
+
+}
+

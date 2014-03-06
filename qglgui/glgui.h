@@ -35,7 +35,7 @@ class QWidget;
 namespace QGL
 {
 
-class GuiWindowFactory;
+class GlGuiRenderer;
 
 /**
  * Main class for GlGui. Handles GUI initialization.
@@ -68,12 +68,30 @@ public:
 	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory) = 0;
 
 	/**
+	 * Register renderer.
+	 *
+	 * @param renderer pointer to renderer object
+	 */
+	virtual void RegisterRenderer(std::shared_ptr<GlGuiRenderer> renderer) = 0;
+
+	/**
 	 * Creates window by provided name.
 	 * GuiWindowFactory will be called to create window.
 	 *
 	 * @param name window name
 	 */
 	virtual void CreateWindow(const std::string &name) = 0;
+
+	/**
+	 * Renders gui using previously registered renderer
+	 */
+	virtual void Render() = 0;
+
+	/**
+	 * Updates gui. Proceed internal events and so.
+	 * Should be called in single thread mode. In multi-thread mode it will be called automatically in gui thread loop
+	 */
+	virtual void Update() = 0;
 
 protected:
 	GlGui();

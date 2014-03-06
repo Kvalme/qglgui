@@ -26,22 +26,20 @@
  *
  */
 
-#pragma once
+#include "qglgui/glguirenderer.h"
 
-#include "qglgui/internal/glguiinternalbase.h"
+using namespace QGL;
 
-namespace QGL
+std::shared_ptr<GlGuiRenderer> QGL::CreateRenderer(RENDERER_TYPE type)
 {
-	
-class GlGuiSingleThread : public GlGuiInternalBase
-{
-public:
-	GlGuiSingleThread();
-	virtual ~GlGuiSingleThread();
-	
-	virtual void CreateWindow(const std::string &name);
-	virtual void Render();
-	virtual void Update();
-};
-	
+	switch (type)
+	{
+		case RENDERER_TYPE::GL1:
+			break;
+		case RENDERER_TYPE::GL2:
+			break;
+		case RENDERER_TYPE::GL3:
+			break;
+	}
+	return std::shared_ptr<GlGuiRenderer>(nullptr);
 }

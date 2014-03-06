@@ -44,3 +44,9 @@ void GlGuiInternalBase::RegisterWindowFactory(std::function<QWidget*(const std::
 {
 	windowFactory = factory;
 }
+
+void GlGuiInternalBase::RegisterRenderer(std::shared_ptr< GlGuiRenderer > renderer)
+{
+	guiRenderer = renderer;
+}
+

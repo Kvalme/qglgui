@@ -18,6 +18,10 @@ endif (NOT OPENGL_FOUND)
 option(BUILD_SAMPLES "Build sample applications" ON)
 option(ENABLE_PROFILING "Enable profiling" OFF)
 
+option(ENABLE_GL1_RENDERER "Enable basic GL1 renderer (glBegin/End)" OFF)
+option(ENABLE_GL2_RENDERER "Enable basic GL2 renderer (VBO + fixed pipeline)" OFF)
+option(ENABLE_GL3_RENDERER "Enable basic GL3 renderer (VBO + built-in shaders)" OFF)
+
 if (ENABLE_PROFILING)
 	add_subdirectory(libcppprofiler)
 endif (ENABLE_PROFILING)

@@ -35,7 +35,7 @@ void glfwError(int error, const char *desc)
 	std::cerr << "Error: " << desc << std::endl;
 }
 
-bool GlfwSampleApplication::init(int width, int height)
+bool GlfwSampleApplication::init(int width, int height, std::function<void(void)> runFunction)
 {
 	if (!glfwInit())
 	{
@@ -58,6 +58,8 @@ bool GlfwSampleApplication::init(int width, int height)
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
+	
+	this->runFunction = runFunction;
 
 	return true;
 }
@@ -73,6 +75,7 @@ void GlfwSampleApplication::run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		renderCube();
+		this->runFunction();
 
 		glfwSwapBuffers(window);
 	}

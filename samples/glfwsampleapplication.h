@@ -31,14 +31,17 @@
 
 #include "GLFW/glfw3.h"
 
+#include <functional>
+
 class GlfwSampleApplication
 {
 public:
 	void run();
-	bool init(int width, int height);
+	bool init(int width, int height, std::function<void(void)> runFunction);
 private:
 	void renderCube();
 	GLFWwindow *window;
+	std::function<void(void)> runFunction;
 };
 
 #endif // GLFWSAMPLEAPPLICATION_H

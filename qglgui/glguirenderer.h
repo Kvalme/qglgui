@@ -27,21 +27,28 @@
  */
 
 #pragma once
-
-#include "qglgui/internal/glguiinternalbase.h"
+#include <memory>
 
 namespace QGL
 {
-	
-class GlGuiSingleThread : public GlGuiInternalBase
+
+/**
+ * Renderer interface. Will be called from same thread as GlGui::render();
+ */
+class GlGuiRenderer
 {
 public:
-	GlGuiSingleThread();
-	virtual ~GlGuiSingleThread();
+	GlGuiRenderer();
+	virtual ~GlGuiRenderer();
 	
-	virtual void CreateWindow(const std::string &name);
-	virtual void Render();
-	virtual void Update();
 };
-	
+
+enum class RENDERER_TYPE
+{
+	GL1,
+	GL2,
+	GL3
+};
+std::shared_ptr<GlGuiRenderer> CreateRenderer(RENDERER_TYPE type);
+
 }

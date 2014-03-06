@@ -40,6 +40,8 @@ public:
 	virtual ~GlGuiMultiThread();
 	
 	virtual void CreateWindow(const std::string &name);
+	virtual void Render();
+	virtual void Update();
 };
 	
 }
