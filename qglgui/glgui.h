@@ -55,9 +55,10 @@ public:
 	 * Single thread require to call update() method manually
 	 *
 	 * @param mode threading mode
+	 * @param fontDir path to font directory
 	 * @return pointer to created gui
 	 */
-	static std::shared_ptr<GlGui> Create(THREADING_MODE mode);
+	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir);
 
 	/**
 	 * Registers window factory.

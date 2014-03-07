@@ -31,11 +31,11 @@
 
 namespace QGL
 {
-
+class GlGuiInternalBase;
 class UIIntegration: public QPlatformIntegration
 {
 public:
-	UIIntegration();
+	UIIntegration(GlGuiInternalBase *gui);
 	~UIIntegration();
 
 	void init();
@@ -52,6 +52,7 @@ private:
 	QAbstractEventDispatcher *event_dispatcher;
 	QPlatformFontDatabase *font_database;
 	QPlatformServices *services_;
+	GlGuiInternalBase *ui;
 
 };
 

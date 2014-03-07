@@ -30,7 +30,7 @@
 
 using namespace QGL;
 
-GlGuiInternalBase::GlGuiInternalBase()
+GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir)
 {
 
 }

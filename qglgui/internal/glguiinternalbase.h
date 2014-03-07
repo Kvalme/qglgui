@@ -36,7 +36,7 @@ namespace QGL
 class GlGuiInternalBase : public GlGui
 {
 public:
-	GlGuiInternalBase();
+	GlGuiInternalBase(const std::string &fontDir);
 	virtual ~GlGuiInternalBase();
 	
 	virtual void CreateWindow(const std::string &name) = 0;

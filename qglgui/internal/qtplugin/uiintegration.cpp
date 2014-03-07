@@ -51,9 +51,11 @@
 #include <qpa/qplatformwindow.h>
 #include <qpa/qplatformfontdatabase.h>
 
+#include "qglgui/internal/glguiinternalbase.h"
+
 using namespace QGL;
 
-UIIntegration::UIIntegration()
+UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 {
 	PROFILE_FUNCTION
 
@@ -73,6 +75,7 @@ UIIntegration::UIIntegration()
 	services_ = new QPlatformServices;
 
 	QCoreApplicationPrivate::eventDispatcher = event_dispatcher;
+	ui = gui;
 }
 
 void UIIntegration::init()
@@ -107,6 +110,7 @@ QPlatformWindow *UIIntegration::createPlatformWindow(QWindow *window) const
 	UIWindow *wnd = new UIWindow(window);
 	wnd->requestActivateWindow();
 
+	
 //	_magic_ui_->_createWindow (wnd->winId(), wnd);
 
 	return wnd;

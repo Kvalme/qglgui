@@ -36,7 +36,7 @@ namespace QGL
 class GlGuiMultiThread : public GlGuiInternalBase
 {
 public:
-	GlGuiMultiThread();
+	GlGuiMultiThread(const std::string &fontDir);
 	virtual ~GlGuiMultiThread();
 	
 	virtual void CreateWindow(const std::string &name);

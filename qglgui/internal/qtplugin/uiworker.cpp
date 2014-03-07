@@ -34,24 +34,27 @@
 #include "QtGui/qpa/qplatformtheme.h"
 
 #include "qglgui/internal/qtplugin/uiintegration.h"
+#include "qglgui/internal/glguiinternalbase.h"
 
 #include "libcppprofiler/src/cppprofiler.h"
 
 using namespace QGL;
 
-UIWorker::UIWorker()
+UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir)
 {
 	PROFILE_FUNCTION
 
+	this->gui = gui;
+	
 	int argc = 0;
 	char **argv = nullptr;
 
-//	qputenv("QT_QPA_FONTDIR", _font_path_.c_str());
+	qputenv("QT_QPA_FONTDIR", fontDir.c_str());
 
 	QCoreApplication::setAttribute (Qt::AA_DontUseNativeMenuBar, true);
 
 	QGuiApplicationPrivate::platform_name = new QString ("QGL");
-//	QGuiApplicationPrivate::platform_integration = new UIIntegration (_magic_ui_);
+	QGuiApplicationPrivate::platform_integration = new UIIntegration (this->gui);
 
 	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
 	static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration)->init();

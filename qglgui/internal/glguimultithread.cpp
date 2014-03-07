@@ -30,7 +30,8 @@
 
 using namespace QGL;
 
-GlGuiMultiThread::GlGuiMultiThread()
+GlGuiMultiThread::GlGuiMultiThread(const std::string &fontDir)
+	: GlGuiInternalBase(fontDir)
 {
 
 }

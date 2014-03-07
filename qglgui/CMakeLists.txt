@@ -8,7 +8,7 @@ set(QGLGUI_HEADERS glgui.h glguirenderer.h)
 add_library(qglgui SHARED ${QGLGUI_SOURCES} $<TARGET_OBJECTS:qglgui_internal> $<TARGET_OBJECTS:qglgui_qtplugin>)
 add_library(qglgui-static STATIC ${QGLGUI_SOURCES} $<TARGET_OBJECTS:qglgui_internal> $<TARGET_OBJECTS:qglgui_qtplugin>)
 
-target_link_libraries(qglgui Qt5PlatformSupport ${FREETYPE_LIBRARIES})
+target_link_libraries(qglgui Qt5PlatformSupport ${FREETYPE_LIBRARIES} glib-2.0)
 qt5_use_modules(qglgui Core Gui Widgets)
 
 set_target_properties(qglgui-static PROPERTIES OUTPUT_NAME "qglgui")

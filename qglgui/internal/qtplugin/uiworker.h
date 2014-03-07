@@ -32,21 +32,22 @@
 
 class QGuiApplication;
 class QApplication;
-class GlGuiInternalBase;
 
 namespace QGL
 {
-	class UIWorker
-	{
-	public:
-		UIWorker();
-		~UIWorker();
-		
-		void Update();
-	private:
-		QGuiApplication *guiApp;
-		QApplication *app;
-		std::shared_ptr<GlGuiInternalBase> gui;
-		
-	};
+class GlGuiInternalBase;
+
+class UIWorker
+{
+public:
+	UIWorker(GlGuiInternalBase *gui, const std::string &fontDir);
+	~UIWorker();
+
+	void Update();
+private:
+	QGuiApplication *guiApp;
+	QApplication *app;
+	GlGuiInternalBase *gui;
+
+};
 }

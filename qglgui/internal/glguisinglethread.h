@@ -37,7 +37,7 @@ class UIWorker;
 class GlGuiSingleThread : public GlGuiInternalBase
 {
 public:
-	GlGuiSingleThread();
+	GlGuiSingleThread(const std::string &fontDir);
 	virtual ~GlGuiSingleThread();
 	
 	virtual void CreateWindow(const std::string &name);

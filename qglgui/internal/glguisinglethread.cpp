@@ -33,11 +33,12 @@
 
 using namespace QGL;
 
-GlGuiSingleThread::GlGuiSingleThread()
+GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir)
+	: GlGuiInternalBase(fontDir)
 {
 	PROFILE_FUNCTION
-	
-	uiWorker = std::shared_ptr<UIWorker>(new UIWorker);
+
+	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir));
 }
 
 GlGuiSingleThread::~GlGuiSingleThread()

@@ -49,7 +49,7 @@ void run()
 
 void initGui()
 {
-	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE);
+	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE, "fonts");
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
 	gui->CreateWindow("");
