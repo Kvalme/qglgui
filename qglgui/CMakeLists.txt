@@ -1,4 +1,4 @@
-include_directories(${GLFW3_INCLUDEDIR} ${PROJECT_SOURCE_DIR})
+include_directories(${GLFW3_INCLUDEDIR} ${PROJECT_SOURCE_DIR} ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Core_PRIVATE_INCLUDE_DIRS} ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 
 add_subdirectory(internal)
 

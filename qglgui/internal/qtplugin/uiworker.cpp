@@ -59,13 +59,10 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir)
 	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
 	static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration)->init();
 
-	QString platformPluginPath = QLatin1String (qgetenv ("QT_QPA_PLATFORM_PLUGIN_PATH"));
-
 	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 
 	app = new QApplication(argc, argv);
 	app->setQuitOnLastWindowClosed (false);
-	app->setStyle ("Fusion");
 }
 
 UIWorker::~UIWorker()

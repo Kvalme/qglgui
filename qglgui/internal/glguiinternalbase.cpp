@@ -27,6 +27,7 @@
  */
 
 #include "qglgui/internal/glguiinternalbase.h"
+#include "qtplugin/uiwindow.h"
 
 using namespace QGL;
 
@@ -49,4 +50,35 @@ void GlGuiInternalBase::RegisterRenderer(std::shared_ptr< GlGuiRenderer > render
 {
 	guiRenderer = renderer;
 }
+
+void GlGuiInternalBase::AddWindow(UIWindow *wnd)
+{
+	windows.insert(std::make_pair(wnd->winId(), Window(wnd)));
+}
+
+void GlGuiInternalBase::RemoveWindow(UIWindow *wnd)
+{
+	windows.erase(wnd->winId());
+}
+
+void GlGuiInternalBase::SetTexture(UIWindow *wnd, QPixmap pixmap)
+{
+	windows[wnd->winId()].pixmap = pixmap.copy();
+}
+
+GlGuiInternalBase::Window::Window(UIWindow *w, bool isChanged, bool isNeedToCleanup, QPixmap pix)
+{
+	this->wnd = w;
+	this->isChanged = isChanged;
+	this->isNeedToCleanup = isNeedToCleanup;
+	this->pixmap = pix.copy();
+}
+
+GlGuiInternalBase::Window::Window(UIWindow *w) :
+	wnd(w)
+{
+
+
+}
+
 

@@ -30,24 +30,45 @@
 
 #include "qglgui/glgui.h"
 
+#include <QPixmap>
+#include <map>
+
 namespace QGL
 {
-	
+class UIWindow;
 class GlGuiInternalBase : public GlGui
 {
 public:
 	GlGuiInternalBase(const std::string &fontDir);
 	virtual ~GlGuiInternalBase();
-	
+
 	virtual void CreateWindow(const std::string &name) = 0;
 	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory);
 	virtual void RegisterRenderer(std::shared_ptr<GlGuiRenderer> renderer);
 	virtual void Render() = 0;
 	virtual void Update() = 0;
-	
+
+	//Internal interface
+	void AddWindow(UIWindow *wnd);
+	void SetTexture(UIWindow *wnd, QPixmap pixmap);
+	void RemoveWindow(UIWindow *wnd);
+
 protected:
+	struct Window
+	{
+		UIWindow *wnd;
+		bool isChanged;
+		bool isNeedToCleanup;
+		QPixmap pixmap;
+		
+		Window(UIWindow *w, bool isChanged, bool isNeedToCleanup, QPixmap pix);
+		explicit Window(UIWindow *w = nullptr);
+	};
+
 	std::function<QWidget*(const std::string &name)> windowFactory;
 	std::shared_ptr<GlGuiRenderer> guiRenderer;
+	
+	std::map<unsigned int, Window> windows;
 };
 
 }

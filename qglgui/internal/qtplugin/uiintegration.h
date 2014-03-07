@@ -48,12 +48,13 @@ public:
 	QPlatformFontDatabase *fontDatabase() const;
 	QAbstractEventDispatcher *guiThreadEventDispatcher() const;
 
+	GlGuiInternalBase* getUi() { return ui;}
+	
 private:
 	QAbstractEventDispatcher *event_dispatcher;
 	QPlatformFontDatabase *font_database;
 	QPlatformServices *services_;
 	GlGuiInternalBase *ui;
-
 };
 
 }
