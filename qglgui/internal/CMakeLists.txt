@@ -4,5 +4,5 @@ add_subdirectory(qtplugin)
 
 set(QGLGUI_INTERNAL_SOURCES glguimultithread.cpp glguiinternalbase.cpp glguisinglethread.cpp)
 
-add_library(qglgui_internal STATIC ${QGLGUI_INTERNAL_SOURCES})
-target_link_libraries(qglgui_internal qglgui_qtplugin)
+add_library(qglgui_internal OBJECT ${QGLGUI_INTERNAL_SOURCES})
+#target_link_libraries(qglgui_internal qglgui_qtplugin)
