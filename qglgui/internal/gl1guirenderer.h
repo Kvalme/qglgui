@@ -26,38 +26,51 @@
  *
  */
 
-#include "qglgui/internal/glguimultithread.h"
+#pragma once
 
-using namespace QGL;
+#include "qglgui/glguirenderer.h"
+#include <QRect>
+#include <map>
 
-GlGuiMultiThread::GlGuiMultiThread(const std::string &fontDir, QRect viewport)
-	: GlGuiInternalBase(fontDir, viewport)
+namespace QGL
 {
 
-}
 
-GlGuiMultiThread::~GlGuiMultiThread()
+class Gl1GuiRenderer : public GlGuiRenderer
 {
+public:
+	Gl1GuiRenderer();
+	virtual ~Gl1GuiRenderer();
+	virtual void SetViewport(QRect viewport);
+
+	virtual void GuiCreateWindow(unsigned int winId, QWindow *wnd);
+	virtual void GuiRemoveWindow(unsigned int winId);
+	virtual void GuiSetTexture(unsigned int winId, QPixmap pixmap);
+
+	virtual void Render();
+
+protected:
+	struct WindowRenderInformation
+	{
+		QWindow *mWindow;
+		unsigned int mWinId;
+		unsigned int mTexId;
+		bool mIsRemoveOnRender;
+		bool mIsTextureChanged;
+		unsigned char *mTextureBuffer;
+
+		WindowRenderInformation();
+		WindowRenderInformation(QWindow *window, unsigned int winId);
+	};
+
+	void UpdateTexture(WindowRenderInformation *window);
+	void RenderWindow(const WindowRenderInformation &window);
+	void RemoveUneededWindows();
+
+	QRect mViewport;
+
+
+	std::map<unsigned int, WindowRenderInformation> mWindows;
+};
 
 }
-
-unsigned int GlGuiMultiThread::CreateWindow(const std::string &name)
-{
-	return 0;
-}
-
-void GlGuiMultiThread::DestroyWindow(unsigned int id)
-{
-
-}
-
-void GlGuiMultiThread::Render()
-{
-
-}
-
-void GlGuiMultiThread::Update()
-{
-
-}
-

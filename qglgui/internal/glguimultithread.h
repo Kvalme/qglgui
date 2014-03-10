@@ -36,10 +36,11 @@ namespace QGL
 class GlGuiMultiThread : public GlGuiInternalBase
 {
 public:
-	GlGuiMultiThread(const std::string &fontDir);
+	GlGuiMultiThread(const std::string &fontDir, QRect viewport);
 	virtual ~GlGuiMultiThread();
 	
-	virtual void CreateWindow(const std::string &name);
+	virtual unsigned int CreateWindow(const std::string &name);
+	virtual void DestroyWindow(unsigned int id);
 	virtual void Render();
 	virtual void Update();
 };

@@ -102,14 +102,14 @@ void GlfwSampleApplication::renderCube()
 
 #define DRAW_FACE(a,b,c,d) \
 	glBegin(GL_POLYGON); \
-	glVertex3fv(vertices[a]); \
 	glColor3fv(colors[a]); \
-	glVertex3fv(vertices[b]); \
+	glVertex3fv(vertices[a]); \
 	glColor3fv(colors[b]); \
-	glVertex3fv(vertices[c]); \
+	glVertex3fv(vertices[b]); \
 	glColor3fv(colors[c]); \
-	glVertex3fv(vertices[d]); \
+	glVertex3fv(vertices[c]); \
 	glColor3fv(colors[d]); \
+	glVertex3fv(vertices[d]); \
 	glEnd();
 	
 	DRAW_FACE(0, 3, 2, 1);

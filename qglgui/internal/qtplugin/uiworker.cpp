@@ -69,6 +69,7 @@ UIWorker::~UIWorker()
 {
 	PROFILE_FUNCTION
 	
+	delete guiApp;
 	delete app;
 }
 

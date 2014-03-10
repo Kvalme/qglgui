@@ -39,29 +39,26 @@ class UIWindow;
 class GlGuiInternalBase : public GlGui
 {
 public:
-	GlGuiInternalBase(const std::string &fontDir);
+	GlGuiInternalBase(const std::string &fontDir, QRect viewport);
 	virtual ~GlGuiInternalBase();
 
-	virtual void CreateWindow(const std::string &name) = 0;
+	virtual unsigned int CreateWindow(const std::string &name) = 0;
+	virtual void DestroyWindow(unsigned int id) = 0;
 	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory);
 	virtual void RegisterRenderer(std::shared_ptr<GlGuiRenderer> renderer);
 	virtual void Render() = 0;
 	virtual void Update() = 0;
 
 	//Internal interface
-	void AddWindow(UIWindow *wnd);
-	void SetTexture(UIWindow *wnd, QPixmap pixmap);
-	void RemoveWindow(UIWindow *wnd);
+	virtual void iAddWindow(UIWindow *wnd);
+	virtual void iSetTexture(unsigned int winId, const QPixmap &pixmap);
+	virtual void iRemoveWindow(unsigned int winId);
 
 protected:
 	struct Window
 	{
 		UIWindow *wnd;
-		bool isChanged;
-		bool isNeedToCleanup;
-		QPixmap pixmap;
 		
-		Window(UIWindow *w, bool isChanged, bool isNeedToCleanup, QPixmap pix);
 		explicit Window(UIWindow *w = nullptr);
 	};
 
@@ -69,6 +66,8 @@ protected:
 	std::shared_ptr<GlGuiRenderer> guiRenderer;
 	
 	std::map<unsigned int, Window> windows;
+	
+	QRect mViewport;
 };
 
 }

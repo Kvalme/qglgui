@@ -28,19 +28,64 @@
 
 #pragma once
 #include <memory>
+#include <QRect>
+#include <QPixmap>
+
+class QWindow;
 
 namespace QGL
 {
 
 /**
- * Renderer interface. Will be called from same thread as GlGui::render();
+ * Renderer interface. Will be called from same thread as GlGui.
+ * Funcitons started from "Gui" will be called from GUI thread.
  */
 class GlGuiRenderer
 {
 public:
 	GlGuiRenderer();
 	virtual ~GlGuiRenderer();
+
+	/**
+	 * Called from GlGui::RegisterRenderer
+	 *
+	 * @param viewport vieport
+	 */
+	virtual void SetViewport(QRect viewport) = 0;
+
+	/**
+	 * Called when QT request window creation.
+	 * Always called from GUI thread
+	 *
+	 * @param winId window ID
+	 * @param wnd pointer to the created window
+	 */
+	virtual void GuiCreateWindow(unsigned int winId, QWindow *wnd) = 0;
+
+	/**
+	 * Called when QT draws a window.
+	 * Always called from GUI thread
+	 * 
+	 * @param winId window ID
+	 * @param pixmap texture for given window
+	 */
+	virtual void GuiSetTexture(unsigned int winId, QPixmap pixmap) = 0;
 	
+	/**
+	 * Called when QT destroys window.
+	 * Always called from GUI thread
+	 * 
+	 * @param winId window ID
+	 */
+	virtual void GuiRemoveWindow(unsigned int winId) = 0;
+
+	/**
+	 * Called from GlGui::Render
+	 */
+	virtual void Render() = 0;
+
+
+
 };
 
 enum class RENDERER_TYPE

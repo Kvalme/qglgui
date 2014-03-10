@@ -1,0 +1,209 @@
+/*
+ * Copyright (c) 2014, Denis Biryukov <denis.birukov@gmail.com>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *     notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the <organization> nor the
+ *     names of its contributors may be used to endorse or promote products
+ *     derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY Denis Biryukov <denis.birukov@gmail.com> ''AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL Denis Biryukov <denis.birukov@gmail.com> BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+#include "gl1guirenderer.h"
+
+#include <GL/gl.h>
+#include <assert.h>
+#include <QWindow>
+
+using namespace QGL;
+
+Gl1GuiRenderer::Gl1GuiRenderer()
+{
+
+}
+
+Gl1GuiRenderer::~Gl1GuiRenderer()
+{
+	for (auto entry : mWindows)
+	{
+		delete[] entry.second.mTextureBuffer;
+	}
+}
+
+void Gl1GuiRenderer::SetViewport(QRect viewport)
+{
+	mViewport = viewport;
+}
+
+void Gl1GuiRenderer::Render()
+{
+	glViewport(mViewport.x(), mViewport.y(), mViewport.width(), mViewport.height());
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix(); //Save matrix
+
+	glLoadIdentity();
+	glOrtho(mViewport.x(), mViewport.width(), mViewport.height(), mViewport.y(), 0, 1);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix(); //Save current matrix
+
+	RemoveUneededWindows();
+
+	GLboolean tex2DStatus = glIsEnabled(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_2D);
+	
+	//Render all windows
+	for (auto &entry : mWindows)
+	{
+		glLoadIdentity();
+		UpdateTexture(&entry.second);
+		RenderWindow(entry.second);
+	}
+
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	
+	if(tex2DStatus == GL_FALSE) glDisable(GL_TEXTURE_2D);
+}
+
+void Gl1GuiRenderer::RemoveUneededWindows()
+{
+	for (auto it = mWindows.begin(); it != mWindows.end();)
+	{
+		if (it->second.mIsRemoveOnRender)
+		{
+			glDeleteTextures(1, &it->second.mTexId);
+			delete[] it->second.mTextureBuffer;
+			mWindows.erase(it++);
+		}
+		else ++it;
+	}
+}
+
+void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation &window)
+{
+	assert(window.mWindow != nullptr);
+	
+	glBindTexture(GL_TEXTURE_2D, window.mTexId);
+	
+	QRect geometry = window.mWindow->geometry();
+	
+	float xs = geometry.x();
+	float ys = geometry.y();
+	float xe = xs + geometry.width();
+	float ye = ys + geometry.height();
+	
+	glBegin(GL_QUADS);
+
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glTexCoord2f(0.0, 0.0);
+	glVertex3f(xs, ys, 0.0);
+	
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glTexCoord2f(0.0, 1.0);
+	glVertex3f(xs, ye, 0.0);
+	
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glTexCoord2f(1.0, 1.0);
+	glVertex3f(xe, ye, 0.0);
+	
+	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glTexCoord2f(1.0, 0.0);
+	glVertex3f(xe, ys, 0.0);
+	
+	glEnd();
+}
+
+void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *window)
+{
+	if (!window->mIsTextureChanged)return;
+	
+	if (glIsTexture(window->mTexId) == GL_FALSE)
+	{
+		glGenTextures(1, &window->mTexId);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, window->mTexId);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window->mWindow->width(), window->mWindow->height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, window->mTextureBuffer);
+	
+	window->mIsTextureChanged = false;
+}
+
+void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, QWindow *wnd)
+{
+	assert(wnd);
+	assert(mWindows.find(winId) == mWindows.end());
+
+	WindowRenderInformation wri(wnd, winId);
+
+	mWindows.insert(std::make_pair(winId, wri));
+}
+
+void Gl1GuiRenderer::GuiRemoveWindow(unsigned int winId)
+{
+	auto it = mWindows.find(winId);
+	assert(it != mWindows.end());
+
+	it->second.mIsRemoveOnRender = true;
+}
+
+void Gl1GuiRenderer::GuiSetTexture(unsigned int winId, QPixmap pixmap)
+{
+	auto it = mWindows.find(winId);
+	assert(it != mWindows.end());
+
+	QImage img = pixmap.toImage();
+
+	it->second.mIsTextureChanged = true;
+	delete[] it->second.mTextureBuffer;
+	it->second.mTextureBuffer = new unsigned char[pixmap.width() * pixmap.height() * 4];
+
+	memcpy(
+		static_cast<void *>(it->second.mTextureBuffer),
+		static_cast<void *>(img.bits()),
+		pixmap.width() * pixmap.height() * 4);
+}
+
+Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation() :
+	mWindow(nullptr),
+	mWinId(0),
+	mTexId(0),
+	mIsRemoveOnRender(false),
+	mIsTextureChanged(true),
+	mTextureBuffer(nullptr)
+{
+}
+
+Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation(QWindow *window, unsigned int winId) :
+	mWindow(window),
+	mWinId(winId),
+	mTexId(0),
+	mIsRemoveOnRender(false),
+	mIsTextureChanged(true),
+	mTextureBuffer(nullptr)
+{
+}

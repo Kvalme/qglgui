@@ -28,13 +28,16 @@
 
 #include "qglgui/internal/glguisinglethread.h"
 #include "qglgui/internal/qtplugin/uiworker.h"
+#include "qglgui/glguirenderer.h"
 
 #include "libcppprofiler/src/cppprofiler.h"
+#include <QWidget>
+#include <assert.h>
 
 using namespace QGL;
 
-GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir)
-	: GlGuiInternalBase(fontDir)
+GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir, QRect viewport)
+	: GlGuiInternalBase(fontDir, viewport)
 {
 	PROFILE_FUNCTION
 
@@ -47,16 +50,38 @@ GlGuiSingleThread::~GlGuiSingleThread()
 
 }
 
-void GlGuiSingleThread::CreateWindow(const std::string &name)
+unsigned int GlGuiSingleThread::CreateWindow(const std::string &name)
 {
 	PROFILE_FUNCTION
-//	QWidget *widget = windowFactory(name);
+	
+	QWidget *w = windowFactory(name);
+	if (!w) return 0;
+	w->show();
+	
+	lastWindowId++;
+	
+	windows.insert(std::make_pair(lastWindowId, w));
+	return lastWindowId;
 }
+
+void GlGuiSingleThread::DestroyWindow(unsigned int id)
+{
+	auto it = windows.find(id);
+	if (it == windows.end())return;
+	
+	it->second->hide();
+	delete it->second;
+	
+	windows.erase(it);
+}
+
 
 void GlGuiSingleThread::Render()
 {
 	PROFILE_FUNCTION
-
+	assert(guiRenderer);
+	
+	guiRenderer->Render();
 }
 
 void GlGuiSingleThread::Update()
@@ -64,4 +89,11 @@ void GlGuiSingleThread::Update()
 	PROFILE_FUNCTION
 
 	uiWorker->Update();
+}
+
+void GlGuiSingleThread::iSetTexture(unsigned int winId, QPixmap pixmap)
+{
+	QGL::GlGuiInternalBase::iSetTexture(winId, pixmap);
+	
+	
 }

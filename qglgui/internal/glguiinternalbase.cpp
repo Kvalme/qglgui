@@ -28,10 +28,14 @@
 
 #include "qglgui/internal/glguiinternalbase.h"
 #include "qtplugin/uiwindow.h"
+#include <qglgui/glguirenderer.h>
+
+#include <assert.h>
 
 using namespace QGL;
 
-GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir)
+GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir, QRect viewport) :
+	mViewport(viewport)
 {
 
 }
@@ -48,30 +52,40 @@ void GlGuiInternalBase::RegisterWindowFactory(std::function<QWidget*(const std::
 
 void GlGuiInternalBase::RegisterRenderer(std::shared_ptr< GlGuiRenderer > renderer)
 {
+	if (!renderer)return;
+	
 	guiRenderer = renderer;
+	guiRenderer->SetViewport(mViewport);
 }
 
-void GlGuiInternalBase::AddWindow(UIWindow *wnd)
+void GlGuiInternalBase::iAddWindow(UIWindow *wnd)
 {
+	assert(wnd);
+	assert(guiRenderer);
+	
 	windows.insert(std::make_pair(wnd->winId(), Window(wnd)));
+	
+	guiRenderer->GuiCreateWindow(wnd->winId(), wnd->window());
 }
 
-void GlGuiInternalBase::RemoveWindow(UIWindow *wnd)
+void GlGuiInternalBase::iRemoveWindow(unsigned int winId)
 {
-	windows.erase(wnd->winId());
+	assert(guiRenderer);
+	
+	windows.erase(winId);
+	
+	guiRenderer->GuiRemoveWindow(winId);
 }
 
-void GlGuiInternalBase::SetTexture(UIWindow *wnd, QPixmap pixmap)
+void GlGuiInternalBase::iSetTexture(unsigned int winId, const QPixmap &pixmap)
 {
-	windows[wnd->winId()].pixmap = pixmap.copy();
-}
-
-GlGuiInternalBase::Window::Window(UIWindow *w, bool isChanged, bool isNeedToCleanup, QPixmap pix)
-{
-	this->wnd = w;
-	this->isChanged = isChanged;
-	this->isNeedToCleanup = isNeedToCleanup;
-	this->pixmap = pix.copy();
+	assert(guiRenderer);
+	
+	auto it = windows.find(winId);
+	if (it == windows.end())
+		throw std::runtime_error("Setting texture for not-existed window is impossible");
+	
+	guiRenderer->GuiSetTexture(winId, pixmap);
 }
 
 GlGuiInternalBase::Window::Window(UIWindow *w) :

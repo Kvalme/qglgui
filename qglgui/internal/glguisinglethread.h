@@ -30,6 +30,8 @@
 
 #include "qglgui/internal/glguiinternalbase.h"
 
+class QWidget;
+
 namespace QGL
 {
 
@@ -37,14 +39,22 @@ class UIWorker;
 class GlGuiSingleThread : public GlGuiInternalBase
 {
 public:
-	GlGuiSingleThread(const std::string &fontDir);
+	GlGuiSingleThread(const std::string &fontDir, QRect viewport);
 	virtual ~GlGuiSingleThread();
 	
-	virtual void CreateWindow(const std::string &name);
+	virtual unsigned int CreateWindow(const std::string &name);
+	virtual void DestroyWindow(unsigned int id);
 	virtual void Render();
 	virtual void Update();
+	
+	virtual void iSetTexture(unsigned int winId, QPixmap pixmap);
+	
 protected:
 	std::shared_ptr<UIWorker> uiWorker;
+	std::map<unsigned int, QWidget* > windows;
+	unsigned int lastWindowId = 0;
+	
+	
 };
 	
 }

@@ -31,16 +31,16 @@
 #include "qglgui/internal/glguimultithread.h"
 #include "qglgui/internal/glguisinglethread.h"
 
-std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode, const std::string &fontDir)
+std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode, const std::string &fontDir, QRect viewPort)
 {
 	std::shared_ptr<GlGuiInternalBase> instance;
 	switch (mode)
 	{
 		case THREADING_MODE::MULTI:
-			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiMultiThread(fontDir));
+			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiMultiThread(fontDir, viewPort));
 			break;
 		case THREADING_MODE::SINGLE:
-			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiSingleThread(fontDir));
+			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiSingleThread(fontDir, viewPort));
 			break;
 	}
 	

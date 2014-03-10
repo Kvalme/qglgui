@@ -110,7 +110,7 @@ QPlatformWindow *UIIntegration::createPlatformWindow(QWindow *window) const
 	UIWindow *wnd = new UIWindow(window);
 	wnd->requestActivateWindow();
 
-	ui->AddWindow(wnd);
+	ui->iAddWindow(wnd);
 	return wnd;
 }
 

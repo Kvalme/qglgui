@@ -29,6 +29,7 @@
 #include "uibackingstore.h"
 #include "libcppprofiler/src/cppprofiler.h"
 #include "uiintegration.h"
+#include <qglgui/internal/glguiinternalbase.h>
 #include <qguiapplication.h>
 #include <QScreen>
 #include <private/qguiapplication_p.h>
@@ -97,9 +98,8 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 
 	QPixmap pix = grabWindow(id, bounds);
 
-//	UIIntegration *i = static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration);
-//	i->getMagicUI()->_setTexture (id, pix.toImage().bits(),  pix.width(), pix.height());
-//	toImage().convertToFormat(QImage::Format_ARGB32).bits(), pix.width(), pix.height());
+	UIIntegration *i = static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration);
+	i->getUi()->iSetTexture(id, pix);
 }
 
 QPaintDevice *UIBackingStore::paintDevice()

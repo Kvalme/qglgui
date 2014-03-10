@@ -29,6 +29,7 @@
 #pragma once
 #include <memory>
 #include <functional>
+#include <QRect>
 
 class QWidget;
 
@@ -56,9 +57,10 @@ public:
 	 *
 	 * @param mode threading mode
 	 * @param fontDir path to font directory
+	 * @param viewport viewport for GUI that will be used as screen size.
 	 * @return pointer to created gui
 	 */
-	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir);
+	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir, QRect viewport);
 
 	/**
 	 * Registers window factory.
@@ -79,12 +81,24 @@ public:
 	 * Creates window by provided name.
 	 * GuiWindowFactory will be called to create window.
 	 *
+	 * @note Window is kept inside class implementation. Window->show() automatically called
+	 *
 	 * @param name window name
+	 * @return window id or 0 in case of error
 	 */
-	virtual void CreateWindow(const std::string &name) = 0;
+	virtual unsigned int CreateWindow(const std::string &name) = 0;
 
 	/**
-	 * Renders gui using previously registered renderer
+	 * Removes window by id.
+	 * Window->hide called before window destruction.
+	 *
+	 * @param id window id to remove
+	 */
+	virtual void DestroyWindow(unsigned int id) = 0;
+
+	/**
+	 * Renders GUI using previously registered renderer.
+	 * Should be called from application from render thread
 	 */
 	virtual void Render() = 0;
 

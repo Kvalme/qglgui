@@ -27,6 +27,7 @@
  */
 
 #include "qglgui/glguirenderer.h"
+#include "internal/gl1guirenderer.h"
 
 using namespace QGL;
 
@@ -35,11 +36,25 @@ std::shared_ptr<GlGuiRenderer> QGL::CreateRenderer(RENDERER_TYPE type)
 	switch (type)
 	{
 		case RENDERER_TYPE::GL1:
-			break;
+			return std::shared_ptr<GlGuiRenderer>(new Gl1GuiRenderer);
 		case RENDERER_TYPE::GL2:
+			throw std::runtime_error("GL2 renderer is no implemented");
 			break;
 		case RENDERER_TYPE::GL3:
+			throw std::runtime_error("GL3 renderer is no implemented");
 			break;
 	}
+	throw std::runtime_error("Invalid renderer");
 	return std::shared_ptr<GlGuiRenderer>(nullptr);
+}
+
+
+GlGuiRenderer::GlGuiRenderer()
+{
+
+}
+
+GlGuiRenderer::~GlGuiRenderer()
+{
+
 }
