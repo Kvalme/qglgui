@@ -65,7 +65,6 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 	font_database = new QPlatformFontDatabase();
 #else
 	font_database = new QGenericUnixFontDatabase();
-	font_database->fontDir();
 #endif
 #elif defined(Q_OS_WIN)
 	event_dispatcher = new QEventDispatcherWin32;

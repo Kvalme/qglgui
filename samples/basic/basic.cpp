@@ -32,23 +32,31 @@
 #include "qglgui/glguirenderer.h"
 #include "basicqtapp.h"
 
+#include "libcppprofiler/src/cppprofiler.h"
+
 using namespace QGL;
 
 std::shared_ptr<GlGui> gui;
 
 QWidget *createWindow(const std::string &)
 {
+	PROFILE_FUNCTION
+	
 	return new BasicQtApp;
 }
 
 void run()
 {
+	PROFILE_FUNCTION
+	
 	gui->Update();
 	gui->Render();
 }
 
 void initGui()
 {
+	PROFILE_FUNCTION
+	
 	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE, "../../../fonts", QRect(0, 0, 800, 600));
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
@@ -57,6 +65,8 @@ void initGui()
 
 int main()
 {
+	PROFILE_FUNCTION
+	
 	GlfwSampleApplication app;
 	if (!app.init(800, 600, run))return 1;
 

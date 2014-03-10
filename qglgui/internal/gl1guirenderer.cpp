@@ -28,6 +28,8 @@
 
 #include "gl1guirenderer.h"
 
+#include "libcppprofiler/src/cppprofiler.h"
+
 #include <GL/gl.h>
 #include <assert.h>
 #include <QWindow>
@@ -36,11 +38,14 @@ using namespace QGL;
 
 Gl1GuiRenderer::Gl1GuiRenderer()
 {
-
+	PROFILE_FUNCTION
+	
 }
 
 Gl1GuiRenderer::~Gl1GuiRenderer()
 {
+	PROFILE_FUNCTION
+	
 	for (auto entry : mWindows)
 	{
 		delete[] entry.second.mTextureBuffer;
@@ -49,11 +54,15 @@ Gl1GuiRenderer::~Gl1GuiRenderer()
 
 void Gl1GuiRenderer::SetViewport(QRect viewport)
 {
+	PROFILE_FUNCTION
+	
 	mViewport = viewport;
 }
 
 void Gl1GuiRenderer::Render()
 {
+	PROFILE_FUNCTION
+	
 	glViewport(mViewport.x(), mViewport.y(), mViewport.width(), mViewport.height());
 
 	glMatrixMode(GL_PROJECTION);
@@ -88,6 +97,8 @@ void Gl1GuiRenderer::Render()
 
 void Gl1GuiRenderer::RemoveUneededWindows()
 {
+	PROFILE_FUNCTION
+	
 	for (auto it = mWindows.begin(); it != mWindows.end();)
 	{
 		if (it->second.mIsRemoveOnRender)
@@ -102,6 +113,8 @@ void Gl1GuiRenderer::RemoveUneededWindows()
 
 void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation &window)
 {
+	PROFILE_FUNCTION
+	
 	assert(window.mWindow != nullptr);
 	
 	glBindTexture(GL_TEXTURE_2D, window.mTexId);
@@ -136,6 +149,8 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 
 void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *window)
 {
+	PROFILE_FUNCTION
+	
 	if (!window->mIsTextureChanged)return;
 	
 	if (glIsTexture(window->mTexId) == GL_FALSE)
@@ -155,6 +170,8 @@ void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *wind
 
 void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, QWindow *wnd)
 {
+	PROFILE_FUNCTION
+	
 	assert(wnd);
 	assert(mWindows.find(winId) == mWindows.end());
 
@@ -165,6 +182,8 @@ void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, QWindow *wnd)
 
 void Gl1GuiRenderer::GuiRemoveWindow(unsigned int winId)
 {
+	PROFILE_FUNCTION
+	
 	auto it = mWindows.find(winId);
 	assert(it != mWindows.end());
 
@@ -173,6 +192,8 @@ void Gl1GuiRenderer::GuiRemoveWindow(unsigned int winId)
 
 void Gl1GuiRenderer::GuiSetTexture(unsigned int winId, QPixmap pixmap)
 {
+	PROFILE_FUNCTION
+	
 	auto it = mWindows.find(winId);
 	assert(it != mWindows.end());
 
@@ -196,6 +217,7 @@ Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation() :
 	mIsTextureChanged(true),
 	mTextureBuffer(nullptr)
 {
+	PROFILE_FUNCTION
 }
 
 Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation(QWindow *window, unsigned int winId) :
@@ -206,4 +228,5 @@ Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation(QWindow *window
 	mIsTextureChanged(true),
 	mTextureBuffer(nullptr)
 {
+	PROFILE_FUNCTION
 }

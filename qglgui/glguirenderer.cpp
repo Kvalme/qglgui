@@ -29,10 +29,14 @@
 #include "qglgui/glguirenderer.h"
 #include "internal/gl1guirenderer.h"
 
+#include "libcppprofiler/src/cppprofiler.h"
+
 using namespace QGL;
 
 std::shared_ptr<GlGuiRenderer> QGL::CreateRenderer(RENDERER_TYPE type)
 {
+	PROFILE_FUNCTION
+
 	switch (type)
 	{
 		case RENDERER_TYPE::GL1:
@@ -51,10 +55,10 @@ std::shared_ptr<GlGuiRenderer> QGL::CreateRenderer(RENDERER_TYPE type)
 
 GlGuiRenderer::GlGuiRenderer()
 {
-
+	PROFILE_FUNCTION
 }
 
 GlGuiRenderer::~GlGuiRenderer()
 {
-
+	PROFILE_FUNCTION
 }

@@ -29,6 +29,7 @@
 #include "qglgui/internal/glguiinternalbase.h"
 #include "qtplugin/uiwindow.h"
 #include <qglgui/glguirenderer.h>
+#include "libcppprofiler/src/cppprofiler.h"
 
 #include <assert.h>
 
@@ -37,61 +38,72 @@ using namespace QGL;
 GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir, QRect viewport) :
 	mViewport(viewport)
 {
-
+	PROFILE_FUNCTION
 }
 
 GlGuiInternalBase::~GlGuiInternalBase()
 {
+	PROFILE_FUNCTION
 
 }
 
 void GlGuiInternalBase::RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory)
 {
+	PROFILE_FUNCTION
+
 	windowFactory = factory;
 }
 
 void GlGuiInternalBase::RegisterRenderer(std::shared_ptr< GlGuiRenderer > renderer)
 {
+	PROFILE_FUNCTION
+
 	if (!renderer)return;
-	
+
 	guiRenderer = renderer;
 	guiRenderer->SetViewport(mViewport);
 }
 
 void GlGuiInternalBase::iAddWindow(UIWindow *wnd)
 {
+	PROFILE_FUNCTION
+
 	assert(wnd);
 	assert(guiRenderer);
-	
+
 	windows.insert(std::make_pair(wnd->winId(), Window(wnd)));
-	
+
 	guiRenderer->GuiCreateWindow(wnd->winId(), wnd->window());
 }
 
 void GlGuiInternalBase::iRemoveWindow(unsigned int winId)
 {
+	PROFILE_FUNCTION
+
 	assert(guiRenderer);
-	
+
 	windows.erase(winId);
-	
+
 	guiRenderer->GuiRemoveWindow(winId);
 }
 
 void GlGuiInternalBase::iSetTexture(unsigned int winId, const QPixmap &pixmap)
 {
+	PROFILE_FUNCTION
+
 	assert(guiRenderer);
-	
+
 	auto it = windows.find(winId);
 	if (it == windows.end())
 		throw std::runtime_error("Setting texture for not-existed window is impossible");
-	
+
 	guiRenderer->GuiSetTexture(winId, pixmap);
 }
 
 GlGuiInternalBase::Window::Window(UIWindow *w) :
 	wnd(w)
 {
-
+	PROFILE_FUNCTION
 
 }
 

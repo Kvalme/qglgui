@@ -30,13 +30,19 @@
 #include "GLFW/glfw3.h"
 #include <iostream>
 
+#include "libcppprofiler/src/cppprofiler.h"
+
 void glfwError(int error, const char *desc)
 {
+	PROFILE_FUNCTION
+	
 	std::cerr << "Error: " << desc << std::endl;
 }
 
 bool GlfwSampleApplication::init(int width, int height, std::function<void(void)> runFunction)
 {
+	PROFILE_FUNCTION
+	
 	if (!glfwInit())
 	{
 		std::cerr << "Unable to initialize glfw" << std::endl;
@@ -66,6 +72,8 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 
 void GlfwSampleApplication::run()
 {
+	PROFILE_FUNCTION
+	
 	for (;;)
 	{
 		glfwPollEvents();
@@ -77,12 +85,16 @@ void GlfwSampleApplication::run()
 		renderCube();
 		this->runFunction();
 
+		PROFILE_START("Swap buffers");
 		glfwSwapBuffers(window);
+		PROFILE_END
 	}
 }
 
 void GlfwSampleApplication::renderCube()
 {
+	PROFILE_FUNCTION
+	
 	const GLfloat vertices[][3] = {{ -1.0, -1.0, -1.0}, {1.0, -1.0, -1.0}, {1.0, 1.0, -1.0}, { -1.0, 1.0, -1.0}, { -1.0, -1.0, 1.0}, {1.0, -1.0, 1.0}, {1.0, 1.0, 1.0}, { -1.0, 1.0, 1.0}};
 	const GLfloat colors[][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 1.0}};
 	static float angle_x = 0, angle_y = 0;

@@ -28,11 +28,15 @@
 
 #include "glgui.h"
 
+#include "libcppprofiler/src/cppprofiler.h"
+
 #include "qglgui/internal/glguimultithread.h"
 #include "qglgui/internal/glguisinglethread.h"
 
 std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode, const std::string &fontDir, QRect viewPort)
 {
+	PROFILE_FUNCTION
+
 	std::shared_ptr<GlGuiInternalBase> instance;
 	switch (mode)
 	{
@@ -43,22 +47,22 @@ std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode
 			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiSingleThread(fontDir, viewPort));
 			break;
 	}
-	
+
 	return instance;
 }
 
 QGL::GlGui::GlGui()
 {
-
+	PROFILE_FUNCTION
 }
 
 QGL::GlGui::GlGui(QGL::GlGui &)
 {
-
+	PROFILE_FUNCTION
 }
 
 QGL::GlGui::~GlGui()
 {
-
+	PROFILE_FUNCTION
 }
 

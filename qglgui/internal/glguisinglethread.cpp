@@ -66,6 +66,8 @@ unsigned int GlGuiSingleThread::CreateWindow(const std::string &name)
 
 void GlGuiSingleThread::DestroyWindow(unsigned int id)
 {
+	PROFILE_FUNCTION
+	
 	auto it = windows.find(id);
 	if (it == windows.end())return;
 	
@@ -79,6 +81,7 @@ void GlGuiSingleThread::DestroyWindow(unsigned int id)
 void GlGuiSingleThread::Render()
 {
 	PROFILE_FUNCTION
+
 	assert(guiRenderer);
 	
 	guiRenderer->Render();
@@ -93,7 +96,7 @@ void GlGuiSingleThread::Update()
 
 void GlGuiSingleThread::iSetTexture(unsigned int winId, QPixmap pixmap)
 {
+	PROFILE_FUNCTION
+	
 	QGL::GlGuiInternalBase::iSetTexture(winId, pixmap);
-	
-	
 }
