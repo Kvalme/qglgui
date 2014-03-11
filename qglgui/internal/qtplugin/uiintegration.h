@@ -31,7 +31,10 @@
 
 namespace QGL
 {
+
 class GlGuiInternalBase;
+class UIScreen;
+
 class UIIntegration: public QPlatformIntegration
 {
 public:
@@ -48,16 +51,20 @@ public:
 	QPlatformFontDatabase *fontDatabase() const;
 	QAbstractEventDispatcher *guiThreadEventDispatcher() const;
 
-	GlGuiInternalBase* getUi() { return ui;}
-	
+	GlGuiInternalBase *getUi()
+	{
+		return ui;
+	}
+
 	int addScreen(QRect viewport);
-	
+
 private:
 	QAbstractEventDispatcher *event_dispatcher;
 	QPlatformFontDatabase *font_database;
 	QPlatformServices *services_;
 	GlGuiInternalBase *ui;
 	int mScreenId = 0;
+	std::vector<UIScreen *> mScreens;
 };
 
 }

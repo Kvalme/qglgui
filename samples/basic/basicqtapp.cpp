@@ -17,6 +17,7 @@ BasicQtApp::~BasicQtApp()
 	PROFILE_FUNCTION
 	
 	delete ui;
+	delete this;
 }
 
 void BasicQtApp::on_horizontalSlider_sliderMoved(int position)

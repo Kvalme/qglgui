@@ -87,7 +87,9 @@ void UIIntegration::init(QRect viewport)
 
 int UIIntegration::addScreen(QRect viewport)
 {
-	screenAdded(new UIScreen(viewport));
+	UIScreen *s = new UIScreen(viewport);
+	mScreens.push_back(s);
+	screenAdded(s);
 	return mScreenId++;
 }
 
@@ -98,6 +100,8 @@ UIIntegration::~UIIntegration()
 	delete event_dispatcher;
 	delete font_database;
 	delete services_;
+	
+	for(UIScreen *s : mScreens) delete s;
 }
 
 QPlatformBackingStore *UIIntegration::createPlatformBackingStore(QWindow *window) const
