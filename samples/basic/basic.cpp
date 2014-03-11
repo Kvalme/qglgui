@@ -32,6 +32,8 @@
 #include "qglgui/glguirenderer.h"
 #include "basicqtapp.h"
 
+#include <memory>
+
 #include "libcppprofiler/src/cppprofiler.h"
 
 using namespace QGL;
@@ -74,6 +76,8 @@ int main()
 	initGui();
 
 	app.run();
+	
+	gui.reset();
 
 	return 0;
 }

@@ -61,8 +61,6 @@ UIWindow::UIWindow(QWindow *window) :
 	static WId counter = 0;
 	win_id = ++counter;
 
-	windows_by_win_id[win_id] = this;
-
 	raise();
 }
 
@@ -85,7 +83,6 @@ UIWindow::~UIWindow()
 			ui->_setMouseGrabWindow(nullptr);
 		}*/
 
-	windows_by_win_id.erase(win_id);
 }
 
 void UIWindow::requestActivateWindow()
@@ -214,15 +211,6 @@ void UIWindow::setWindowFlags(Qt::WindowFlags flags)
 	PROFILE_FUNCTION
 
 	QPlatformWindow::setWindowFlags(flags);
-}
-
-
-UIWindow *UIWindow::windowByWinId(WId id)
-{
-	PROFILE_FUNCTION
-
-	auto fnd = windows_by_win_id.find(id);
-	return (fnd == windows_by_win_id.end() ? nullptr : fnd->second);
 }
 
 void UIWindow::lower()
