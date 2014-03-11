@@ -77,14 +77,19 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 	ui = gui;
 }
 
-void UIIntegration::init()
+void UIIntegration::init(QRect viewport)
 {
 	PROFILE_FUNCTION
 
 	QGuiApplicationPrivate::instance()->setEventDispatcher(event_dispatcher);
-	screenAdded(new UIScreen);
+	addScreen(viewport);
 }
 
+int UIIntegration::addScreen(QRect viewport)
+{
+	screenAdded(new UIScreen(viewport));
+	return mScreenId++;
+}
 
 UIIntegration::~UIIntegration()
 {

@@ -30,24 +30,29 @@
 
 #include <memory>
 
+#include <QRect>
+
 class QGuiApplication;
 class QApplication;
 
 namespace QGL
 {
 class GlGuiInternalBase;
+class UIIntegration;
 
 class UIWorker
 {
 public:
-	UIWorker(GlGuiInternalBase *gui, const std::string &fontDir);
+	UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport);
 	~UIWorker();
 
 	void Update();
+	int CreateScreen(QRect viewport);
 private:
 	QGuiApplication *guiApp;
 	QApplication *app;
 	GlGuiInternalBase *gui;
+	UIIntegration *mPlatform;
 
 };
 }

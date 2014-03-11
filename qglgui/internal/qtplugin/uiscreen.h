@@ -37,7 +37,7 @@ namespace QGL
 class UIScreen: public QPlatformScreen
 {
 public:
-	UIScreen();
+	UIScreen(QRect viewport);
 	virtual ~UIScreen();
 
 	QRect geometry() const

@@ -37,11 +37,11 @@
 using namespace QGL;
 
 GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir, QRect viewport)
-	: GlGuiInternalBase(fontDir, viewport)
+	: GlGuiInternalBase(fontDir)
 {
 	PROFILE_FUNCTION
 
-	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir));
+	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport));
 }
 
 GlGuiSingleThread::~GlGuiSingleThread()
@@ -50,33 +50,14 @@ GlGuiSingleThread::~GlGuiSingleThread()
 
 }
 
-unsigned int GlGuiSingleThread::CreateWindow(const std::string &name)
+void GlGuiSingleThread::CreateWindow(const std::string &name)
 {
 	PROFILE_FUNCTION
 	
 	QWidget *w = windowFactory(name);
-	if (!w) return 0;
+	assert(w);
 	w->show();
-	
-	lastWindowId++;
-	
-	windows.insert(std::make_pair(lastWindowId, w));
-	return lastWindowId;
 }
-
-void GlGuiSingleThread::DestroyWindow(unsigned int id)
-{
-	PROFILE_FUNCTION
-	
-	auto it = windows.find(id);
-	if (it == windows.end())return;
-	
-	it->second->hide();
-	delete it->second;
-	
-	windows.erase(it);
-}
-
 
 void GlGuiSingleThread::Render()
 {
@@ -100,3 +81,9 @@ void GlGuiSingleThread::iSetTexture(unsigned int winId, QPixmap pixmap)
 	
 	QGL::GlGuiInternalBase::iSetTexture(winId, pixmap);
 }
+
+int GlGuiSingleThread::CreateScreen(QRect viewport)
+{
+	return uiWorker->CreateScreen(viewport);
+}
+

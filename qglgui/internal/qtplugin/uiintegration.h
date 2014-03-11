@@ -35,10 +35,10 @@ class GlGuiInternalBase;
 class UIIntegration: public QPlatformIntegration
 {
 public:
-	UIIntegration(GlGuiInternalBase *gui);
+	UIIntegration(QGL::GlGuiInternalBase *gui);
 	~UIIntegration();
 
-	void init();
+	void init(QRect viewport);
 	bool hasCapability(QPlatformIntegration::Capability cap) const;
 
 	QPlatformWindow *createPlatformWindow(QWindow *window) const;
@@ -50,11 +50,14 @@ public:
 
 	GlGuiInternalBase* getUi() { return ui;}
 	
+	int addScreen(QRect viewport);
+	
 private:
 	QAbstractEventDispatcher *event_dispatcher;
 	QPlatformFontDatabase *font_database;
 	QPlatformServices *services_;
 	GlGuiInternalBase *ui;
+	int mScreenId = 0;
 };
 
 }

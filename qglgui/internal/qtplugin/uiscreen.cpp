@@ -34,11 +34,11 @@
 
 using namespace QGL;
 
-UIScreen::UIScreen()
+UIScreen::UIScreen(QRect viewport)
 {
 	PROFILE_FUNCTION
 
-	geometry_.setRect(0, 0, 100, 100);
+	geometry_ = viewport;
 }
 
 UIScreen::~UIScreen()

@@ -39,7 +39,8 @@ public:
 	GlGuiMultiThread(const std::string &fontDir, QRect viewport);
 	virtual ~GlGuiMultiThread();
 	
-	virtual unsigned int CreateWindow(const std::string &name);
+	virtual int CreateScreen(QRect viewport);
+	virtual void CreateWindow(const std::string &name);
 	virtual void DestroyWindow(unsigned int id);
 	virtual void Render();
 	virtual void Update();

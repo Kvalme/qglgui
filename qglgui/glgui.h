@@ -57,10 +57,19 @@ public:
 	 *
 	 * @param mode threading mode
 	 * @param fontDir path to font directory
-	 * @param viewport viewport for GUI that will be used as screen size.
+	 * @param viewport viewport for primary screen GUI that will be used as screen size.
 	 * @return pointer to created gui
 	 */
 	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir, QRect viewport);
+	
+	/**
+	 * Creates QT screen.
+	 * At least one screen should be created before first window can be created
+	 * 
+	 * @param viewport viewport of the newly created screen
+	 * @return screen id. -1 in case of error.
+	 */
+	virtual int CreateScreen(QRect viewport) = 0;
 
 	/**
 	 * Registers window factory.
@@ -80,22 +89,15 @@ public:
 	/**
 	 * Creates window by provided name.
 	 * GuiWindowFactory will be called to create window.
+	 * Window isn't saved inside UI library. It should be managed by it self.
 	 *
 	 * @note Window is kept inside class implementation. Window->show() automatically called
 	 *
 	 * @param name window name
 	 * @return window id or 0 in case of error
 	 */
-	virtual unsigned int CreateWindow(const std::string &name) = 0;
-
-	/**
-	 * Removes window by id.
-	 * Window->hide called before window destruction.
-	 *
-	 * @param id window id to remove
-	 */
-	virtual void DestroyWindow(unsigned int id) = 0;
-
+	virtual void CreateWindow(const std::string &name) = 0;
+	
 	/**
 	 * Renders GUI using previously registered renderer.
 	 * Should be called from application from render thread

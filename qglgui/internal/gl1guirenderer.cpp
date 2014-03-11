@@ -33,6 +33,7 @@
 #include <GL/gl.h>
 #include <assert.h>
 #include <QWindow>
+#include <QScreen>
 
 using namespace QGL;
 
@@ -52,32 +53,20 @@ Gl1GuiRenderer::~Gl1GuiRenderer()
 	}
 }
 
-void Gl1GuiRenderer::SetViewport(QRect viewport)
-{
-	PROFILE_FUNCTION
-	
-	mViewport = viewport;
-}
-
 void Gl1GuiRenderer::Render()
 {
 	PROFILE_FUNCTION
-	
-	glViewport(mViewport.x(), mViewport.y(), mViewport.width(), mViewport.height());
-
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix(); //Save matrix
-
-	glLoadIdentity();
-	glOrtho(mViewport.x(), mViewport.width(), mViewport.height(), mViewport.y(), 0, 1);
-
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix(); //Save current matrix
 
 	RemoveUneededWindows();
 
 	GLboolean tex2DStatus = glIsEnabled(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_2D);
+	
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix(); //Save matrix
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix(); //Save current matrix
 	
 	//Render all windows
 	for (auto &entry : mWindows)
@@ -116,6 +105,17 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 	PROFILE_FUNCTION
 	
 	assert(window.mWindow != nullptr);
+
+	QRect viewport = window.mWindow->screen()->availableGeometry();
+	
+	glViewport(viewport.x(), viewport.y(), viewport.width(), viewport.height());
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(viewport.x(), viewport.width(), viewport.height(), viewport.y(), 0, 1);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	
 	glBindTexture(GL_TEXTURE_2D, window.mTexId);
 	

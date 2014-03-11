@@ -42,8 +42,8 @@ public:
 	GlGuiSingleThread(const std::string &fontDir, QRect viewport);
 	virtual ~GlGuiSingleThread();
 	
-	virtual unsigned int CreateWindow(const std::string &name);
-	virtual void DestroyWindow(unsigned int id);
+	virtual int CreateScreen(QRect viewport);
+	virtual void CreateWindow(const std::string &name);
 	virtual void Render();
 	virtual void Update();
 	
@@ -51,10 +51,6 @@ public:
 	
 protected:
 	std::shared_ptr<UIWorker> uiWorker;
-	std::map<unsigned int, QWidget* > windows;
-	unsigned int lastWindowId = 0;
-	
-	
 };
 	
 }

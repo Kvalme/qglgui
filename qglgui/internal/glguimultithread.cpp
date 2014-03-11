@@ -31,7 +31,7 @@
 using namespace QGL;
 
 GlGuiMultiThread::GlGuiMultiThread(const std::string &fontDir, QRect viewport)
-	: GlGuiInternalBase(fontDir, viewport)
+	: GlGuiInternalBase(fontDir)
 {
 
 }
@@ -41,9 +41,8 @@ GlGuiMultiThread::~GlGuiMultiThread()
 
 }
 
-unsigned int GlGuiMultiThread::CreateWindow(const std::string &name)
+void GlGuiMultiThread::CreateWindow(const std::string &name)
 {
-	return 0;
 }
 
 void GlGuiMultiThread::DestroyWindow(unsigned int id)
@@ -59,5 +58,10 @@ void GlGuiMultiThread::Render()
 void GlGuiMultiThread::Update()
 {
 
+}
+
+int GlGuiMultiThread::CreateScreen(QRect viewport)
+{
+	return -1;
 }
 

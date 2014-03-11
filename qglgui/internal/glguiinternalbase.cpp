@@ -35,8 +35,7 @@
 
 using namespace QGL;
 
-GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir, QRect viewport) :
-	mViewport(viewport)
+GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir)
 {
 	PROFILE_FUNCTION
 }
@@ -61,7 +60,6 @@ void GlGuiInternalBase::RegisterRenderer(std::shared_ptr< GlGuiRenderer > render
 	if (!renderer)return;
 
 	guiRenderer = renderer;
-	guiRenderer->SetViewport(mViewport);
 }
 
 void GlGuiInternalBase::iAddWindow(UIWindow *wnd)

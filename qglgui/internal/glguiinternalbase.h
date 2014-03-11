@@ -39,11 +39,11 @@ class UIWindow;
 class GlGuiInternalBase : public GlGui
 {
 public:
-	GlGuiInternalBase(const std::string &fontDir, QRect viewport);
+	GlGuiInternalBase(const std::string &fontDir);
 	virtual ~GlGuiInternalBase();
-
-	virtual unsigned int CreateWindow(const std::string &name) = 0;
-	virtual void DestroyWindow(unsigned int id) = 0;
+	
+	virtual int CreateScreen(QRect viewport) = 0;
+	virtual void CreateWindow(const std::string &name) = 0;
 	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory);
 	virtual void RegisterRenderer(std::shared_ptr<GlGuiRenderer> renderer);
 	virtual void Render() = 0;
@@ -66,8 +66,6 @@ protected:
 	std::shared_ptr<GlGuiRenderer> guiRenderer;
 	
 	std::map<unsigned int, Window> windows;
-	
-	QRect mViewport;
 };
 
 }

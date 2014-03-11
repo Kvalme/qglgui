@@ -47,13 +47,6 @@ public:
 	virtual ~GlGuiRenderer();
 
 	/**
-	 * Called from GlGui::RegisterRenderer
-	 *
-	 * @param viewport vieport
-	 */
-	virtual void SetViewport(QRect viewport) = 0;
-
-	/**
 	 * Called when QT request window creation.
 	 * Always called from GUI thread
 	 *

@@ -41,7 +41,6 @@ class Gl1GuiRenderer : public GlGuiRenderer
 public:
 	Gl1GuiRenderer();
 	virtual ~Gl1GuiRenderer();
-	virtual void SetViewport(QRect viewport);
 
 	virtual void GuiCreateWindow(unsigned int winId, QWindow *wnd);
 	virtual void GuiRemoveWindow(unsigned int winId);
@@ -66,9 +65,6 @@ protected:
 	void UpdateTexture(WindowRenderInformation *window);
 	void RenderWindow(const WindowRenderInformation &window);
 	void RemoveUneededWindows();
-
-	QRect mViewport;
-
 
 	std::map<unsigned int, WindowRenderInformation> mWindows;
 };

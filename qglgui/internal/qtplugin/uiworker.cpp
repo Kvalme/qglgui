@@ -40,7 +40,7 @@
 
 using namespace QGL;
 
-UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir)
+UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport)
 {
 	PROFILE_FUNCTION
 
@@ -54,10 +54,11 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir)
 	QCoreApplication::setAttribute (Qt::AA_DontUseNativeMenuBar, true);
 
 	QGuiApplicationPrivate::platform_name = new QString ("QGL");
-	QGuiApplicationPrivate::platform_integration = new UIIntegration (this->gui);
+	mPlatform = new UIIntegration (this->gui);
+	QGuiApplicationPrivate::platform_integration = mPlatform;
 
 	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
-	static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration)->init();
+	static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration)->init(viewport);
 
 	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 
@@ -78,3 +79,9 @@ void UIWorker::Update()
 	
 	app->processEvents();
 }
+
+int UIWorker::CreateScreen(QRect viewport)
+{
+	return mPlatform->addScreen(viewport);
+}
+
