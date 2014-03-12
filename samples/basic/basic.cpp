@@ -60,7 +60,6 @@ void initGui()
 	PROFILE_FUNCTION
 	
 	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE, "../../../fonts", QRect(0, 0, 800, 600));
-	gui->CreateScreen(QRect(0, 0, 800, 300));
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
 	gui->CreateWindow("");

@@ -48,6 +48,11 @@ public:
 	virtual void RegisterRenderer(std::shared_ptr<GlGuiRenderer> renderer);
 	virtual void Render() = 0;
 	virtual void Update() = 0;
+	
+	virtual void InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
+	virtual void InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+	virtual void InjectCharacterEvent(QChar character);
+	virtual void InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers);
 
 	//Internal interface
 	virtual void iAddWindow(UIWindow *wnd);
@@ -55,6 +60,7 @@ public:
 	virtual void iRemoveWindow(unsigned int winId);
 
 protected:
+	UIWindow* handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
 	struct Window
 	{
 		UIWindow *wnd;

@@ -30,6 +30,8 @@
 #include <memory>
 #include <functional>
 #include <QRect>
+#include <QEvent>
+#include <QChar>
 
 class QWidget;
 
@@ -64,7 +66,6 @@ public:
 	
 	/**
 	 * Creates QT screen.
-	 * At least one screen should be created before first window can be created
 	 * 
 	 * @param viewport viewport of the newly created screen
 	 * @return screen id. -1 in case of error.
@@ -109,7 +110,45 @@ public:
 	 * Should be called in single thread mode. In multi-thread mode it will be called automatically in gui thread loop
 	 */
 	virtual void Update() = 0;
+	
+	/**
+	 * Injects mouse move event into QT event queue
+	 * 
+	 * @param screenId idientifyer of the screen on which event happened
+	 * @param positon current mouse position
+	 * @param buttons pressed mouse buttons
+	 * @param modifiers active keyboard modifiers
+	 */
+	virtual void InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers) = 0;
 
+	/**
+	 * Injects mouse button event into QT event queue
+	 * 
+	 * @param screenId idientifyer of the creen on which event happened
+	 * @param position current mouse position
+	 * @param button pressed button
+	 * @param modifiers active keyboard modifiers
+	 */
+	virtual void InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers) = 0;
+	
+	/**
+	 * Injects keyboard event into QT event queue
+	 * Always passes key to current active window
+	 * 
+	 * @param eventType Qt::KeyPress or Qt::KeyRelease
+	 * @param key key
+	 * @param modifiers modifiers state (shift, meta, ctrl)
+	 */
+	virtual void InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers) = 0;
+	
+	/**
+	 * Injects character event into QT event queue
+	 * Always passes character to current active window
+	 * 
+	 * @param character character to inject
+	 */
+	virtual void InjectCharacterEvent(QChar character) = 0;
+	
 protected:
 	GlGui();
 	GlGui(GlGui &);

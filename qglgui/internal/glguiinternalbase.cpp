@@ -32,6 +32,7 @@
 #include "libcppprofiler/src/cppprofiler.h"
 
 #include <assert.h>
+#include <qpa/qwindowsysteminterface.h>
 
 using namespace QGL;
 
@@ -104,5 +105,32 @@ GlGuiInternalBase::Window::Window(UIWindow *w) :
 	PROFILE_FUNCTION
 
 }
+
+void GlGuiInternalBase::InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+{
+	UIWindow *wnd = handleMouseEvent(screenId, position, button, modifiers);
+	if (wnd) wnd->window()->requestActivate();
+}
+
+void GlGuiInternalBase::InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+	handleMouseEvent(screenId, position, buttons, modifiers);
+}
+
+void GlGuiInternalBase::InjectCharacterEvent(QChar character)
+{
+	QWindowSystemInterface::handleKeyEvent (NULL, QEvent::KeyPress, Qt::Key::Key_A, 0, character);
+}
+
+void GlGuiInternalBase::InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers)
+{
+	QWindowSystemInterface::handleKeyEvent (NULL, eventType, key, modifiers);
+}
+
+UIWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers)
+{
+	return nullptr;
+}
+
 
 
