@@ -108,29 +108,73 @@ GlGuiInternalBase::Window::Window(UIWindow *w) :
 
 void GlGuiInternalBase::InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
+	PROFILE_FUNCTION
+
 	UIWindow *wnd = handleMouseEvent(screenId, position, button, modifiers);
 	if (wnd) wnd->window()->requestActivate();
 }
 
 void GlGuiInternalBase::InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
+	PROFILE_FUNCTION
+
 	handleMouseEvent(screenId, position, buttons, modifiers);
 }
 
 void GlGuiInternalBase::InjectCharacterEvent(QChar character)
 {
-	QWindowSystemInterface::handleKeyEvent (NULL, QEvent::KeyPress, Qt::Key::Key_A, 0, character);
+	PROFILE_FUNCTION
+
+	QWindowSystemInterface::handleKeyEvent(NULL, QEvent::KeyPress, Qt::Key::Key_A, 0, character);
 }
 
 void GlGuiInternalBase::InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers)
 {
-	QWindowSystemInterface::handleKeyEvent (NULL, eventType, key, modifiers);
+	PROFILE_FUNCTION
+
+	QWindowSystemInterface::handleKeyEvent(NULL, eventType, key, modifiers);
 }
 
 UIWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers)
 {
+	PROFILE_FUNCTION
+
+	QWindow *wnd = nullptr;
+	/*	UIWindow *uiw = _mouse_grab_window;
+		QWindow *wnd = _mouse_grab_window ? _mouse_grab_window->window() : nullptr;*/
+	if (!wnd)
+	{
+		Window *w = getWindowByPoint(position);
+		wnd = w ? w->wnd->window() : nullptr;
+//		uiw = w ? w->wnd : nullptr;
+	}
+
+	if (!wnd) return nullptr;
+
+	QPointF local = wnd->mapFromGlobal(position);
+
+	QWindowSystemInterface::handleMouseEvent(wnd, local, position, Qt::MouseButtons(b));
 	return nullptr;
 }
 
+GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
+{
+	PROFILE_FUNCTION
 
+	Window *wnd = nullptr;
+	for (auto & w_pair : windows)
+	{
+		Window *tmp_wnd = &w_pair.second;
+		if (!tmp_wnd->wnd) continue;
+		if (!tmp_wnd->wnd->isVisible())continue;
+		QRect geom = tmp_wnd->wnd->geometry();
+		
+		if ( geom.contains(point))
+		{
+			if (wnd && tmp_wnd->wnd->getZLevel() > wnd->wnd->getZLevel()) wnd = tmp_wnd;
+			else if (!wnd) wnd = tmp_wnd;
+		}
+	}
 
+	return wnd;
+}

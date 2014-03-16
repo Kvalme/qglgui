@@ -33,6 +33,7 @@
 #include "basicqtapp.h"
 
 #include <memory>
+#include <iostream>
 
 #include "libcppprofiler/src/cppprofiler.h"
 
@@ -40,17 +41,36 @@ using namespace QGL;
 
 std::shared_ptr<GlGui> gui;
 
+void mouseMove(double x, double y, int buttonState, int mods)
+{
+
+	gui->InjectMouseMoveEvent(0, QPoint(x, y), buttonState & GLFW_MOUSE_BUTTON_LEFT ? Qt::LeftButton : Qt::NoButton, 0);
+}
+
+void mouseButton(double x, double y, int button, int action, int mods)
+{
+	gui->InjectMouseButtonEvent(0, QPoint(x, y), action == GLFW_PRESS ? Qt::LeftButton : Qt::NoButton, 0);
+}
+
+void keyboard(int key, int scancode, int action, int mods)
+{
+}
+
+void character(unsigned int c)
+{
+}
+
 QWidget *createWindow(const std::string &)
 {
 	PROFILE_FUNCTION
-	
+
 	return new BasicQtApp;
 }
 
 void run()
 {
 	PROFILE_FUNCTION
-	
+
 	gui->Update();
 	gui->Render();
 }
@@ -58,7 +78,7 @@ void run()
 void initGui()
 {
 	PROFILE_FUNCTION
-	
+
 	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE, "../../../fonts", QRect(0, 0, 800, 600));
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
@@ -68,14 +88,18 @@ void initGui()
 int main()
 {
 	PROFILE_FUNCTION
-	
+
 	GlfwSampleApplication app;
 	if (!app.init(800, 600, run))return 1;
 
 	initGui();
 
+	app.setCharCallback(character);
+	app.setKeyboardCallback(keyboard);
+	app.setMouseButtonCallback(mouseButton);
+	app.setMouseMoveCallback(mouseMove);
 	app.run();
-	
+
 	gui.reset();
 
 	return 0;

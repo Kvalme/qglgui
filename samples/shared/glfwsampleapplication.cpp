@@ -32,17 +32,23 @@
 
 #include "libcppprofiler/src/cppprofiler.h"
 
+GLFWwindow *GlfwSampleApplication::window = nullptr;
+std::function<void(double, double, int, int)> GlfwSampleApplication::mMouseMoveCallback;
+std::function<void(double, double, int, int, int)> GlfwSampleApplication::mMouseButtonCallback;
+std::function<void(int, int, int, int)> GlfwSampleApplication::mKeyboardCallback;
+std::function<void(unsigned int)> GlfwSampleApplication::mCharCallback;
+
 void glfwError(int error, const char *desc)
 {
 	PROFILE_FUNCTION
-	
+
 	std::cerr << "Error: " << desc << std::endl;
 }
 
 bool GlfwSampleApplication::init(int width, int height, std::function<void(void)> runFunction)
 {
 	PROFILE_FUNCTION
-	
+
 	if (!glfwInit())
 	{
 		std::cerr << "Unable to initialize glfw" << std::endl;
@@ -64,7 +70,12 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
-	
+
+	glfwSetCursorPosCallback(window, mCursorPos);
+	glfwSetMouseButtonCallback(window, mMouseButton);
+	glfwSetKeyCallback(window, mKey);
+	glfwSetCharCallback(window, mChar);
+
 	this->runFunction = runFunction;
 
 	return true;
@@ -73,15 +84,16 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 void GlfwSampleApplication::run()
 {
 	PROFILE_FUNCTION
-	
+
 	for (;;)
 	{
 		glfwPollEvents();
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)return;
+		if (glfwWindowShouldClose(window) == GL_TRUE)return;
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		renderCube();
 		this->runFunction();
 
@@ -94,14 +106,14 @@ void GlfwSampleApplication::run()
 void GlfwSampleApplication::renderCube()
 {
 	PROFILE_FUNCTION
-	
+
 	const GLfloat vertices[][3] = {{ -1.0, -1.0, -1.0}, {1.0, -1.0, -1.0}, {1.0, 1.0, -1.0}, { -1.0, 1.0, -1.0}, { -1.0, -1.0, 1.0}, {1.0, -1.0, 1.0}, {1.0, 1.0, 1.0}, { -1.0, 1.0, 1.0}};
 	const GLfloat colors[][3] = {{1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {1.0, 0.0, 0.0}, {1.0, 1.0, 1.0}};
 	static float angle_x = 0, angle_y = 0;
-	
+
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
-	
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(-1, 1, -1, 1, 1, 100);
@@ -123,17 +135,87 @@ void GlfwSampleApplication::renderCube()
 	glColor3fv(colors[d]); \
 	glVertex3fv(vertices[d]); \
 	glEnd();
-	
+
 	DRAW_FACE(0, 3, 2, 1);
 	DRAW_FACE(2, 3, 7, 6);
 	DRAW_FACE(0, 4, 7, 3);
 	DRAW_FACE(1, 2, 6, 5);
 	DRAW_FACE(4, 5, 6, 7);
 	DRAW_FACE(0, 1, 5, 4);
-	
-#undef DRAW_FACE	
+
+#undef DRAW_FACE
 	angle_x += 1;
 	angle_y += 1;
 
 }
 
+void GlfwSampleApplication::mChar(GLFWwindow *wnd, unsigned int c)
+{
+	if (mCharCallback) mCharCallback(c);
+}
+
+void GlfwSampleApplication::mCursorPos(GLFWwindow *wnd, double x, double y)
+{
+	if (mMouseMoveCallback)
+	{
+		int buttonMask = 0;
+		for (int a = GLFW_MOUSE_BUTTON_1; a < GLFW_MOUSE_BUTTON_LAST; ++a)
+		{
+			if (glfwGetMouseButton(window, a) == GLFW_PRESS)
+			{
+				buttonMask |= 1 << a;
+			}
+		}
+
+		int mods = 0;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS)
+			mods |= GLFW_MOD_ALT;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+			mods |= GLFW_MOD_SHIFT;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
+			mods |= GLFW_MOD_CONTROL;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SUPER) == GLFW_PRESS)
+			mods |= GLFW_MOD_SUPER;
+
+		mMouseMoveCallback(x, y, buttonMask, mods);
+	}
+}
+
+void GlfwSampleApplication::mKey(GLFWwindow *wnd, int key, int scancode, int action, int mods)
+{
+	if (mKeyboardCallback)mKeyboardCallback(key, scancode, action, mods);
+}
+
+void GlfwSampleApplication::mMouseButton(GLFWwindow *wnd, int button, int action, int mods)
+{
+	if (mMouseButtonCallback)
+	{
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+		mMouseButtonCallback(x, y, button, action, mods);
+	}
+}
+
+void GlfwSampleApplication::setCharCallback(std::function<void(unsigned int)> callback)
+{
+	mCharCallback = callback;
+}
+
+void GlfwSampleApplication::setKeyboardCallback(std::function<void(int, int, int, int)> callback)
+{
+	mKeyboardCallback = callback;
+}
+
+void GlfwSampleApplication::setMouseButtonCallback(std::function<void(double, double, int, int, int)> callback)
+{
+	mMouseButtonCallback = callback;
+}
+
+void GlfwSampleApplication::setMouseMoveCallback(std::function<void(double, double, int, int)> callback)
+{
+	mMouseMoveCallback = callback;
+}

@@ -60,13 +60,16 @@ public:
 	virtual void iRemoveWindow(unsigned int winId);
 
 protected:
-	UIWindow* handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
 	struct Window
 	{
 		UIWindow *wnd;
 		
 		explicit Window(UIWindow *w = nullptr);
 	};
+
+	UIWindow* handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
+	Window* getWindowByPoint(QPoint point);
+
 
 	std::function<QWidget*(const std::string &name)> windowFactory;
 	std::shared_ptr<GlGuiRenderer> guiRenderer;

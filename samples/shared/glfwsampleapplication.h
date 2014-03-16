@@ -38,10 +38,26 @@ class GlfwSampleApplication
 public:
 	void run();
 	bool init(int width, int height, std::function<void(void)> runFunction);
+	void setMouseMoveCallback(std::function<void(double, double, int, int)> callback);
+	void setMouseButtonCallback(std::function<void(double, double, int, int, int)> callback);
+	void setKeyboardCallback(std::function<void(int, int, int, int)> callback);
+	void setCharCallback(std::function<void(unsigned int)> callback);
+	
 private:
 	void renderCube();
-	GLFWwindow *window;
+	static GLFWwindow *window;
 	std::function<void(void)> runFunction;
+	static std::function<void(double, double, int, int)> mMouseMoveCallback;
+	static std::function<void(double, double, int, int, int)> mMouseButtonCallback;
+	static std::function<void(int, int, int, int)> mKeyboardCallback;
+	static std::function<void(unsigned int)> mCharCallback;
+	
+	static void mCursorPos(GLFWwindow *wnd, double x, double y);
+	static void mMouseButton(GLFWwindow *wnd, int button, int action, int mods);
+	static void mKey(GLFWwindow *wnd, int key, int scancode, int action, int mods);
+	static void mChar(GLFWwindow *wnd, unsigned int c);
+	
+	
 };
 
 #endif // GLFWSAMPLEAPPLICATION_H
