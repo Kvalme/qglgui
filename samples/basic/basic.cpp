@@ -87,7 +87,7 @@ void initGui()
 int main()
 {
 	PROFILE_FUNCTION
-
+	
 	GlfwSampleApplication app;
 	if (!app.init(800, 600, run))return 1;
 
@@ -100,6 +100,6 @@ int main()
 	app.run();
 
 	gui.reset();
-
+	
 	return 0;
 }

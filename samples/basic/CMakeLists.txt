@@ -6,6 +6,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 qt5_wrap_ui(ui_basicqtapp.h basicqtapp.ui)
 
 add_executable(basic ${SAMPLE_APPLICATION_SOURCE} ui_basicqtapp.h)
-target_link_libraries(basic samples_shared qglgui-static Qt5PlatformSupport ${GLFW3_LIBRARY} ${OPENGL_gl_LIBRARY} ${FREETYPE_LIBRARIES} glib-2.0)
+target_link_libraries(basic samples_shared qglgui-static Qt5PlatformSupport ${GLFW3_LIBRARY} ${OPENGL_gl_LIBRARY} ${FREETYPE_LIBRARIES} glib-2.0 ${PROFILER_LIB})
 qt5_use_modules(basic Core Gui Widgets)
 

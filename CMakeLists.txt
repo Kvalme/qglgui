@@ -24,7 +24,9 @@ option(ENABLE_GL2_RENDERER "Enable basic GL2 renderer (VBO + fixed pipeline)" OF
 option(ENABLE_GL3_RENDERER "Enable basic GL3 renderer (VBO + built-in shaders)" OFF)
 
 if (ENABLE_PROFILING)
+	add_definitions(-DENABLE_PROFILING)
 	add_subdirectory(libcppprofiler)
+	set(PROFILER_LIB cppprofiler-static)
 endif (ENABLE_PROFILING)
 
 add_subdirectory(qglgui)
