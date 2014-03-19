@@ -87,7 +87,8 @@ void GlfwSampleApplication::run()
 
 	for (;;)
 	{
-		CPPProfiler::ProfileHelper frame("Frame");
+		PROFILE_BLOCK(frame, "Frame");
+		
 		glfwPollEvents();
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)return;
 		if (glfwWindowShouldClose(window) == GL_TRUE)return;
