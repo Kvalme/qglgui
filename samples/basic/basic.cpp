@@ -43,8 +43,7 @@ std::shared_ptr<GlGui> gui;
 
 void mouseMove(double x, double y, int buttonState, int mods)
 {
-
-	gui->InjectMouseMoveEvent(0, QPoint(x, y), buttonState & GLFW_MOUSE_BUTTON_LEFT ? Qt::LeftButton : Qt::NoButton, 0);
+	gui->InjectMouseMoveEvent(0, QPoint(x, y), (buttonState & 1) == (1) ? Qt::LeftButton : Qt::NoButton, 0);
 }
 
 void mouseButton(double x, double y, int button, int action, int mods)

@@ -105,13 +105,13 @@ GlGuiInternalBase::Window::Window(UIWindow *w) :
 	PROFILE_FUNCTION
 
 }
-
+#include <iostream>
 void GlGuiInternalBase::InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
 
-	UIWindow *wnd = handleMouseEvent(screenId, position, button, modifiers);
-	if (wnd) wnd->window()->requestActivate();
+	QWindow *wnd = handleMouseEvent(screenId, position, button, modifiers);
+	if (wnd) wnd->requestActivate();
 }
 
 void GlGuiInternalBase::InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
@@ -135,18 +135,15 @@ void GlGuiInternalBase::InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key,
 	QWindowSystemInterface::handleKeyEvent(NULL, eventType, key, modifiers);
 }
 
-UIWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers)
+QWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
 
-	QWindow *wnd = nullptr;
-	/*	UIWindow *uiw = _mouse_grab_window;
-		QWindow *wnd = _mouse_grab_window ? _mouse_grab_window->window() : nullptr;*/
+	QWindow *wnd = mMouseGrabWindow ? mMouseGrabWindow->window() : nullptr;
 	if (!wnd)
 	{
 		Window *w = getWindowByPoint(position);
 		wnd = w ? w->wnd->window() : nullptr;
-//		uiw = w ? w->wnd : nullptr;
 	}
 
 	if (!wnd) return nullptr;
@@ -154,7 +151,7 @@ UIWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt:
 	QPointF local = wnd->mapFromGlobal(position);
 
 	QWindowSystemInterface::handleMouseEvent(wnd, local, position, Qt::MouseButtons(b));
-	return nullptr;
+	return wnd;
 }
 
 GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
@@ -178,3 +175,14 @@ GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
 
 	return wnd;
 }
+
+void GlGuiInternalBase::iGrabKeyboard(UIWindow *wnd)
+{
+	mKeyboardGrabWindow = wnd;
+}
+
+void GlGuiInternalBase::iGrabMouse(UIWindow *wnd)
+{
+	mMouseGrabWindow = wnd;
+}
+

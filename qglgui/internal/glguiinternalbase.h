@@ -58,6 +58,10 @@ public:
 	virtual void iAddWindow(UIWindow *wnd);
 	virtual void iSetTexture(unsigned int winId, const QPixmap &pixmap);
 	virtual void iRemoveWindow(unsigned int winId);
+	virtual void iGrabKeyboard(UIWindow *wnd);
+	virtual void iGrabMouse(UIWindow *wnd);
+	virtual const UIWindow* iGetKeyboardGrab() const { return mKeyboardGrabWindow;}
+	virtual const UIWindow* iGetMouseGrab() const { return mMouseGrabWindow;}
 
 protected:
 	struct Window
@@ -66,10 +70,12 @@ protected:
 		
 		explicit Window(UIWindow *w = nullptr);
 	};
+	
+	UIWindow *mKeyboardGrabWindow;
+	UIWindow *mMouseGrabWindow;
 
-	UIWindow* handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
+	QWindow * handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
 	Window* getWindowByPoint(QPoint point);
-
 
 	std::function<QWidget*(const std::string &name)> windowFactory;
 	std::shared_ptr<GlGuiRenderer> guiRenderer;

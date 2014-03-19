@@ -29,6 +29,7 @@
 #include "uiwindow.h"
 #include "libcppprofiler/src/cppprofiler.h"
 #include "uiintegration.h"
+#include <qglgui/internal/glguiinternalbase.h>
 
 #include <qpa/qplatformscreen.h>
 #include <qpa/qwindowsysteminterface.h>
@@ -68,21 +69,20 @@ UIWindow::~UIWindow()
 {
 	PROFILE_FUNCTION
 
-	/*	MagicUI *ui = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration)->getMagicUI();
-		ui->_removeWindow(_win_id_);
+	GlGuiInternalBase *ui = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration)->getUi();
+	ui->iRemoveWindow(win_id);
 
-		if (_top_level_window_ == this) _top_level_window_ = nullptr;
+	if (top_level_window == this) top_level_window = nullptr;
 
-		if (ui->_getKeyboardGrabWinwdow() == this)
-		{
-			ui->_setKeyboardGrabWindow(nullptr);
-		}
+	if (ui->iGetKeyboardGrab() == this)
+	{
+		ui->iGrabKeyboard(nullptr);
+	}
 
-		if (ui->_getMouseGrabWinwdow() == this)
-		{
-			ui->_setMouseGrabWindow(nullptr);
-		}*/
-
+	if (ui->iGetMouseGrab() == this)
+	{
+		ui->iGrabMouse(nullptr);
+	}
 }
 
 void UIWindow::requestActivateWindow()
@@ -244,9 +244,9 @@ bool UIWindow::setKeyboardGrabEnabled(bool grab)
 {
 	PROFILE_FUNCTION
 
-//	UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
-	/*	if (grab) i->getMagicUI()->_setKeyboardGrabWindow(this);
-		else i->getMagicUI()->_setKeyboardGrabWindow(nullptr);*/
+	UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
+	if (grab) i->getUi()->iGrabKeyboard(this);
+	else i->getUi()->iGrabKeyboard(nullptr);
 	return true;
 }
 
@@ -254,9 +254,9 @@ bool UIWindow::setMouseGrabEnabled(bool grab)
 {
 	PROFILE_FUNCTION
 
-//	UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
-	/*	if (grab) i->getMagicUI()->_setMouseGrabWindow(this);
-		else i->getMagicUI()->_setMouseGrabWindow(nullptr);*/
+	UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
+	if (grab) i->getUi()->iGrabMouse(this);
+	else i->getUi()->iGrabMouse(nullptr);
 	return true;
 }
 
