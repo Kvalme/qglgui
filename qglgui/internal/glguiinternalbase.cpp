@@ -165,8 +165,8 @@ GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
 		if (!tmp_wnd->wnd) continue;
 		if (!tmp_wnd->wnd->isVisible())continue;
 		QRect geom = tmp_wnd->wnd->geometry();
-		
-		if ( geom.contains(point))
+
+		if (geom.contains(point))
 		{
 			if (wnd && tmp_wnd->wnd->getZLevel() > wnd->wnd->getZLevel()) wnd = tmp_wnd;
 			else if (!wnd) wnd = tmp_wnd;
@@ -178,11 +178,15 @@ GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
 
 void GlGuiInternalBase::iGrabKeyboard(UIWindow *wnd)
 {
+	PROFILE_FUNCTION
+
 	mKeyboardGrabWindow = wnd;
 }
 
 void GlGuiInternalBase::iGrabMouse(UIWindow *wnd)
 {
+	PROFILE_FUNCTION
+
 	mMouseGrabWindow = wnd;
 }
 

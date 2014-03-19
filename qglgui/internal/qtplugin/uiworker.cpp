@@ -45,43 +45,45 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect vie
 	PROFILE_FUNCTION
 
 	this->gui = gui;
-	
+
 	int argc = 0;
 	char **argv = nullptr;
 
 	qputenv("QT_QPA_FONTDIR", fontDir.c_str());
 
-	QCoreApplication::setAttribute (Qt::AA_DontUseNativeMenuBar, true);
+	QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, true);
 
-	QGuiApplicationPrivate::platform_name = new QString ("QGL");
-	mPlatform = new UIIntegration (this->gui);
+	QGuiApplicationPrivate::platform_name = new QString("QGL");
+	mPlatform = new UIIntegration(this->gui);
 	QGuiApplicationPrivate::platform_integration = mPlatform;
 
 	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
-	static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration)->init(viewport);
+	static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration)->init(viewport);
 
 	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 
 	app = new QApplication(argc, argv);
-	app->setQuitOnLastWindowClosed (false);
+	app->setQuitOnLastWindowClosed(false);
 }
 
 UIWorker::~UIWorker()
 {
 	PROFILE_FUNCTION
-	
+
 	delete app;
 }
 
 void UIWorker::Update()
 {
 	PROFILE_FUNCTION
-	
+
 	app->processEvents();
 }
 
 int UIWorker::CreateScreen(QRect viewport)
 {
+	PROFILE_FUNCTION
+
 	return mPlatform->addScreen(viewport);
 }
 
