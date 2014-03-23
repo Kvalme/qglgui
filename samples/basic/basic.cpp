@@ -30,7 +30,9 @@
 #include "glfwsampleapplication.h"
 #include "qglgui/glgui.h"
 #include "qglgui/glguirenderer.h"
+
 #include "basicqtapp.h"
+#include "styles/widgetgallery.h"
 
 #include <memory>
 #include <iostream>
@@ -74,11 +76,11 @@ void run()
 	gui->Render();
 }
 
-void initGui()
+void initGui(int w, int h)
 {
 	PROFILE_FUNCTION
 
-	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE, "../../../fonts", QRect(0, 0, 800, 600));
+	gui = GlGui::Create(GlGui::THREADING_MODE::SINGLE, "../../../fonts", QRect(0, 0, w, h));
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
 	gui->CreateWindow("");
@@ -89,9 +91,10 @@ int main()
 	PROFILE_FUNCTION
 	
 	GlfwSampleApplication app;
-	if (!app.init(800, 600, run))return 1;
+	int w = 1024, h = 768;
+	if (!app.init(w, h, run))return 1;
 
-	initGui();
+	initGui(w, h);
 
 	app.setCharCallback(character);
 	app.setKeyboardCallback(keyboard);

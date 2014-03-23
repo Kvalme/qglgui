@@ -36,7 +36,9 @@
 
 using namespace QGL;
 
-GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir)
+GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir) :
+	mKeyboardGrabWindow(nullptr),
+	mMouseGrabWindow(nullptr)
 {
 	PROFILE_FUNCTION
 }
@@ -72,7 +74,7 @@ void GlGuiInternalBase::iAddWindow(UIWindow *wnd)
 
 	windows.insert(std::make_pair(wnd->winId(), Window(wnd)));
 
-	guiRenderer->GuiCreateWindow(wnd->winId(), wnd->window());
+	guiRenderer->GuiCreateWindow(wnd->winId(), wnd);
 }
 
 void GlGuiInternalBase::iRemoveWindow(unsigned int winId)

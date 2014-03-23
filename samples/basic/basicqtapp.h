@@ -17,9 +17,11 @@ public:
     
 private slots:
     void on_horizontalSlider_sliderMoved(int position);
+    void on_selectedSample_currentIndexChanged ( const QString & text );
 
 private:
     Ui::BasicQtApp *ui;
+    QWidget *mCurrent;
 };
 
 #endif // BASICQTAPP_H

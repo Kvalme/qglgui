@@ -35,6 +35,7 @@
 namespace QGL
 {
 
+class UIWindow;
 
 class Gl1GuiRenderer : public GlGuiRenderer
 {
@@ -42,7 +43,7 @@ public:
 	Gl1GuiRenderer();
 	virtual ~Gl1GuiRenderer();
 
-	virtual void GuiCreateWindow(unsigned int winId, QWindow *wnd);
+	virtual void GuiCreateWindow(unsigned int winId, UIWindow *wnd);
 	virtual void GuiRemoveWindow(unsigned int winId);
 	virtual void GuiSetTexture(unsigned int winId, QPixmap pixmap);
 
@@ -51,7 +52,7 @@ public:
 protected:
 	struct WindowRenderInformation
 	{
-		QWindow *mWindow;
+		UIWindow *mWindow;
 		unsigned int mWinId;
 		unsigned int mTexId;
 		bool mIsRemoveOnRender;
@@ -59,7 +60,7 @@ protected:
 		unsigned char *mTextureBuffer;
 
 		WindowRenderInformation();
-		WindowRenderInformation(QWindow *window, unsigned int winId);
+		WindowRenderInformation(UIWindow *window, unsigned int winId);
 	};
 
 	void UpdateTexture(WindowRenderInformation *window);

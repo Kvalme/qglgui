@@ -36,6 +36,8 @@ class QWindow;
 namespace QGL
 {
 
+class UIWindow;
+
 /**
  * Renderer interface. Will be called from same thread as GlGui.
  * Funcitons started from "Gui" will be called from GUI thread.
@@ -53,7 +55,7 @@ public:
 	 * @param winId window ID
 	 * @param wnd pointer to the created window
 	 */
-	virtual void GuiCreateWindow(unsigned int winId, QWindow *wnd) = 0;
+	virtual void GuiCreateWindow(unsigned int winId, UIWindow *wnd) = 0;
 
 	/**
 	 * Called when QT draws a window.

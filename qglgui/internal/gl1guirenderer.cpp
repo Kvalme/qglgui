@@ -35,18 +35,20 @@
 #include <QWindow>
 #include <QScreen>
 
+#include "qglgui/internal/qtplugin/uiwindow.h"
+
 using namespace QGL;
 
 Gl1GuiRenderer::Gl1GuiRenderer()
 {
 	PROFILE_FUNCTION
-	
+
 }
 
 Gl1GuiRenderer::~Gl1GuiRenderer()
 {
 	PROFILE_FUNCTION
-	
+
 	for (auto entry : mWindows)
 	{
 		delete[] entry.second.mTextureBuffer;
@@ -59,18 +61,24 @@ void Gl1GuiRenderer::Render()
 
 	RemoveUneededWindows();
 
+	GLboolean blendStatus = glIsEnabled(GL_BLEND);
 	GLboolean tex2DStatus = glIsEnabled(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
-	
+
+	if (tex2DStatus != GL_TRUE) glEnable(GL_TEXTURE_2D);
+	if (blendStatus != GL_TRUE) glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix(); //Save matrix
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix(); //Save current matrix
-	
+
 	//Render all windows
-	for (auto &entry : mWindows)
+	for (auto & entry : mWindows)
 	{
+		if (!entry.second.mWindow->isVisible())continue;
+
 		glLoadIdentity();
 		UpdateTexture(&entry.second);
 		RenderWindow(entry.second);
@@ -80,14 +88,15 @@ void Gl1GuiRenderer::Render()
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
-	
-	if(tex2DStatus == GL_FALSE) glDisable(GL_TEXTURE_2D);
+
+	if (tex2DStatus == GL_FALSE) glDisable(GL_TEXTURE_2D);
+	if (blendStatus == GL_FALSE) glDisable(GL_BLEND);
 }
 
 void Gl1GuiRenderer::RemoveUneededWindows()
 {
 	PROFILE_FUNCTION
-	
+
 	for (auto it = mWindows.begin(); it != mWindows.end();)
 	{
 		if (it->second.mIsRemoveOnRender)
@@ -103,56 +112,58 @@ void Gl1GuiRenderer::RemoveUneededWindows()
 void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation &window)
 {
 	PROFILE_FUNCTION
-	
+
 	assert(window.mWindow != nullptr);
 
-	QRect viewport = window.mWindow->screen()->availableGeometry();
-	
+	QRect viewport = window.mWindow->window()->screen()->availableGeometry();
+
 	glViewport(viewport.x(), viewport.y(), viewport.width(), viewport.height());
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(viewport.x(), viewport.width(), viewport.height(), viewport.y(), 0, 1);
-	
+	glOrtho(viewport.x(), viewport.width(), viewport.height(), viewport.y(), -1, 1);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
 	glBindTexture(GL_TEXTURE_2D, window.mTexId);
-	
+
 	QRect geometry = window.mWindow->geometry();
-	
+
 	float xs = geometry.x();
 	float ys = geometry.y();
 	float xe = xs + geometry.width();
 	float ye = ys + geometry.height();
-	
+	float z_pos = window.mWindow->getZLevel();
+	float alpha = window.mWindow->getOpacity();
+
 	glBegin(GL_QUADS);
 
-	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glColor4f(1.0, 1.0, 1.0, alpha);
 	glTexCoord2f(0.0, 0.0);
-	glVertex3f(xs, ys, 0.0);
-	
-	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glVertex3f(xs, ys, z_pos);
+
+	glColor4f(1.0, 1.0, 1.0, alpha);
 	glTexCoord2f(0.0, 1.0);
-	glVertex3f(xs, ye, 0.0);
-	
-	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glVertex3f(xs, ye, z_pos);
+
+	glColor4f(1.0, 1.0, 1.0, alpha);
 	glTexCoord2f(1.0, 1.0);
-	glVertex3f(xe, ye, 0.0);
-	
-	glColor4f(1.0, 1.0, 1.0, 1.0);
+	glVertex3f(xe, ye, z_pos);
+
+	glColor4f(1.0, 1.0, 1.0, alpha);
 	glTexCoord2f(1.0, 0.0);
-	glVertex3f(xe, ys, 0.0);
-	
+	glVertex3f(xe, ys, z_pos);
+
 	glEnd();
 }
 
 void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *window)
 {
 	PROFILE_FUNCTION
-	
+
 	if (!window->mIsTextureChanged)return;
-	
+
 	if (glIsTexture(window->mTexId) == GL_FALSE)
 	{
 		glGenTextures(1, &window->mTexId);
@@ -163,15 +174,16 @@ void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *wind
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window->mWindow->width(), window->mWindow->height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, window->mTextureBuffer);
-	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window->mWindow->window()->width(),
+				 window->mWindow->window()->height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, window->mTextureBuffer);
+
 	window->mIsTextureChanged = false;
 }
 
-void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, QWindow *wnd)
+void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, UIWindow *wnd)
 {
 	PROFILE_FUNCTION
-	
+
 	assert(wnd);
 	assert(mWindows.find(winId) == mWindows.end());
 
@@ -183,7 +195,7 @@ void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, QWindow *wnd)
 void Gl1GuiRenderer::GuiRemoveWindow(unsigned int winId)
 {
 	PROFILE_FUNCTION
-	
+
 	auto it = mWindows.find(winId);
 	assert(it != mWindows.end());
 
@@ -193,7 +205,7 @@ void Gl1GuiRenderer::GuiRemoveWindow(unsigned int winId)
 void Gl1GuiRenderer::GuiSetTexture(unsigned int winId, QPixmap pixmap)
 {
 	PROFILE_FUNCTION
-	
+
 	auto it = mWindows.find(winId);
 	assert(it != mWindows.end());
 
@@ -220,7 +232,7 @@ Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation() :
 	PROFILE_FUNCTION
 }
 
-Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation(QWindow *window, unsigned int winId) :
+Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation(UIWindow *window, unsigned int winId) :
 	mWindow(window),
 	mWinId(winId),
 	mTexId(0),
