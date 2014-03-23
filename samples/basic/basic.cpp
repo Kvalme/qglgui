@@ -38,6 +38,7 @@
 #include <iostream>
 
 #include "libcppprofiler/src/cppprofiler.h"
+#include "qglgui/glfwhelper.h"
 
 using namespace QGL;
 
@@ -45,20 +46,22 @@ std::shared_ptr<GlGui> gui;
 
 void mouseMove(double x, double y, int buttonState, int mods)
 {
-	gui->InjectMouseMoveEvent(0, QPoint(x, y), (buttonState & 1) == (1) ? Qt::LeftButton : Qt::NoButton, 0);
+	gui->InjectMouseMoveEvent(0, QPoint(x, y), GlfwHelper::MouseButtons(buttonState), GlfwHelper::KeyboardModifiers(mods));
 }
 
 void mouseButton(double x, double y, int button, int action, int mods)
 {
-	gui->InjectMouseButtonEvent(0, QPoint(x, y), action == GLFW_PRESS ? Qt::LeftButton : Qt::NoButton, 0);
+	gui->InjectMouseButtonEvent(0, QPoint(x, y), GlfwHelper::MouseButton(button, action), GlfwHelper::KeyboardModifiers(mods));
 }
 
 void keyboard(int key, int scancode, int action, int mods)
 {
+	gui->InjectKeyboardEvent(GlfwHelper::KeyboardEvent(action), GlfwHelper::KeyboardKey(key), GlfwHelper::KeyboardModifiers(mods));
 }
 
 void character(unsigned int c)
 {
+	gui->InjectCharacterEvent(c);
 }
 
 QWidget *createWindow(const std::string &)

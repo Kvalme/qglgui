@@ -75,6 +75,7 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 	glfwSetMouseButtonCallback(window, mMouseButton);
 	glfwSetKeyCallback(window, mKey);
 	glfwSetCharCallback(window, mChar);
+//	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
 	this->runFunction = runFunction;
 
