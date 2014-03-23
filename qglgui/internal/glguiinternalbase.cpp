@@ -114,6 +114,7 @@ void GlGuiInternalBase::InjectMouseButtonEvent(int screenId, QPoint position, Qt
 
 	QWindow *wnd = handleMouseEvent(screenId, position, button, modifiers);
 	if (wnd) wnd->requestActivate();
+	if (button != Qt::LeftButton) mMouseGrabWindow = nullptr;
 }
 
 void GlGuiInternalBase::InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
