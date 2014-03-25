@@ -132,6 +132,16 @@ public:
 	virtual void InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers) = 0;
 	
 	/**
+	 * Injects mouse wheel event into QT event queue
+	 * 
+	 * @param screenId identifyer of the screen on which event happened
+	 * @param position current mouse position
+	 * @param delta offset of mouse wheel
+	 * @param modifiers active keyboard modifiers
+	 */
+	virtual void InjectMouseWheelEvent(int screenId, QPoint position, double delta, Qt::KeyboardModifiers modifiers) = 0;
+	
+	/**
 	 * Injects keyboard event into QT event queue
 	 * Always passes key to current active window
 	 * 

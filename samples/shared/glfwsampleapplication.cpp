@@ -37,7 +37,7 @@ std::function<void(double, double, int, int)> GlfwSampleApplication::mMouseMoveC
 std::function<void(double, double, int, int, int)> GlfwSampleApplication::mMouseButtonCallback;
 std::function<void(int, int, int, int)> GlfwSampleApplication::mKeyboardCallback;
 std::function<void(unsigned int)> GlfwSampleApplication::mCharCallback;
-std::function<void(double, double)> GlfwSampleApplication::mScrollCallback;
+std::function<void(double, double, double, double, int)> GlfwSampleApplication::mScrollCallback;
 
 void glfwError(int error, const char *desc)
 {
@@ -76,7 +76,7 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 	glfwSetMouseButtonCallback(window, mMouseButton);
 	glfwSetKeyCallback(window, mKey);
 	glfwSetCharCallback(window, mChar);
-	glfwSetScrollCallback(window, mScroll())
+	glfwSetScrollCallback(window, mScroll);
 
 	this->runFunction = runFunction;
 
@@ -224,12 +224,32 @@ void GlfwSampleApplication::setMouseMoveCallback(std::function<void(double, doub
 	mMouseMoveCallback = callback;
 }
 
-void GlfwSampleApplication::mScroll(GLFWwindow *wnd, double x, double y)
+void GlfwSampleApplication::mScroll(GLFWwindow *wnd, double xo, double yo)
 {
-	if (mScrollCallback) mScrollCallback(x, y);
+	if (mScrollCallback)
+	{
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+		
+		int mods = 0;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS)
+			mods |= GLFW_MOD_ALT;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS)
+			mods |= GLFW_MOD_SHIFT;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS)
+			mods |= GLFW_MOD_CONTROL;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SUPER) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SUPER) == GLFW_PRESS)
+			mods |= GLFW_MOD_SUPER;
+
+		mScrollCallback(x, y, xo, yo, mods);
+	}
 }
 
-void GlfwSampleApplication::setScrollCallback(std::function< void(double, double) > callback)
+void GlfwSampleApplication::setScrollCallback(std::function< void(double, double, double, double, int) > callback)
 {
 	mScrollCallback = callback;
 }

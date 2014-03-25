@@ -53,6 +53,7 @@ public:
 	virtual void InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 	virtual void InjectCharacterEvent(QChar character);
 	virtual void InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers);
+	virtual void InjectMouseWheelEvent(int screenId, QPoint position, double delta, Qt::KeyboardModifiers modifiers);
 
 	//Internal interface
 	virtual void iAddWindow(UIWindow *wnd);

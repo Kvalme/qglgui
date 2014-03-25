@@ -193,3 +193,8 @@ void GlGuiInternalBase::iGrabMouse(UIWindow *wnd)
 	mMouseGrabWindow = wnd;
 }
 
+void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, double delta, Qt::KeyboardModifiers modifiers)
+{
+
+}
+
