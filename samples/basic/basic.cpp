@@ -64,6 +64,11 @@ void character(unsigned int c)
 	gui->InjectCharacterEvent(c);
 }
 
+void scroll(double x, double y)
+{
+	
+}
+
 QWidget *createWindow(const std::string &)
 {
 	PROFILE_FUNCTION
@@ -103,6 +108,7 @@ int main()
 	app.setKeyboardCallback(keyboard);
 	app.setMouseButtonCallback(mouseButton);
 	app.setMouseMoveCallback(mouseMove);
+	app.setScrollCallback(scroll);
 	app.run();
 
 	gui.reset();

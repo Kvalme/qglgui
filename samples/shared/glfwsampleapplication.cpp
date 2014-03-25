@@ -37,6 +37,7 @@ std::function<void(double, double, int, int)> GlfwSampleApplication::mMouseMoveC
 std::function<void(double, double, int, int, int)> GlfwSampleApplication::mMouseButtonCallback;
 std::function<void(int, int, int, int)> GlfwSampleApplication::mKeyboardCallback;
 std::function<void(unsigned int)> GlfwSampleApplication::mCharCallback;
+std::function<void(double, double)> GlfwSampleApplication::mScrollCallback;
 
 void glfwError(int error, const char *desc)
 {
@@ -75,7 +76,7 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 	glfwSetMouseButtonCallback(window, mMouseButton);
 	glfwSetKeyCallback(window, mKey);
 	glfwSetCharCallback(window, mChar);
-//	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	glfwSetScrollCallback(window, mScroll())
 
 	this->runFunction = runFunction;
 
@@ -221,4 +222,14 @@ void GlfwSampleApplication::setMouseButtonCallback(std::function<void(double, do
 void GlfwSampleApplication::setMouseMoveCallback(std::function<void(double, double, int, int)> callback)
 {
 	mMouseMoveCallback = callback;
+}
+
+void GlfwSampleApplication::mScroll(GLFWwindow *wnd, double x, double y)
+{
+	if (mScrollCallback) mScrollCallback(x, y);
+}
+
+void GlfwSampleApplication::setScrollCallback(std::function< void(double, double) > callback)
+{
+	mScrollCallback = callback;
 }

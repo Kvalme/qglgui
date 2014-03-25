@@ -42,6 +42,7 @@ public:
 	void setMouseButtonCallback(std::function<void(double, double, int, int, int)> callback);
 	void setKeyboardCallback(std::function<void(int, int, int, int)> callback);
 	void setCharCallback(std::function<void(unsigned int)> callback);
+	void setScrollCallback(static std::function<void(double, double)> callback);
 	
 private:
 	void renderCube();
@@ -51,12 +52,13 @@ private:
 	static std::function<void(double, double, int, int, int)> mMouseButtonCallback;
 	static std::function<void(int, int, int, int)> mKeyboardCallback;
 	static std::function<void(unsigned int)> mCharCallback;
+	static std::function<void(double, double)> mScrollCallback;
 	
 	static void mCursorPos(GLFWwindow *wnd, double x, double y);
 	static void mMouseButton(GLFWwindow *wnd, int button, int action, int mods);
 	static void mKey(GLFWwindow *wnd, int key, int scancode, int action, int mods);
 	static void mChar(GLFWwindow *wnd, unsigned int c);
-	
+	static void mScroll(GLFWwindow *wnd, double x, double y);
 	
 };
 

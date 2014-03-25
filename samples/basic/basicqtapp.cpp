@@ -40,6 +40,7 @@ void BasicQtApp::on_horizontalSlider_sliderMoved(int position)
 void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 {
 	delete mCurrent;
+	mCurrent = nullptr;
 	
 	if (text == "Styles") mCurrent = new WidgetGallery;
 	
