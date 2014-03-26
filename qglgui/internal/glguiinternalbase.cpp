@@ -193,7 +193,7 @@ void GlGuiInternalBase::iGrabMouse(UIWindow *wnd)
 	mMouseGrabWindow = wnd;
 }
 
-void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, double delta, Qt::KeyboardModifiers modifiers)
+void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
 	
@@ -203,11 +203,13 @@ void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, dou
 		Window *w = getWindowByPoint(position);
 		wnd = w ? w->wnd->window() : nullptr;
 	}
-
 	if (!wnd) return;
 	
 	QPointF local = wnd->mapFromGlobal(position);
 	
-	QWindowSystemInterface::handleWheelEvent(wnd, local, position, delta, Qt::Vertical, modifiers);
+	if (deltax != 0)
+		QWindowSystemInterface::handleWheelEvent(wnd, local, position, deltax, Qt::Horizontal, modifiers);
+	if (deltay != 0)
+		QWindowSystemInterface::handleWheelEvent(wnd, local, position, deltay, Qt::Vertical, modifiers);
 }
 

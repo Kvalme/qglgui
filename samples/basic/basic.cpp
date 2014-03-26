@@ -66,7 +66,7 @@ void character(unsigned int c)
 
 void scroll(double x, double y, double xo, double yo, int mods)
 {
-	gui->InjectMouseWheelEvent(0, QPoint(x, y), xo, GlfwHelper::KeyboardModifiers(mods));
+	gui->InjectMouseWheelEvent(0, QPoint(x, y), xo, yo, GlfwHelper::KeyboardModifiers(mods));
 }
 
 QWidget *createWindow(const std::string &)

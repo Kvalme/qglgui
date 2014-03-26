@@ -136,10 +136,11 @@ public:
 	 * 
 	 * @param screenId identifyer of the screen on which event happened
 	 * @param position current mouse position
-	 * @param delta offset of mouse wheel
+	 * @param deltax offset of mouse wheel on X axis
+	 * @param deltay offset of mousewheel on Y axis
 	 * @param modifiers active keyboard modifiers
 	 */
-	virtual void InjectMouseWheelEvent(int screenId, QPoint position, double delta, Qt::KeyboardModifiers modifiers) = 0;
+	virtual void InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers) = 0;
 	
 	/**
 	 * Injects keyboard event into QT event queue
