@@ -207,9 +207,9 @@ void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, dou
 	
 	QPointF local = wnd->mapFromGlobal(position);
 	
-	if (deltax != 0)
-		QWindowSystemInterface::handleWheelEvent(wnd, local, position, deltax, Qt::Horizontal, modifiers);
-	if (deltay != 0)
-		QWindowSystemInterface::handleWheelEvent(wnd, local, position, deltay, Qt::Vertical, modifiers);
+	QPoint angDelta(deltax, deltay);
+	QPoint pxDelta(angDelta * 10);
+	
+	QWindowSystemInterface::handleWheelEvent(wnd, local, position, pxDelta, angDelta, modifiers);
 }
 
