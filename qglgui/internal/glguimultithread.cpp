@@ -75,7 +75,7 @@ void GlGuiMultiThread::Render()
 	assert(mGuiThreadId != std::this_thread::get_id());
 	assert(guiRenderer);
 	
-	guiRenderer->Render(&mMainMutex);
+	guiRenderer->Render();
 }
 
 void GlGuiMultiThread::Update()
@@ -98,5 +98,40 @@ int GlGuiMultiThread::CreateScreen(QRect viewport)
 	PROFILE_FUNCTION
 	
 	return -1;
+}
+
+void GlGuiMultiThread::InjectCharacterEvent(QChar character)
+{
+	PROFILE_FUNCTION
+	std::lock_guard<std::mutex> guard(mMainMutex);
+	QGL::GlGuiInternalBase::InjectCharacterEvent(character);
+}
+
+void GlGuiMultiThread::InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers)
+{
+	PROFILE_FUNCTION
+	std::lock_guard<std::mutex> guard(mMainMutex);
+	QGL::GlGuiInternalBase::InjectKeyboardEvent(eventType, key, modifiers);
+}
+
+void GlGuiMultiThread::InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+{
+	PROFILE_FUNCTION
+	std::lock_guard<std::mutex> guard(mMainMutex);
+	QGL::GlGuiInternalBase::InjectMouseButtonEvent(screenId, position, button, modifiers);
+}
+
+void GlGuiMultiThread::InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+	PROFILE_FUNCTION
+	std::lock_guard<std::mutex> guard(mMainMutex);
+	QGL::GlGuiInternalBase::InjectMouseMoveEvent(screenId, position, buttons, modifiers);
+}
+
+void GlGuiMultiThread::InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers)
+{
+	PROFILE_FUNCTION
+	std::lock_guard<std::mutex> guard(mMainMutex);
+	QGL::GlGuiInternalBase::InjectMouseWheelEvent(screenId, position, deltax, deltay, modifiers);
 }
 

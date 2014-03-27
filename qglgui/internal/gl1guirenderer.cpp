@@ -55,14 +55,14 @@ Gl1GuiRenderer::~Gl1GuiRenderer()
 	}
 }
 
-void Gl1GuiRenderer::Render(std::mutex *mutex)
+void Gl1GuiRenderer::Render()
 {
 	PROFILE_FUNCTION
 
-	if (mutex) mutex->lock();
+	mRenderMutex.lock();
 	RemoveUneededWindows();
 	auto windowsCopy = mWindows;
-	if (mutex) mutex->unlock();
+	mRenderMutex.unlock();
 
 	GLboolean blendStatus = glIsEnabled(GL_BLEND);
 	GLboolean tex2DStatus = glIsEnabled(GL_TEXTURE_2D);
@@ -129,6 +129,7 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	if (glIsTexture(window.mTexId) == GL_FALSE) return;
 	glBindTexture(GL_TEXTURE_2D, window.mTexId);
 
 	QRect geometry = window.mWindow->geometry();
@@ -166,6 +167,7 @@ void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *wind
 	PROFILE_FUNCTION
 
 	if (!window->mIsTextureChanged)return;
+	if (!window->mTextureBuffer)return;
 
 	if (glIsTexture(window->mTexId) == GL_FALSE)
 	{
@@ -186,7 +188,9 @@ void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *wind
 void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, UIWindow *wnd)
 {
 	PROFILE_FUNCTION
-
+	
+	std::lock_guard<std::mutex> guard(mRenderMutex);
+	
 	assert(wnd);
 	assert(mWindows.find(winId) == mWindows.end());
 
@@ -199,6 +203,8 @@ void Gl1GuiRenderer::GuiRemoveWindow(unsigned int winId)
 {
 	PROFILE_FUNCTION
 
+	std::lock_guard<std::mutex> guard(mRenderMutex);
+
 	auto it = mWindows.find(winId);
 	assert(it != mWindows.end());
 
@@ -209,6 +215,8 @@ void Gl1GuiRenderer::GuiSetTexture(unsigned int winId, QPixmap pixmap)
 {
 	PROFILE_FUNCTION
 
+	std::lock_guard<std::mutex> guard(mRenderMutex);
+	
 	auto it = mWindows.find(winId);
 	assert(it != mWindows.end());
 

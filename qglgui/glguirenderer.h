@@ -77,14 +77,8 @@ public:
 
 	/**
 	 * Called from GlGui::Render
-	 * 
-	 * @note In case of MultiThread rendering GlGui implementation will pass main GUI mutex here. 
-	 * Obtaining lock on this mutex wil guarantee that no changes to windows will be made while it's locked.
-	 * @param mutex main GUI mutex
 	 */
-	virtual void Render(std::mutex *mutex = 0 ) = 0;
-
-
+	virtual void Render() = 0;
 
 };
 
