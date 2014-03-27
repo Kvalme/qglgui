@@ -44,6 +44,7 @@ using namespace QGL;
 
 std::shared_ptr<GlGui> gui;
 std::thread guiThread;
+bool doExit = false;
 
 GlGui::THREADING_MODE threadingMode = GlGui::THREADING_MODE::MULTI;
 
@@ -86,10 +87,11 @@ void GuiThread(int w, int h)
 	//GlGui should be created in new thread to operate correctly.
 	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h));
 	
-	while(true)
+	while(!doExit)
 	{
 		gui->Update();
 	}
+	gui.reset();
 }
 
 void run()
@@ -103,8 +105,7 @@ void initGui(int w, int h)
 {
 	PROFILE_FUNCTION
 
-	guiThread = std::thread(GuiThread, w, h);
-	guiThread.detach();
+	guiThread = std::thread(GuiThread, w, h);;
 	
 	while(!gui); //Just wait for gui to create
 	gui->RegisterWindowFactory(createWindow);
@@ -129,7 +130,8 @@ int main()
 	app.setScrollCallback(scroll);
 	app.run();
 
-	gui.reset();
+	doExit = true;
+	guiThread.join();
 	
 	return 0;
 }
