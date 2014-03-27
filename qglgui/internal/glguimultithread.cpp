@@ -53,16 +53,12 @@ GlGuiMultiThread::~GlGuiMultiThread()
 void GlGuiMultiThread::CreateWindow(const std::string &name)
 {
 	PROFILE_FUNCTION
-	std::lock_guard<std::mutex> guard(mMainMutex);
 	
 	if (mGuiThreadId != std::this_thread::get_id())
 	{
-		auto create = [=]()
-		{
-			CreateWindow(name);
-		};
-		
-		mTasks.push_back(create);
+		std::lock_guard<std::mutex> guard(mMainMutex);
+
+		mTasks.push_back(std::bind(&GlGuiMultiThread::CreateWindow, this, name));
 	}
 	else
 	{
@@ -75,6 +71,10 @@ void GlGuiMultiThread::CreateWindow(const std::string &name)
 void GlGuiMultiThread::Render()
 {
 	PROFILE_FUNCTION
+	
+	assert(mGuiThreadId != std::this_thread::get_id());
+
+	std::lock_guard<std::mutex> guard(mMainMutex);
 
 	assert(guiRenderer);
 	
@@ -84,6 +84,9 @@ void GlGuiMultiThread::Render()
 void GlGuiMultiThread::Update()
 {
 	PROFILE_FUNCTION
+	
+	std::lock_guard<std::mutex> guard(mMainMutex);
+	
 	for (std::function<void(void)> &f : mTasks)
 	{
 		f();
