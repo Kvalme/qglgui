@@ -73,12 +73,9 @@ void GlGuiMultiThread::Render()
 	PROFILE_FUNCTION
 	
 	assert(mGuiThreadId != std::this_thread::get_id());
-
-	std::lock_guard<std::mutex> guard(mMainMutex);
-
 	assert(guiRenderer);
 	
-	guiRenderer->Render();
+	guiRenderer->Render(&mMainMutex);
 }
 
 void GlGuiMultiThread::Update()

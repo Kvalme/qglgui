@@ -47,7 +47,7 @@ public:
 	virtual void GuiRemoveWindow(unsigned int winId);
 	virtual void GuiSetTexture(unsigned int winId, QPixmap pixmap);
 
-	virtual void Render();
+	virtual void Render(std::mutex *mutex);
 
 protected:
 	struct WindowRenderInformation

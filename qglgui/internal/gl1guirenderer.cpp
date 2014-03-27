@@ -55,11 +55,14 @@ Gl1GuiRenderer::~Gl1GuiRenderer()
 	}
 }
 
-void Gl1GuiRenderer::Render()
+void Gl1GuiRenderer::Render(std::mutex *mutex)
 {
 	PROFILE_FUNCTION
 
+	if (mutex) mutex->lock();
 	RemoveUneededWindows();
+	auto windowsCopy = mWindows;
+	if (mutex) mutex->unlock();
 
 	GLboolean blendStatus = glIsEnabled(GL_BLEND);
 	GLboolean tex2DStatus = glIsEnabled(GL_TEXTURE_2D);
@@ -75,7 +78,7 @@ void Gl1GuiRenderer::Render()
 	glPushMatrix(); //Save current matrix
 
 	//Render all windows
-	for (auto & entry : mWindows)
+	for (auto & entry : windowsCopy)
 	{
 		if (!entry.second.mWindow->isVisible())continue;
 
