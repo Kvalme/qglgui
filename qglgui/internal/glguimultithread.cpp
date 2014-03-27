@@ -27,41 +27,76 @@
  */
 
 #include "qglgui/internal/glguimultithread.h"
+#include "qglgui/internal/qtplugin/uiworker.h"
+#include <qglgui/glguirenderer.h>
+
+#include "libcppprofiler/src/cppprofiler.h"
+#include <QWidget>
+#include <assert.h>
+
 
 using namespace QGL;
 
 GlGuiMultiThread::GlGuiMultiThread(const std::string &fontDir, QRect viewport)
 	: GlGuiInternalBase(fontDir)
 {
-
+	PROFILE_FUNCTION
+	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport));
+	mGuiThreadId = std::this_thread::get_id();
 }
 
 GlGuiMultiThread::~GlGuiMultiThread()
 {
-
+	PROFILE_FUNCTION
 }
 
 void GlGuiMultiThread::CreateWindow(const std::string &name)
 {
-}
-
-void GlGuiMultiThread::DestroyWindow(unsigned int id)
-{
-
+	PROFILE_FUNCTION
+	std::lock_guard<std::mutex> guard(mMainMutex);
+	
+	if (mGuiThreadId != std::this_thread::get_id())
+	{
+		auto create = [=]()
+		{
+			CreateWindow(name);
+		};
+		
+		mTasks.push_back(create);
+	}
+	else
+	{
+		QWidget *w = windowFactory(name);
+		assert(w);
+		w->show();
+	}
 }
 
 void GlGuiMultiThread::Render()
 {
+	PROFILE_FUNCTION
 
+	assert(guiRenderer);
+	
+	guiRenderer->Render();
 }
 
 void GlGuiMultiThread::Update()
 {
-
+	PROFILE_FUNCTION
+	for (std::function<void(void)> &f : mTasks)
+	{
+		f();
+	}
+	mTasks.clear();
+	
+	uiWorker->Update();
 }
 
 int GlGuiMultiThread::CreateScreen(QRect viewport)
 {
+	PROFILE_FUNCTION
+	
 	return -1;
 }
 

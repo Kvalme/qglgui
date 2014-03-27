@@ -107,7 +107,7 @@ public:
 
 	/**
 	 * Updates gui. Proceed internal events and so.
-	 * Should be called in single thread mode. In multi-thread mode it will be called automatically in gui thread loop
+	 * Should be called in single thread mode. In multi-thread mode it has no effect
 	 */
 	virtual void Update() = 0;
 	

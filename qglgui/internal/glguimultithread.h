@@ -29,9 +29,13 @@
 #pragma once
 
 #include "qglgui/internal/glguiinternalbase.h"
+#include <mutex>
+#include <thread>
 
 namespace QGL
 {
+
+class UIWorker;
 	
 class GlGuiMultiThread : public GlGuiInternalBase
 {
@@ -41,9 +45,14 @@ public:
 	
 	virtual int CreateScreen(QRect viewport);
 	virtual void CreateWindow(const std::string &name);
-	virtual void DestroyWindow(unsigned int id);
 	virtual void Render();
 	virtual void Update();
+private:
+	std::shared_ptr<UIWorker> uiWorker;
+	std::mutex mMainMutex;
+	std::thread::id mGuiThreadId;
+	
+	std::vector<std::function<void(void)>> mTasks;
 };
 	
 }

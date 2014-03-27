@@ -43,8 +43,9 @@
 using namespace QGL;
 
 std::shared_ptr<GlGui> gui;
+std::thread guiThread;
 
-GlGui::THREADING_MODE threadingMode = GlGui::THREADING_MODE::SINGLE;
+GlGui::THREADING_MODE threadingMode = GlGui::THREADING_MODE::MULTI;
 
 void mouseMove(double x, double y, int buttonState, int mods)
 {
@@ -78,11 +79,23 @@ QWidget *createWindow(const std::string &)
 	return new BasicQtApp;
 }
 
+void GuiThread(int w, int h)
+{
+	PROFILE_FUNCTION
+	
+	//GlGui should be created in new thread to operate correctly.
+	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h));
+	
+	while(true)
+	{
+		gui->Update();
+	}
+}
+
 void run()
 {
 	PROFILE_FUNCTION
 
-	gui->Update();
 	gui->Render();
 }
 
@@ -90,7 +103,10 @@ void initGui(int w, int h)
 {
 	PROFILE_FUNCTION
 
-	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h));
+	guiThread = std::thread(GuiThread, w, h);
+	guiThread.detach();
+	
+	while(!gui); //Just wait for gui to create
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
 	gui->CreateWindow("");
