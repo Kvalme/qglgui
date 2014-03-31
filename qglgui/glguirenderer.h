@@ -29,11 +29,9 @@
 #pragma once
 #include <memory>
 #include <mutex>
-#include <QRect>
-#include <QPixmap>
 
 class QWindow;
-
+class QPixmap;
 namespace QGL
 {
 
@@ -65,7 +63,7 @@ public:
 	 * @param winId window ID
 	 * @param pixmap texture for given window
 	 */
-	virtual void GuiSetTexture(unsigned int winId, QPixmap pixmap) = 0;
+	virtual void GuiSetTexture(unsigned int winId, const QPixmap *pixmap) = 0;
 	
 	/**
 	 * Called when QT destroys window.
@@ -88,6 +86,6 @@ enum class RENDERER_TYPE
 	GL2,
 	GL3
 };
-std::shared_ptr<GlGuiRenderer> CreateRenderer(RENDERER_TYPE type);
+GlGuiRenderer* CreateRenderer(RENDERER_TYPE type);
 
 }

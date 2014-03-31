@@ -45,7 +45,7 @@ public:
 	virtual int CreateScreen(QRect viewport) = 0;
 	virtual void CreateWindow(const std::string &name) = 0;
 	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory);
-	virtual void RegisterRenderer(std::shared_ptr<GlGuiRenderer> renderer);
+	virtual void RegisterRenderer(GlGuiRenderer *renderer);
 	virtual void Render() = 0;
 	virtual void Update() = 0;
 	
@@ -79,7 +79,7 @@ protected:
 	Window* getWindowByPoint(QPoint point);
 
 	std::function<QWidget*(const std::string &name)> windowFactory;
-	std::shared_ptr<GlGuiRenderer> guiRenderer;
+	GlGuiRenderer *guiRenderer;
 	
 	std::map<unsigned int, Window> windows;
 };

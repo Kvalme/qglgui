@@ -33,14 +33,14 @@
 
 using namespace QGL;
 
-std::shared_ptr<GlGuiRenderer> QGL::CreateRenderer(RENDERER_TYPE type)
+GlGuiRenderer * QGL::CreateRenderer(RENDERER_TYPE type)
 {
 	PROFILE_FUNCTION
 
 	switch (type)
 	{
 		case RENDERER_TYPE::GL1:
-			return std::shared_ptr<GlGuiRenderer>(new Gl1GuiRenderer);
+			return new Gl1GuiRenderer;
 		case RENDERER_TYPE::GL2:
 			throw std::runtime_error("GL2 renderer is no implemented");
 			break;
@@ -49,7 +49,7 @@ std::shared_ptr<GlGuiRenderer> QGL::CreateRenderer(RENDERER_TYPE type)
 			break;
 	}
 	throw std::runtime_error("Invalid renderer");
-	return std::shared_ptr<GlGuiRenderer>(nullptr);
+	return nullptr;
 }
 
 

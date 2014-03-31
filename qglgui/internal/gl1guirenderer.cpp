@@ -211,7 +211,7 @@ void Gl1GuiRenderer::GuiRemoveWindow(unsigned int winId)
 	it->second.mIsRemoveOnRender = true;
 }
 
-void Gl1GuiRenderer::GuiSetTexture(unsigned int winId, QPixmap pixmap)
+void Gl1GuiRenderer::GuiSetTexture(unsigned int winId, const QPixmap *pixmap)
 {
 	PROFILE_FUNCTION
 
@@ -220,16 +220,16 @@ void Gl1GuiRenderer::GuiSetTexture(unsigned int winId, QPixmap pixmap)
 	auto it = mWindows.find(winId);
 	assert(it != mWindows.end());
 
-	QImage img = pixmap.toImage();
+	QImage img = pixmap->toImage();
 
 	it->second.mIsTextureChanged = true;
 	delete[] it->second.mTextureBuffer;
-	it->second.mTextureBuffer = new unsigned char[pixmap.width() * pixmap.height() * 4];
+	it->second.mTextureBuffer = new unsigned char[pixmap->width() * pixmap->height() * 4];
 
 	memcpy(
 		static_cast<void *>(it->second.mTextureBuffer),
 		static_cast<void *>(img.bits()),
-		pixmap.width() * pixmap.height() * 4);
+		pixmap->width() * pixmap->height() * 4);
 }
 
 Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation() :

@@ -56,7 +56,7 @@ void GlGuiInternalBase::RegisterWindowFactory(std::function<QWidget*(const std::
 	windowFactory = factory;
 }
 
-void GlGuiInternalBase::RegisterRenderer(std::shared_ptr< GlGuiRenderer > renderer)
+void GlGuiInternalBase::RegisterRenderer(GlGuiRenderer *renderer)
 {
 	PROFILE_FUNCTION
 
@@ -98,7 +98,7 @@ void GlGuiInternalBase::iSetTexture(unsigned int winId, const QPixmap &pixmap)
 	if (it == windows.end())
 		throw std::runtime_error("Setting texture for not-existed window is impossible");
 
-	guiRenderer->GuiSetTexture(winId, pixmap);
+	guiRenderer->GuiSetTexture(winId, &pixmap);
 }
 
 GlGuiInternalBase::Window::Window(UIWindow *w) :

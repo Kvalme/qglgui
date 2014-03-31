@@ -45,7 +45,7 @@ public:
 
 	virtual void GuiCreateWindow(unsigned int winId, UIWindow *wnd);
 	virtual void GuiRemoveWindow(unsigned int winId);
-	virtual void GuiSetTexture(unsigned int winId, QPixmap pixmap);
+	virtual void GuiSetTexture(unsigned int winId, const QPixmap *pixmap);
 
 	virtual void Render();
 
