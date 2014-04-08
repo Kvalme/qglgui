@@ -54,9 +54,7 @@ void GlGuiSingleThread::CreateWindow(const std::string &name)
 {
 	PROFILE_FUNCTION
 	
-	QWidget *w = windowFactory(name);
-	assert(w);
-	w->show();
+	windowFactory(name);
 }
 
 void GlGuiSingleThread::Render()

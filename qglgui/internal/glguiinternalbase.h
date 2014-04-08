@@ -44,7 +44,7 @@ public:
 	
 	virtual int CreateScreen(QRect viewport) = 0;
 	virtual void CreateWindow(const std::string &name) = 0;
-	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory);
+	virtual void RegisterWindowFactory(std::function<void(const std::string &name)> factory);
 	virtual void RegisterRenderer(GlGuiRenderer *renderer);
 	virtual void Render() = 0;
 	virtual void Update() = 0;
@@ -78,7 +78,7 @@ protected:
 	QWindow * handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
 	Window* getWindowByPoint(QPoint point);
 
-	std::function<QWidget*(const std::string &name)> windowFactory;
+	std::function<void(const std::string &name)> windowFactory;
 	GlGuiRenderer *guiRenderer;
 	
 	std::map<unsigned int, Window> windows;

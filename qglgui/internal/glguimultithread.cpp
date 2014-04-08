@@ -62,9 +62,7 @@ void GlGuiMultiThread::CreateWindow(const std::string &name)
 	}
 	else
 	{
-		QWidget *w = windowFactory(name);
-		assert(w);
-		w->show();
+		windowFactory(name);
 	}
 }
 

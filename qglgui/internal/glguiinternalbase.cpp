@@ -49,7 +49,7 @@ GlGuiInternalBase::~GlGuiInternalBase()
 
 }
 
-void GlGuiInternalBase::RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory)
+void GlGuiInternalBase::RegisterWindowFactory(std::function<void(const std::string &name)> factory)
 {
 	PROFILE_FUNCTION
 

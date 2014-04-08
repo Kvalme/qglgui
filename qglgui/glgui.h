@@ -77,7 +77,7 @@ public:
 	 *
 	 * @param factory pointer to the factory
 	 */
-	virtual void RegisterWindowFactory(std::function<QWidget*(const std::string &name)> factory) = 0;
+	virtual void RegisterWindowFactory(std::function<void(const std::string &name)> factory) = 0;
 
 	/**
 	 * Register renderer.
