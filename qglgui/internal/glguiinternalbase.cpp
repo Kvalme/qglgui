@@ -33,6 +33,7 @@
 
 #include <assert.h>
 #include <qpa/qwindowsysteminterface.h>
+#include <QApplication>
 
 using namespace QGL;
 
@@ -226,4 +227,9 @@ bool GlGuiInternalBase::IsMouseGrabbed()
 bool GlGuiInternalBase::IsPointInsideWindow(QPoint point)
 {
 	return (getWindowByPoint(point) != nullptr);
+}
+
+bool GlGuiInternalBase::IsFocusWindow()
+{
+	return (QApplication::focusWidget() != nullptr);
 }

@@ -58,6 +58,7 @@ public:
 	virtual bool IsKeyboardGrabbed();
 	virtual bool IsMouseGrabbed();
 	virtual bool IsPointInsideWindow(QPoint point);
+	virtual bool IsFocusWindow();
 	
 	//Internal interface
 	virtual void iAddWindow(UIWindow *wnd);

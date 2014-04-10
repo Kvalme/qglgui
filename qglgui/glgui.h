@@ -177,6 +177,12 @@ public:
 	 */
 	virtual bool IsKeyboardGrabbed() = 0;
 	
+	/**
+	 * Checks if any widnow has input focus
+	 * @return true if some window has input focus
+	 */
+	virtual bool IsFocusWindow() = 0;
+	
 protected:
 	GlGui();
 	GlGui(GlGui &);
