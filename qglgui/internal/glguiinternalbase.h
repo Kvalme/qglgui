@@ -55,6 +55,10 @@ public:
 	virtual void InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers);
 	virtual void InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers);
 
+	virtual bool IsKeyboardGrabbed();
+	virtual bool IsMouseGrabbed();
+	virtual bool IsPointInsideWindow(QPoint point);
+	
 	//Internal interface
 	virtual void iAddWindow(UIWindow *wnd);
 	virtual void iSetTexture(unsigned int winId, const QPixmap &pixmap);

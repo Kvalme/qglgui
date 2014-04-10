@@ -158,6 +158,25 @@ public:
 	 */
 	virtual void InjectCharacterEvent(QChar character) = 0;
 	
+	/**
+	 * Checks if point is inside any window
+	 * @param point point
+	 * @return true is point inside window
+	 */
+	virtual bool IsPointInsideWindow(QPoint point) = 0;
+	
+	/**
+	 * Checks if mouse is grabbed or not
+	 * @return true if mouse is grabbed
+	 */
+	virtual bool IsMouseGrabbed() = 0;
+	
+	/**
+	 * Checks if keyboard is grabbed or not
+	 * @return true if keyboard is grabbed
+	 */
+	virtual bool IsKeyboardGrabbed() = 0;
+	
 protected:
 	GlGui();
 	GlGui(GlGui &);

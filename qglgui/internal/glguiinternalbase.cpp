@@ -213,3 +213,17 @@ void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, dou
 	QWindowSystemInterface::handleWheelEvent(wnd, local, position, pxDelta, angDelta, modifiers);
 }
 
+bool GlGuiInternalBase::IsKeyboardGrabbed()
+{
+	return (mKeyboardGrabWindow != nullptr);
+}
+
+bool GlGuiInternalBase::IsMouseGrabbed()
+{
+	return (mMouseGrabWindow != nullptr);
+}
+
+bool GlGuiInternalBase::IsPointInsideWindow(QPoint point)
+{
+	return (getWindowByPoint(point) != nullptr);
+}
