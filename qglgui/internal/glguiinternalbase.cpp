@@ -154,7 +154,7 @@ QWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt::
 
 	QPointF local = wnd->mapFromGlobal(position);
 
-	QWindowSystemInterface::handleMouseEvent(wnd, local, position, Qt::MouseButtons(b));
+	QWindowSystemInterface::handleMouseEvent(wnd, local, position, Qt::MouseButtons(b), modifiers);
 	return wnd;
 }
 
