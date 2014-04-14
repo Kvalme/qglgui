@@ -1,5 +1,7 @@
 project(qglgui)
 
+INCLUDE(CPack)
+
 cmake_minimum_required(VERSION 2.8.9)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake/modules)

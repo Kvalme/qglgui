@@ -71,11 +71,12 @@ void scroll(double x, double y, double xo, double yo, int mods)
 	gui->InjectMouseWheelEvent(0, QPoint(x, y), xo, yo, GlfwHelper::KeyboardModifiers(mods));
 }
 
-QWidget *createWindow(const std::string &)
+void createWindow(const std::string &)
 {
 	PROFILE_FUNCTION
 
-	return new BasicQtApp;
+	QWidget *w = new BasicQtApp;
+	w->show();
 }
 
 void run()
