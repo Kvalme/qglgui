@@ -1,0 +1,12 @@
+set(SAMPLE_TREE_LIBRARY_SOURCE tree.cpp)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+qt5_wrap_ui(ui_tree.h tree.ui)
+
+add_library(sample_tree OBJECT ${SAMPLE_TREE_LIBRARY_SOURCE} ui_tree.h)
+
+set_property(TARGET sample_tree APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Core_INCLUDE_DIRS}")
+set_property(TARGET sample_tree APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Gui_INCLUDE_DIRS}")
+set_property(TARGET sample_tree APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Widgets_INCLUDE_DIRS}")

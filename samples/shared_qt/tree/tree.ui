@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>tree</class>
+ <widget class="QWidget" name="tree">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTreeWidget" name="treeWidget">
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="dragDropMode">
+      <enum>QAbstractItemView::InternalMove</enum>
+     </property>
+     <property name="defaultDropAction">
+      <enum>Qt::MoveAction</enum>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::ExtendedSelection</enum>
+     </property>
+     <property name="autoExpandDelay">
+      <number>-1</number>
+     </property>
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
+     <column>
+      <property name="text">
+       <string>1</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>2</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>3</string>
+      </property>
+     </column>
+     <item>
+      <property name="text">
+       <string>I1</string>
+      </property>
+      <property name="text">
+       <string>Test</string>
+      </property>
+      <property name="text">
+       <string>It</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>1</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>2</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </item>
+       </item>
+      </item>
+     </item>
+     <item>
+      <property name="text">
+       <string>i1</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>i6</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>i7</string>
+        </property>
+       </item>
+      </item>
+      <item>
+       <property name="text">
+        <string>i2</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>i5</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>i4</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>i3</string>
+        </property>
+       </item>
+      </item>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

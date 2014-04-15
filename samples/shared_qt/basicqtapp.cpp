@@ -4,6 +4,7 @@
 #include "libcppprofiler/src/cppprofiler.h"
 
 #include "styles/widgetgallery.h"
+#include "tree/tree.h"
 #include <qdesktopwidget.h>
 
 BasicQtApp::BasicQtApp(QWidget *parent) :
@@ -17,6 +18,7 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	
 	ui->selectedSample->addItem("None");
 	ui->selectedSample->addItem("Styles");
+	ui->selectedSample->addItem("Tree");
 	
 	move(0, 0);
 }
@@ -43,7 +45,8 @@ void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 	mCurrent = nullptr;
 	
 	if (text == "Styles") mCurrent = new WidgetGallery;
-	
+	else if (text == "Tree") mCurrent = new tree;
+
 	if (mCurrent)
 	{
 		mCurrent->show();
