@@ -83,7 +83,7 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	Q_UNUSED(region);
 
 	QSize imageSize = image.size();
-	if (imageSize.isEmpty()) return;
+	if (imageSize.isEmpty() || region.isEmpty()) return;
 
 	QRegion clipped = QRect(0, 0, window->width(), window->height());
 	clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);
