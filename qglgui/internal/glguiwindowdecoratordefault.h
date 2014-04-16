@@ -26,4 +26,17 @@
  *
  */
 
-#include "uiwindowdecorator.h"
+#pragma once
+#include <qglgui/glguiwindowdecorator.h>
+
+namespace QGL
+{
+
+class GlUIWindowDecoratorDefault : public GlUIWindowDecorator
+{
+public:
+	virtual void SetTheme(const std::string &name);
+};
+
+}
+

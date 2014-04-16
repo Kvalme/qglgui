@@ -28,40 +28,22 @@
 
 #pragma once
 
-#include "qglgui/internal/glguiinternalbase.h"
-#include <mutex>
-#include <thread>
+#include <string>
 
 namespace QGL
 {
 
-class UIWorker;
-	
-class GlGuiMultiThread : public GlGuiInternalBase
+class GlUIWindowDecorator
 {
 public:
-	GlGuiMultiThread(const std::string &fontDir, QRect viewport);
-	virtual ~GlGuiMultiThread();
+	/**
+	 * Set theme
+	 * @param name theme name
+	 */
+	virtual void SetTheme(const std::string &name) = 0;
 	
-	virtual int CreateScreen(QRect viewport);
-	virtual void CreateWindow(const std::string &name);
-	virtual void Render();
-	virtual void Update();
-	virtual void SetWindowTheme(const std::string &name);
-	
-	virtual void InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
-	virtual void InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
-	virtual void InjectCharacterEvent(QChar character);
-	virtual void InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers);
-	virtual void InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers);
-	
-private:
-	std::shared_ptr<UIWorker> uiWorker;
-	std::mutex mMainMutex;
-	std::thread::id mGuiThreadId;
-	
-	std::vector<std::function<void(void)>> mTasks;
+	virtual ~GlUIWindowDecorator(){};
 };
+
 	
 }
-

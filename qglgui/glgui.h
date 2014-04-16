@@ -39,6 +39,7 @@ namespace QGL
 {
 
 class GlGuiRenderer;
+class GlUIWindowDecorator;
 
 /**
  * Main class for GlGui. Handles GUI initialization.
@@ -85,7 +86,22 @@ public:
 	 * @param renderer pointer to renderer object
 	 */
 	virtual void RegisterRenderer(GlGuiRenderer *renderer) = 0;
-
+	
+	/**
+	 * Register window decorator. If no decorator registered - default docorator will be used.
+	 * If null passed as decorator - windows will not have decorations and titlebar
+	 * 
+	 * @param decorator pointer to decorator object
+	 */
+	virtual void RegisterWindowDecorator(GlUIWindowDecorator *decorator) = 0;
+	
+	/**
+	 * Sets window decoration theme
+	 * 
+	 * @param name theme name
+	 */
+	virtual void SetWindowTheme(const std::string &name) = 0;
+	
 	/**
 	 * Creates window by provided name.
 	 * GuiWindowFactory will be called to create window.

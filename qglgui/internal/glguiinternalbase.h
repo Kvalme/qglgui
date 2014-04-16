@@ -35,6 +35,8 @@
 
 namespace QGL
 {
+
+class GlUIWindowDecorator;
 class UIWindow;
 class GlGuiInternalBase : public GlGui
 {
@@ -46,6 +48,8 @@ public:
 	virtual void CreateWindow(const std::string &name) = 0;
 	virtual void RegisterWindowFactory(std::function<void(const std::string &name)> factory);
 	virtual void RegisterRenderer(GlGuiRenderer *renderer);
+	virtual void RegisterWindowDecorator(GlUIWindowDecorator *decorator);
+	virtual void SetWindowTheme(const std::string &name);
 	virtual void Render() = 0;
 	virtual void Update() = 0;
 	
@@ -66,6 +70,7 @@ public:
 	virtual void iRemoveWindow(unsigned int winId);
 	virtual void iGrabKeyboard(UIWindow *wnd);
 	virtual void iGrabMouse(UIWindow *wnd);
+	virtual GlUIWindowDecorator* getDecorator() { return mDecorator;}
 	virtual const UIWindow* iGetKeyboardGrab() const { return mKeyboardGrabWindow;}
 	virtual const UIWindow* iGetMouseGrab() const { return mMouseGrabWindow;}
 
@@ -85,6 +90,8 @@ protected:
 
 	std::function<void(const std::string &name)> windowFactory;
 	GlGuiRenderer *guiRenderer;
+	
+	GlUIWindowDecorator *mDecorator;
 	
 	std::map<unsigned int, Window> windows;
 };

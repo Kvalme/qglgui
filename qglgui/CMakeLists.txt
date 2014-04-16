@@ -3,7 +3,7 @@ include_directories(${GLFW3_INCLUDEDIR} ${PROJECT_SOURCE_DIR} ${Qt5Core_INCLUDE_
 add_subdirectory(internal)
 
 set(QGLGUI_SOURCES glfwhelper.cpp glgui.cpp glguirenderer.cpp)
-set(QGLGUI_HEADERS glgui.h glguirenderer.h)
+set(QGLGUI_HEADERS glgui.h glguirenderer.h glwindowdecorator.h)
 
 add_library(qglgui SHARED ${QGLGUI_SOURCES} $<TARGET_OBJECTS:qglgui_internal> $<TARGET_OBJECTS:qglgui_qtplugin>)
 add_library(qglgui-static STATIC ${QGLGUI_SOURCES} $<TARGET_OBJECTS:qglgui_internal> $<TARGET_OBJECTS:qglgui_qtplugin>)

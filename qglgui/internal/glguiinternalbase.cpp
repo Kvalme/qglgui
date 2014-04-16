@@ -28,6 +28,7 @@
 
 #include "qglgui/internal/glguiinternalbase.h"
 #include "qtplugin/uiwindow.h"
+#include "glguiwindowdecoratordefault.h"
 #include <qglgui/glguirenderer.h>
 #include "libcppprofiler/src/cppprofiler.h"
 
@@ -42,6 +43,7 @@ GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir) :
 	mMouseGrabWindow(nullptr)
 {
 	PROFILE_FUNCTION
+	mDecorator = new GlUIWindowDecoratorDefault;
 }
 
 GlGuiInternalBase::~GlGuiInternalBase()
@@ -232,4 +234,16 @@ bool GlGuiInternalBase::IsPointInsideWindow(QPoint point)
 bool GlGuiInternalBase::IsFocusWindow()
 {
 	return (QApplication::focusWidget() != nullptr);
+}
+
+void GlGuiInternalBase::RegisterWindowDecorator(GlUIWindowDecorator *decorator)
+{
+	delete mDecorator;
+	mDecorator = decorator;
+	mDecorator->SetTheme("windowdecorations/Ember");
+}
+
+void GlGuiInternalBase::SetWindowTheme(const std::string &name)
+{
+	mDecorator->SetTheme(name);
 }

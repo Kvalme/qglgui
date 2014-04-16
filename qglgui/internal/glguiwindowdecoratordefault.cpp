@@ -26,9 +26,11 @@
  *
  */
 
-#pragma once
+#include "glguiwindowdecoratordefault.h"
 
-class UIWindowDecorator
+using namespace QGL;
+
+void GlUIWindowDecoratorDefault::SetTheme(const std::string &name)
 {
-};
-
+	
+}
