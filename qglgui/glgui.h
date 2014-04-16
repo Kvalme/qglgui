@@ -98,9 +98,10 @@ public:
 	/**
 	 * Sets window decoration theme
 	 * 
+	 * @param path where theme located
 	 * @param name theme name
 	 */
-	virtual void SetWindowTheme(const std::string &name) = 0;
+	virtual void SetWindowTheme(const std::string &path, const std::string &name) = 0;
 	
 	/**
 	 * Creates window by provided name.

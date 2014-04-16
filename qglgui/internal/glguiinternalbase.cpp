@@ -240,10 +240,10 @@ void GlGuiInternalBase::RegisterWindowDecorator(GlUIWindowDecorator *decorator)
 {
 	delete mDecorator;
 	mDecorator = decorator;
-	mDecorator->SetTheme("windowdecorations/Ember");
 }
 
-void GlGuiInternalBase::SetWindowTheme(const std::string &name)
+void GlGuiInternalBase::SetWindowTheme(const std::string &path, const std::string &name)
 {
-	mDecorator->SetTheme(name);
+	if (mDecorator)
+		mDecorator->SetTheme(path, name);
 }

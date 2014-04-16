@@ -111,6 +111,7 @@ void initGui(int w, int h)
 	while(!gui); //Just wait for gui to create
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
+	gui->SetWindowTheme("../../../windowdecorations", "kant");
 	gui->CreateWindow("");
 }
 

@@ -35,7 +35,7 @@ namespace QGL
 class GlUIWindowDecoratorDefault : public GlUIWindowDecorator
 {
 public:
-	virtual void SetTheme(const std::string &name);
+	virtual void SetTheme(const std::string &path, const std::string &name);
 };
 
 }

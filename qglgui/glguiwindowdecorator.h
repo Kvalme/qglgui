@@ -40,7 +40,7 @@ public:
 	 * Set theme
 	 * @param name theme name
 	 */
-	virtual void SetTheme(const std::string &name) = 0;
+	virtual void SetTheme(const std::string &path, const std::string &name) = 0;
 	
 	virtual ~GlUIWindowDecorator(){};
 };

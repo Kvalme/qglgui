@@ -37,6 +37,8 @@ class QApplication;
 
 namespace QGL
 {
+
+class GlUIWindowDecorator;
 class GlGuiInternalBase;
 class UIIntegration;
 

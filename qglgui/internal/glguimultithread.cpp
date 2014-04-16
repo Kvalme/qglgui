@@ -168,16 +168,16 @@ void GlGuiMultiThread::InjectMouseWheelEvent(int screenId, QPoint position, doub
 	}
 }
 
-void GlGuiMultiThread::SetWindowTheme(const std::string &name)
+void GlGuiMultiThread::SetWindowTheme(const std::string &path, const std::string &name)
 {
 	PROFILE_FUNCTION
 	if (mGuiThreadId != std::this_thread::get_id())
 	{
 		std::lock_guard<std::mutex> guard(mMainMutex);
-		mTasks.push_back(std::bind(&GlGuiMultiThread::SetWindowTheme, this, name));
+		mTasks.push_back(std::bind(&GlGuiMultiThread::SetWindowTheme, this, path, name));
 	}
 	else
 	{
-		QGL::GlGuiInternalBase::SetWindowTheme(name);
+		QGL::GlGuiInternalBase::SetWindowTheme(path, name);
 	}
 }

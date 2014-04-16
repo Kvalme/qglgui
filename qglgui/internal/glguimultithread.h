@@ -47,7 +47,7 @@ public:
 	virtual void CreateWindow(const std::string &name);
 	virtual void Render();
 	virtual void Update();
-	virtual void SetWindowTheme(const std::string &name);
+	virtual void SetWindowTheme(const std::string &path, const std::string &name);
 	
 	virtual void InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers);
 	virtual void InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);

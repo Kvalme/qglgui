@@ -28,9 +28,25 @@
 
 #include "glguiwindowdecoratordefault.h"
 
+#include "libcppprofiler/src/cppprofiler.h"
+#include <QSettings>
+#include <QStringList>
+
+#include <iostream>
+
 using namespace QGL;
 
-void GlUIWindowDecoratorDefault::SetTheme(const std::string &name)
+void GlUIWindowDecoratorDefault::SetTheme(const std::string &path, const std::string &name)
 {
+	PROFILE_FUNCTION
+	
+	QSettings settings((path + "/" + name + "/" + name + "rc").c_str(), QSettings::IniFormat);
+	settings.sync();
+	
+	if (settings.status() != QSettings::NoError)
+	{
+		throw std::runtime_error("Unable to load theme");
+	}
+	
 	
 }

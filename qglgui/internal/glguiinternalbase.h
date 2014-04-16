@@ -49,7 +49,7 @@ public:
 	virtual void RegisterWindowFactory(std::function<void(const std::string &name)> factory);
 	virtual void RegisterRenderer(GlGuiRenderer *renderer);
 	virtual void RegisterWindowDecorator(GlUIWindowDecorator *decorator);
-	virtual void SetWindowTheme(const std::string &name);
+	virtual void SetWindowTheme(const std::string &path, const std::string &name);
 	virtual void Render() = 0;
 	virtual void Update() = 0;
 	
