@@ -43,7 +43,7 @@ public:
 private:
 	bool LoadGeneral(QSettings &settings);
 	bool LoadLayout(QSettings &settings);
-	QColor SplitColor(QString color);
+	QColor SplitColor(QStringList color);
 
 	std::string mThemePath;
 	std::string mThemeName;

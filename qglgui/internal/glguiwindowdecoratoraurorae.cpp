@@ -57,10 +57,10 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 
 bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
 {
-	mActiveTextColor = SplitColor(settings.value("General/ActiveTextColor").toString());
-	mInactiveTextColor = SplitColor(settings.value("General/InactiveTextColor").toString());
-	QString hAlignment = settings.value("General/TitleAlignment").toString();
-	QString vAlignment = settings.value("General/TitleVerticalAlignment").toString();
+	mActiveTextColor = SplitColor(settings.value("ActiveTextColor").toStringList());
+	mInactiveTextColor = SplitColor(settings.value("InactiveTextColor").toStringList());
+	QString hAlignment = settings.value("TitleAlignment").toString();
+	QString vAlignment = settings.value("TitleVerticalAlignment").toString();
 	mTitleAlignment = 0;
 
 	if (hAlignment == "Center") mTitleAlignment = Qt::AlignHCenter;
@@ -71,7 +71,7 @@ bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
 	else if (vAlignment == "Bottom") mTitleAlignment |= Qt::AlignBottom;
 	else if (vAlignment == "Middle") mTitleAlignment = Qt::AlignVCenter;
 
-	mAnimation = settings.value("General/Animation").toUInt();
+	mAnimation = settings.value("Animation").toUInt();
 	
 	return true;
 }
@@ -101,14 +101,13 @@ bool GlUIWindowDecoratorAurorae::LoadLayout(QSettings &settings)
 	return true;
 }
 
-QColor GlUIWindowDecoratorAurorae::SplitColor(QString color)
+QColor GlUIWindowDecoratorAurorae::SplitColor(QStringList color)
 {
-	QStringList colors = color.split(",");
 	QColor c;
-	c.setRed(colors[0].toUInt());
-	c.setGreen(colors[1].toUInt());
-	c.setBlue(colors[2].toUInt());
-	c.setAlpha(colors[3].toUInt());
+	c.setRed(color[0].toUInt());
+	c.setGreen(color[1].toUInt());
+	c.setBlue(color[2].toUInt());
+	c.setAlpha(color[3].toUInt());
 	
 	return c;
 }
