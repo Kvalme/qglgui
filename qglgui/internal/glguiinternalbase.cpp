@@ -28,7 +28,7 @@
 
 #include "qglgui/internal/glguiinternalbase.h"
 #include "qtplugin/uiwindow.h"
-#include "glguiwindowdecoratordefault.h"
+#include "glguiwindowdecoratoraurorae.h"
 #include <qglgui/glguirenderer.h>
 #include "libcppprofiler/src/cppprofiler.h"
 
@@ -43,7 +43,7 @@ GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir) :
 	mMouseGrabWindow(nullptr)
 {
 	PROFILE_FUNCTION
-	mDecorator = new GlUIWindowDecoratorDefault;
+	mDecorator = new GlUIWindowDecoratorAurorae;
 }
 
 GlGuiInternalBase::~GlGuiInternalBase()

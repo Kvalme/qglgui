@@ -26,27 +26,51 @@
  *
  */
 
-#include "glguiwindowdecoratordefault.h"
-
-#include "libcppprofiler/src/cppprofiler.h"
+#pragma once
+#include <qglgui/glguiwindowdecorator.h>
+#include <QColor>
+#include <QRect>
 #include <QSettings>
-#include <QStringList>
 
-#include <iostream>
-
-using namespace QGL;
-
-void GlUIWindowDecoratorDefault::SetTheme(const std::string &path, const std::string &name)
+namespace QGL
 {
-	PROFILE_FUNCTION
-	
-	QSettings settings((path + "/" + name + "/" + name + "rc").c_str(), QSettings::IniFormat);
-	settings.sync();
-	
-	if (settings.status() != QSettings::NoError)
-	{
-		throw std::runtime_error("Unable to load theme");
-	}
-	
-	
+
+class GlUIWindowDecoratorAurorae : public GlUIWindowDecorator
+{
+public:
+	virtual void SetTheme(const std::string &path, const std::string &name);
+
+private:
+	bool LoadGeneral(QSettings &settings);
+	bool LoadLayout(QSettings &settings);
+	QColor SplitColor(QString color);
+
+	std::string mThemePath;
+	std::string mThemeName;
+	QColor mActiveTextColor;
+	QColor mInactiveTextColor;
+	Qt::Alignment mTitleAlignment;
+	uint32_t mAnimation;
+	uint32_t mBorderLeft;
+	uint32_t mBorderRight;
+	uint32_t mBorderBottom;
+	uint32_t mTitleEdgeTop;
+	uint32_t mTitleEdgeBottom;
+	uint32_t mTitleEdgeLeft;
+	uint32_t mTitleEdgeRight;
+	uint32_t mTitleBorderLeft;
+	uint32_t mTitleBorderRight;
+	uint32_t mTitleHeight;
+	uint32_t mButtonWidth;
+	uint32_t mButtonHeight;
+	uint32_t mButtonSpacing;
+	uint32_t mButtonMarginTop;
+	uint32_t mExplicitButtonSpacer;
+	uint32_t mPaddingTop;
+	uint32_t mPaddingBottom;
+	uint32_t mPaddingRight;
+	uint32_t mPaddingLeft;
+};
+
 }
+
