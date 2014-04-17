@@ -31,6 +31,10 @@
 #include "libcppprofiler/src/cppprofiler.h"
 #include <QSettings>
 #include <QStringList>
+#include <qguiapplication.h>
+#include <QImage>
+#include <QScreen>
+#include <qpaintengine.h>
 
 #include <iostream>
 
@@ -126,5 +130,29 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 
 bool GlUIWindowDecoratorAurorae::PrecacheResources()
 {
+	auto renderButtonPart = [&](QImage **image, const QString &elementId, QSvgRenderer &source)
+	{
+		*image = new QImage(mButtonWidth, mButtonHeight, QImage::Format_ARGB32);
+		(*image)->fill(QColor(0, 0, 0, 0));
+		QPainter imagePainter(*image);
+		source.render(&imagePainter, elementId);	
+	};
+	auto renderButton = [&](ButtonCache &cache, QSvgRenderer &source)
+	{
+		renderButtonPart(&cache.activeCenter, "active-center", source);
+		renderButtonPart(&cache.hoverCenter, "hover-center", source);
+		renderButtonPart(&cache.deactivatedCenter, "deactivated-center", source);
+		renderButtonPart(&cache.pressedCenter, "pressed-center", source);
+		renderButtonPart(&cache.deactivatedInactiveCenter, "deactivated-inactive-center", source);
+		renderButtonPart(&cache.inactiveCenter, "inactive-center", source);
+		renderButtonPart(&cache.hoverInactiveCenter, "hover-inactive-center", source);
+	};
+	
+	renderButton(mCloseButtonCache, mCloseButton);
+	renderButton(mMaximizeButtonCache, mMaximizeButton);
+	renderButton(mMinimizeButtonCache, mMinimizeButton);
+	renderButton(mRestoreButtonCache, mRestoreButton);
+	
+	
 	return true;
 }

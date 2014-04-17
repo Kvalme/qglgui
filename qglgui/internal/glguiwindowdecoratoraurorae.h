@@ -29,10 +29,11 @@
 #pragma once
 #include <qglgui/glguiwindowdecorator.h>
 #include <QColor>
-#include <QPixmap>
 #include <QRect>
 #include <QSettings>
 #include <QSvgRenderer>
+
+class QImage;
 
 namespace QGL
 {
@@ -84,29 +85,33 @@ private:
 	
 	struct DecorationCache
 	{
-		QPixmap topLeft;
-		QPixmap topRight;
-		QPixmap bottomLeft;
-		QPixmap bottomRight;
-		QPixmap top;
-		QPixmap right;
-		QPixmap bottom;
-		QPixmap left;
+		QImage *topLeft = nullptr;
+		QImage *topRight = nullptr;
+		QImage *bottomLeft = nullptr;
+		QImage *bottomRight = nullptr;
+		QImage *top = nullptr;
+		QImage *right = nullptr;
+		QImage *bottom = nullptr;
+		QImage *left = nullptr;
 	};
 	struct ButtonCache
 	{
-		QPixmap activeCenter;
-		QPixmap hoverCenter;
-		QPixmap pressedCenter;
-		QPixmap deactivatedCenter;
+		QImage *activeCenter = nullptr;
+		QImage *hoverCenter = nullptr;
+		QImage *pressedCenter = nullptr;
+		QImage *deactivatedCenter = nullptr;
 		
-		QPixmap inactiveCenter;
-		QPixmap hoverInactiveCenter;
-		QPixmap deactivatedInactiveCenter;
+		QImage *inactiveCenter = nullptr;
+		QImage *hoverInactiveCenter = nullptr;
+		QImage *deactivatedInactiveCenter = nullptr;
 	};
 	
 	DecorationCache mActiveDecoration;
 	DecorationCache mInactiveDecoration;
+	ButtonCache mCloseButtonCache;
+	ButtonCache mMaximizeButtonCache;
+	ButtonCache mMinimizeButtonCache;
+	ButtonCache mRestoreButtonCache;
 	
 };
 
