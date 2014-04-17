@@ -63,6 +63,8 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 
 bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
 {
+	PROFILE_FUNCTION
+	
 	mActiveTextColor = SplitColor(settings.value("ActiveTextColor").toStringList());
 	mInactiveTextColor = SplitColor(settings.value("InactiveTextColor").toStringList());
 	QString hAlignment = settings.value("TitleAlignment").toString();
@@ -84,6 +86,8 @@ bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
 
 bool GlUIWindowDecoratorAurorae::LoadLayout(QSettings &settings)
 {
+	PROFILE_FUNCTION
+	
 	mBorderLeft = settings.value("Layout/BorderLeft").toUInt();
 	mBorderRight = settings.value("Layout/BorderRight").toUInt();
 	mBorderBottom = settings.value("Layout/BorderBottom").toUInt();
@@ -109,6 +113,8 @@ bool GlUIWindowDecoratorAurorae::LoadLayout(QSettings &settings)
 
 QColor GlUIWindowDecoratorAurorae::SplitColor(QStringList color)
 {
+	PROFILE_FUNCTION
+	
 	QColor c;
 	c.setRed(color[0].toUInt());
 	c.setGreen(color[1].toUInt());
@@ -120,6 +126,8 @@ QColor GlUIWindowDecoratorAurorae::SplitColor(QStringList color)
 
 bool GlUIWindowDecoratorAurorae::LoadResources()
 {
+	PROFILE_FUNCTION
+	
 	if (!mCloseButton.load(QString((mThemePath + "close.svgz").c_str())) && !mCloseButton.load(QString((mThemePath + "close.svg").c_str()))) return false;
 	if (!mMaximizeButton.load(QString((mThemePath + "maximize.svgz").c_str())) && !mMaximizeButton.load(QString((mThemePath + "maximize.svg").c_str()))) return false;
 	if (!mMinimizeButton.load(QString((mThemePath + "minimize.svgz").c_str())) && !mMinimizeButton.load(QString((mThemePath + "minimize.svg").c_str()))) return false;
@@ -130,12 +138,15 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 
 bool GlUIWindowDecoratorAurorae::PrecacheResources()
 {
+	PROFILE_FUNCTION
+	
 	auto renderButtonPart = [&](QImage **image, const QString &elementId, QSvgRenderer &source)
 	{
 		*image = new QImage(mButtonWidth, mButtonHeight, QImage::Format_ARGB32);
 		(*image)->fill(QColor(0, 0, 0, 0));
 		QPainter imagePainter(*image);
 		source.render(&imagePainter, elementId);	
+		(*image)->save(QString("/tmp/%1.png").arg(elementId), "png");
 	};
 	auto renderButton = [&](ButtonCache &cache, QSvgRenderer &source)
 	{
