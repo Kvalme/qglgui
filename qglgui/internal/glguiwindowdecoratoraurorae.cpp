@@ -53,6 +53,8 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 
 	if (!LoadGeneral(settings))throw std::runtime_error("Unable to load theme. Unable to load [General] section");
 	if (!LoadLayout(settings))throw std::runtime_error("Unable to load theme. Unable to load [Layout] section");
+	if (!LoadResources())throw std::runtime_error("Unable to load theme. Unable to load theme files");
+	if (!PrecacheResources())throw std::runtime_error("Unable to load theme. Unable to cache resources");
 }
 
 bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
@@ -112,3 +114,17 @@ QColor GlUIWindowDecoratorAurorae::SplitColor(QStringList color)
 	return c;
 }
 
+bool GlUIWindowDecoratorAurorae::LoadResources()
+{
+	if (!mCloseButton.load(QString((mThemePath + "close.svgz").c_str())) && !mCloseButton.load(QString((mThemePath + "close.svg").c_str()))) return false;
+	if (!mMaximizeButton.load(QString((mThemePath + "maximize.svgz").c_str())) && !mMaximizeButton.load(QString((mThemePath + "maximize.svg").c_str()))) return false;
+	if (!mMinimizeButton.load(QString((mThemePath + "minimize.svgz").c_str())) && !mMinimizeButton.load(QString((mThemePath + "minimize.svg").c_str()))) return false;
+	if (!mRestoreButton.load(QString((mThemePath + "restore.svgz").c_str())) && !mRestoreButton.load(QString((mThemePath + "restore.svg").c_str()))) return false;
+	if (!mDecoration.load(QString((mThemePath + "decoration.svgz").c_str())) && !mDecoration.load(QString((mThemePath + "decoration.svg").c_str()))) return false;
+	return true;
+}
+
+bool GlUIWindowDecoratorAurorae::PrecacheResources()
+{
+	return true;
+}

@@ -29,8 +29,10 @@
 #pragma once
 #include <qglgui/glguiwindowdecorator.h>
 #include <QColor>
+#include <QPixmap>
 #include <QRect>
 #include <QSettings>
+#include <QSvgRenderer>
 
 namespace QGL
 {
@@ -43,6 +45,8 @@ public:
 private:
 	bool LoadGeneral(QSettings &settings);
 	bool LoadLayout(QSettings &settings);
+	bool LoadResources();
+	bool PrecacheResources();
 	QColor SplitColor(QStringList color);
 
 	std::string mThemePath;
@@ -70,6 +74,40 @@ private:
 	uint32_t mPaddingBottom;
 	uint32_t mPaddingRight;
 	uint32_t mPaddingLeft;
+	
+	QSvgRenderer mCloseButton;
+	QSvgRenderer mMaximizeButton;
+	QSvgRenderer mMinimizeButton;
+	QSvgRenderer mRestoreButton;
+	
+	QSvgRenderer mDecoration;
+	
+	struct DecorationCache
+	{
+		QPixmap topLeft;
+		QPixmap topRight;
+		QPixmap bottomLeft;
+		QPixmap bottomRight;
+		QPixmap top;
+		QPixmap right;
+		QPixmap bottom;
+		QPixmap left;
+	};
+	struct ButtonCache
+	{
+		QPixmap activeCenter;
+		QPixmap hoverCenter;
+		QPixmap pressedCenter;
+		QPixmap deactivatedCenter;
+		
+		QPixmap inactiveCenter;
+		QPixmap hoverInactiveCenter;
+		QPixmap deactivatedInactiveCenter;
+	};
+	
+	DecorationCache mActiveDecoration;
+	DecorationCache mInactiveDecoration;
+	
 };
 
 }
