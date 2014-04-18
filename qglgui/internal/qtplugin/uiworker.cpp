@@ -56,11 +56,11 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect vie
 	QGuiApplicationPrivate::platform_name = new QString("QGL");
 	mPlatform = new UIIntegration(this->gui);
 	QGuiApplicationPrivate::platform_integration = mPlatform;
-
+	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
+	
 	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
 	static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration)->init(viewport);
 
-	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 
 	app = new QApplication(argc, argv);
 	app->setQuitOnLastWindowClosed(false);

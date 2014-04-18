@@ -12,10 +12,10 @@ set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 -fPIC -DPIC -Wall -Werror -Og -g3 -DDEBUG 
 set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11 -fPIC -DPIC -Wall -Werror -O3 -DNDEBUG -mfpmath=sse,387 -msse2 -msse3 -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\"")
 
 find_package(OpenGL REQUIRED)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Svg REQUIRED)
+find_package(Qt5Core 5.2 REQUIRED)
+find_package(Qt5Gui 5.2 REQUIRED)
+find_package(Qt5Widgets 5.2 REQUIRED)
+find_package(Qt5Svg 5.2 REQUIRED)
 find_package(Freetype REQUIRED)
 
 

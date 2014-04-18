@@ -73,15 +73,25 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 
 	services_ = new QPlatformServices;
 
-	QCoreApplicationPrivate::eventDispatcher = event_dispatcher;
+//	QCoreApplicationPrivate::eventDispatcher = event_dispatcher;
 	ui = gui;
+}
+
+QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
+{
+	return event_dispatcher;
+#if defined(Q_OS_UNIX)
+	return createUnixEventDispatcher();
+#elif defined(Q_OS_WIN)
+	return new QEventDispatcherWin32;
+#endif
 }
 
 void UIIntegration::init(QRect viewport)
 {
 	PROFILE_FUNCTION
 
-	QGuiApplicationPrivate::instance()->setEventDispatcher(event_dispatcher);
+//	QGuiApplicationPrivate::instance()->setEventDispatcher(event_dispatcher);
 	addScreen(viewport);
 }
 
@@ -97,7 +107,7 @@ UIIntegration::~UIIntegration()
 {
 	PROFILE_FUNCTION
 
-	delete event_dispatcher;
+//	delete event_dispatcher;
 	delete font_database;
 	delete services_;
 	
@@ -122,12 +132,12 @@ QPlatformWindow *UIIntegration::createPlatformWindow(QWindow *window) const
 	return wnd;
 }
 
-QAbstractEventDispatcher *UIIntegration::guiThreadEventDispatcher() const
+/*QAbstractEventDispatcher *UIIntegration::guiThreadEventDispatcher() const
 {
 	PROFILE_FUNCTION
 
 	return event_dispatcher;
-}
+}*/
 
 QPlatformFontDatabase *UIIntegration::fontDatabase() const
 {

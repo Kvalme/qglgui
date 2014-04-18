@@ -46,10 +46,11 @@ public:
 
 	QPlatformWindow *createPlatformWindow(QWindow *window) const;
 	QPlatformBackingStore *createPlatformBackingStore(QWindow *window) const;
+	QAbstractEventDispatcher *createEventDispatcher() const;
 	QPlatformServices *services() const;
 
 	QPlatformFontDatabase *fontDatabase() const;
-	QAbstractEventDispatcher *guiThreadEventDispatcher() const;
+//	QAbstractEventDispatcher *guiThreadEventDispatcher() const;
 
 	GlGuiInternalBase *getUi()
 	{
