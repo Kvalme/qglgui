@@ -140,23 +140,22 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 {
 	PROFILE_FUNCTION
 	
-	auto renderButtonPart = [&](QImage **image, const QString &elementId, QSvgRenderer &source)
+	auto renderPart = [&](QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height)
 	{
-		*image = new QImage(mButtonWidth, mButtonHeight, QImage::Format_ARGB32);
+		*image = new QImage(width, height, QImage::Format_ARGB32);
 		(*image)->fill(QColor(0, 0, 0, 0));
 		QPainter imagePainter(*image);
-		source.render(&imagePainter, elementId);	
-		(*image)->save(QString("/tmp/%1.png").arg(elementId), "png");
+		source.render(&imagePainter, elementId);
 	};
 	auto renderButton = [&](ButtonCache &cache, QSvgRenderer &source)
 	{
-		renderButtonPart(&cache.activeCenter, "active-center", source);
-		renderButtonPart(&cache.hoverCenter, "hover-center", source);
-		renderButtonPart(&cache.deactivatedCenter, "deactivated-center", source);
-		renderButtonPart(&cache.pressedCenter, "pressed-center", source);
-		renderButtonPart(&cache.deactivatedInactiveCenter, "deactivated-inactive-center", source);
-		renderButtonPart(&cache.inactiveCenter, "inactive-center", source);
-		renderButtonPart(&cache.hoverInactiveCenter, "hover-inactive-center", source);
+		renderPart(&cache.activeCenter, "active-center", source, mButtonWidth, mButtonHeight);
+		renderPart(&cache.hoverCenter, "hover-center", source, mButtonWidth, mButtonHeight);
+		renderPart(&cache.deactivatedCenter, "deactivated-center", source, mButtonWidth, mButtonHeight);
+		renderPart(&cache.pressedCenter, "pressed-center", source, mButtonWidth, mButtonHeight);
+		renderPart(&cache.deactivatedInactiveCenter, "deactivated-inactive-center", source, mButtonWidth, mButtonHeight);
+		renderPart(&cache.inactiveCenter, "inactive-center", source, mButtonWidth, mButtonHeight);
+		renderPart(&cache.hoverInactiveCenter, "hover-inactive-center", source, mButtonWidth, mButtonHeight);
 	};
 	
 	renderButton(mCloseButtonCache, mCloseButton);
@@ -164,6 +163,16 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 	renderButton(mMinimizeButtonCache, mMinimizeButton);
 	renderButton(mRestoreButtonCache, mRestoreButton);
 	
+	//Prepare decoration fixed-sized blocks
+	renderPart(&mActiveDecoration.topLeft, "decoration-topleft", mDecoration, mTitleHeight, mTitleHeight);
+	renderPart(&mActiveDecoration.topRight, "decoration-topright", mDecoration, mTitleHeight, mTitleHeight);
+	renderPart(&mActiveDecoration.bottomLeft, "decoration-bottomleft", mDecoration, mTitleHeight, mTitleHeight);
+	renderPart(&mActiveDecoration.bottomRight, "decoration-bottomright", mDecoration, mTitleHeight, mTitleHeight);
+	
+	renderPart(&mInactiveDecoration.topLeft, "decoration-inactive-topleft", mDecoration, mTitleHeight, mTitleHeight);
+	renderPart(&mInactiveDecoration.topRight, "decoration-inactive-topright", mDecoration, mTitleHeight, mTitleHeight);
+	renderPart(&mInactiveDecoration.bottomLeft, "decoration-inactive-bottomleft", mDecoration, mTitleHeight, mTitleHeight);
+	renderPart(&mInactiveDecoration.bottomRight, "decoration-inactive-bottomright", mDecoration, mTitleHeight, mTitleHeight);
 	
 	return true;
 }
