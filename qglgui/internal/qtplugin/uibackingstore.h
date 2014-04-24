@@ -47,15 +47,19 @@ public:
 	void flush(QWindow *window, const QRegion &region, const QPoint &offset);
 	void resize(const QSize &size, const QRegion &staticContents);
 	bool scroll(const QRegion &area, int dx, int dy);
+	virtual void beginPaint(const QRegion &);
+	virtual void endPaint();
 
 	QPixmap grabWindow(WId window, const QRect &rect) const;
 
 	static UIBackingStore *backingStoreByWinId(WId id);
 
 private:
+	void resize(const QSize &size);
 	void clearMap();
 
 	QImage image;
+	QSize mRequestedSize;
 
 	std::map<WId, QRect> window_area_map;
 	static std::map<WId, UIBackingStore *> win_id_to_backing_store_map;

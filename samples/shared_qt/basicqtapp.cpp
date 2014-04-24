@@ -20,7 +20,8 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	ui->selectedSample->addItem("Styles");
 	ui->selectedSample->addItem("Tree");
 	
-	move(0, 0);
+	setGeometry(QRect(0, 0, 100, 100));
+	move(0,0);
 }
 
 BasicQtApp::~BasicQtApp()

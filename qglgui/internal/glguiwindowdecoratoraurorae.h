@@ -42,12 +42,17 @@ class GlUIWindowDecoratorAurorae : public GlUIWindowDecorator
 {
 public:
 	virtual void SetTheme(const std::string &path, const std::string &name);
+	
+	virtual QMargins GetFrameMargins();
+	
+	virtual void Render(QWindow *window, QPaintDevice *image);
 
 private:
 	bool LoadGeneral(QSettings &settings);
 	bool LoadLayout(QSettings &settings);
 	bool LoadResources();
 	bool PrecacheResources();
+	void CacheBorders(bool isActive, int width, int height);
 	QColor SplitColor(QStringList color);
 
 	std::string mThemePath;
@@ -112,6 +117,9 @@ private:
 	ButtonCache mMaximizeButtonCache;
 	ButtonCache mMinimizeButtonCache;
 	ButtonCache mRestoreButtonCache;
+	
+	void renderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
+	void renderButton(ButtonCache &cache, QSvgRenderer &source);
 	
 };
 

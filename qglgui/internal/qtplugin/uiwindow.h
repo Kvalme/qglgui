@@ -45,10 +45,7 @@ public:
 	void setWindowState(Qt::WindowState state);
 	void setWindowFlags(Qt::WindowFlags flags);
 
-	QMargins frameMargins() const
-	{
-		return margins;
-	}
+	QMargins frameMargins() const;
 
 	void setVisible(bool visible);
 	bool isVisible()
@@ -89,6 +86,7 @@ public:
 private:
 	void setFrameMarginsEnabled(bool enabled);
 	void setGeometryImpl(const QRect &rect);
+	void checkDecorations();
 
 	QRect normal_geometry;
 	QMargins margins;
@@ -102,6 +100,7 @@ private:
 	qreal opacity_level;
 
 	static UIWindow *top_level_window;
+	bool isDecorationsNeeded = false;
 };
 
 }

@@ -33,6 +33,7 @@
 #include <qguiapplication.h>
 #include <QScreen>
 #include <private/qguiapplication_p.h>
+#include <qglgui/glguiwindowdecorator.h>
 
 using namespace QGL;
 
@@ -75,7 +76,7 @@ void UIBackingStore::clearMap()
 	}
 	window_area_map.clear();
 }
-
+#include <iostream>
 void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint &offset)
 {
 	PROFILE_FUNCTION
@@ -88,17 +89,28 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	QRegion clipped = QRect(0, 0, window->width(), window->height());
 	clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);
 
+//	QRegion clipped = QRect(0, 0, imageSize.width(), imageSize.height());
+
 	QRect bounds = clipped.boundingRect().translated(offset);
 	if (bounds.isNull()) return;
+
+	std::cerr << "Bounds:" << bounds.x() << ":" << bounds.y() << "->" << bounds.width() << ":" << bounds.height() << std::endl;
 
 	WId id = window->winId();
 
 	window_area_map[id] = bounds;
 	win_id_to_backing_store_map[id] = this;
 
-	QPixmap pix = grabWindow(id, bounds);
+	UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
+	GlUIWindowDecorator *decorator = i->getUi()->getDecorator();
+	if (decorator)
+	{
+		decorator->Render(window, &image);
+	}
 
-	UIIntegration *i = static_cast<UIIntegration *> (QGuiApplicationPrivate::platform_integration);
+	QPixmap pix = grabWindow(id, QRect(QPoint(0, 0), image.size()));
+	std::cerr << "Pixmap:" << pix.rect().x() << ":" << pix.rect().y() << "->" << pix.width() << ":" << pix.height() << std::endl;
+	std::cerr << "Image:" << image.size().width()<<":"<<image.size().height()<<std::endl;
 	i->getUi()->iSetTexture(id, pix);
 }
 
@@ -113,11 +125,34 @@ void UIBackingStore::resize(const QSize &size, const QRegion &staticContents)
 {
 	PROFILE_FUNCTION
 
+	mRequestedSize = size;
+}
+
+void UIBackingStore::beginPaint(const QRegion &r)
+{
+	QPlatformBackingStore::beginPaint(r);
+
+	resize(mRequestedSize);
+}
+
+void UIBackingStore::endPaint()
+{
+	QPlatformBackingStore::endPaint();
+}
+
+void UIBackingStore::resize(const QSize &size)
+{
 	QImage::Format format = QGuiApplication::primaryScreen()->handle()->format();
-	if (image.size() != size)
+
+	QMargins margins = window()->frameMargins();
+
+	QSize sizeWithMargins = size + QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
+
+	if (image.size() != sizeWithMargins)
 	{
-		image = QImage(size, format);
+		image = QImage(sizeWithMargins, format);
 	}
+	
 	clearMap();
 }
 
@@ -154,7 +189,7 @@ QPixmap UIBackingStore::grabWindow(WId window, const QRect &rect) const
 	if (adjusted.height() <= 0)
 		adjusted.setHeight(area.height());
 
-	adjusted = adjusted.translated(area.topLeft()) & area;
+	//adjusted = adjusted.translated(area.topLeft()) & area;
 
 	if (adjusted.isEmpty()) return QPixmap();
 

@@ -29,6 +29,10 @@
 #pragma once
 
 #include <string>
+#include <QMargins>
+
+class QWindow;
+class QPaintDevice;
 
 namespace QGL
 {
@@ -41,8 +45,11 @@ public:
 	 * @param name theme name
 	 */
 	virtual void SetTheme(const std::string &path, const std::string &name) = 0;
+	virtual QMargins GetFrameMargins() = 0;
+	virtual void Render(QWindow *window, QPaintDevice *image) = 0;
 	
 	virtual ~GlUIWindowDecorator(){};
+	
 };
 
 	

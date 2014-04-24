@@ -132,7 +132,7 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 	if (glIsTexture(window.mTexId) == GL_FALSE) return;
 	glBindTexture(GL_TEXTURE_2D, window.mTexId);
 
-	QRect geometry = window.mWindow->geometry();
+	QRect geometry = window.mWindow->window()->frameGeometry();
 
 	float xs = geometry.x();
 	float ys = geometry.y();
@@ -161,7 +161,7 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 
 	glEnd();
 }
-
+#include <iostream>
 void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *window)
 {
 	PROFILE_FUNCTION
@@ -179,8 +179,8 @@ void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *wind
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window->mWindow->window()->width(),
-				 window->mWindow->window()->height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, window->mTextureBuffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window->mWindow->window()->frameGeometry().width(),
+				 window->mWindow->window()->frameGeometry().height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, window->mTextureBuffer);
 
 	window->mIsTextureChanged = false;
 }

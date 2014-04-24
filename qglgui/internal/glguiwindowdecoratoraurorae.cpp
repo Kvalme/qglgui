@@ -31,10 +31,12 @@
 #include "libcppprofiler/src/cppprofiler.h"
 #include <QSettings>
 #include <QStringList>
+#include <QMargins>
 #include <qguiapplication.h>
 #include <QImage>
 #include <QScreen>
 #include <qpaintengine.h>
+#include <QWindow>
 
 #include <iostream>
 
@@ -136,19 +138,16 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 	return true;
 }
 
-bool GlUIWindowDecoratorAurorae::PrecacheResources()
+void GlUIWindowDecoratorAurorae::renderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height)
 {
-	PROFILE_FUNCTION
-	
-	auto renderPart = [&](QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height)
-	{
 		*image = new QImage(width, height, QImage::Format_ARGB32);
 		(*image)->fill(QColor(0, 0, 0, 0));
 		QPainter imagePainter(*image);
 		source.render(&imagePainter, elementId);
-	};
-	auto renderButton = [&](ButtonCache &cache, QSvgRenderer &source)
-	{
+}
+
+void GlUIWindowDecoratorAurorae::renderButton(GlUIWindowDecoratorAurorae::ButtonCache &cache, QSvgRenderer &source)
+{
 		renderPart(&cache.activeCenter, "active-center", source, mButtonWidth, mButtonHeight);
 		renderPart(&cache.hoverCenter, "hover-center", source, mButtonWidth, mButtonHeight);
 		renderPart(&cache.deactivatedCenter, "deactivated-center", source, mButtonWidth, mButtonHeight);
@@ -156,7 +155,12 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 		renderPart(&cache.deactivatedInactiveCenter, "deactivated-inactive-center", source, mButtonWidth, mButtonHeight);
 		renderPart(&cache.inactiveCenter, "inactive-center", source, mButtonWidth, mButtonHeight);
 		renderPart(&cache.hoverInactiveCenter, "hover-inactive-center", source, mButtonWidth, mButtonHeight);
-	};
+}
+
+
+bool GlUIWindowDecoratorAurorae::PrecacheResources()
+{
+	PROFILE_FUNCTION
 	
 	renderButton(mCloseButtonCache, mCloseButton);
 	renderButton(mMaximizeButtonCache, mMaximizeButton);
@@ -176,3 +180,72 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 	
 	return true;
 }
+
+QMargins GlUIWindowDecoratorAurorae::GetFrameMargins()
+{
+	return QMargins(mBorderLeft, mTitleHeight, mBorderRight, mBorderBottom);
+}
+
+void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
+{
+	//Render fixed parts
+	QPainter painter(image);
+	QRect geom = window->geometry();
+//	QMargins m = window->frameMargins();
+	DecorationCache *decoration = window->isActive() ? &mActiveDecoration : &mInactiveDecoration;
+	
+	CacheBorders(window->isActive(), geom.width(), geom.height());
+	
+	std::cerr<<"Geom:"<<geom.x()<<":"<<geom.y()<<"->"<<geom.width()<<":"<<geom.height()<<std::endl;
+	
+	//corners
+	QPoint target(0, 0);
+	painter.drawImage(target, *(decoration->topLeft));
+	
+ 	target.setX(mBorderLeft + geom.width());
+	painter.drawImage(target, *(decoration->topRight));
+	
+	target.setX(0);
+	target.setY(mTitleHeight + geom.height());
+	painter.drawImage(target, *(decoration->bottomLeft));
+	
+	target.setX(mBorderLeft + geom.width());
+	painter.drawImage(target, *(decoration->bottomRight));
+	
+	//draw borders
+	target.setX(mBorderLeft);
+	target.setY(0);
+	painter.drawImage(target, *(decoration->top));
+
+	target.setX(mBorderLeft);
+	target.setY(mTitleHeight + geom.height());
+	painter.drawImage(target, *(decoration->bottom));
+
+	target.setX(0);
+	target.setY(mTitleHeight);
+	painter.drawImage(target, *(decoration->left));
+
+	target.setX(mBorderLeft + geom.width());
+	target.setY(mTitleHeight);
+	painter.drawImage(target, *(decoration->right));
+
+}
+
+void GlUIWindowDecoratorAurorae::CacheBorders(bool isActive, int width, int height)
+{
+	if (isActive)
+	{
+		renderPart(&mActiveDecoration.top, "decoration-top", mDecoration, width, mTitleHeight);
+		renderPart(&mActiveDecoration.bottom, "decoration-bottom", mDecoration, width, mBorderBottom);
+		renderPart(&mActiveDecoration.left, "decoration-left", mDecoration, mBorderLeft, height);
+		renderPart(&mActiveDecoration.right, "decoration-right", mDecoration, mBorderRight, height);
+	}
+	else
+	{
+		renderPart(&mInactiveDecoration.top, "decoration-inactive-top", mDecoration, width, mTitleHeight);
+		renderPart(&mInactiveDecoration.bottom, "decoration-inactive-bottom", mDecoration, width, mBorderBottom);
+		renderPart(&mInactiveDecoration.left, "decoration-inactive-left", mDecoration, mBorderLeft, height);
+		renderPart(&mInactiveDecoration.right, "decoration-inactive-right", mDecoration, mBorderRight, height);
+	}
+}
+

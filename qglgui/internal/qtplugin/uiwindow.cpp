@@ -30,12 +30,14 @@
 #include "libcppprofiler/src/cppprofiler.h"
 #include "uiintegration.h"
 #include <qglgui/internal/glguiinternalbase.h>
+#include <qglgui/glguiwindowdecorator.h>
 
 #include <qpa/qplatformscreen.h>
 #include <qpa/qwindowsysteminterface.h>
 
 #include <private/qwindow_p.h>
 #include <private/qguiapplication_p.h>
+
 
 using namespace QGL;
 
@@ -63,6 +65,8 @@ UIWindow::UIWindow(QWindow *window) :
 	win_id = ++counter;
 
 	raise();
+	
+	checkDecorations();
 }
 
 UIWindow::~UIWindow()
@@ -203,6 +207,9 @@ void UIWindow::setWindowState(Qt::WindowState state)
 		default:
 			break;
 	}
+	
+	checkDecorations();
+
 	QWindowSystemInterface::handleWindowStateChanged(window(), state);
 }
 
@@ -280,4 +287,34 @@ void UIWindow::propagateSizeHints()
 //	QPlatformWindow::propagateSizeHints();
 }
 
+QMargins UIWindow::frameMargins() const
+{
+	if (isDecorationsNeeded)
+	{
+		UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
+		GlUIWindowDecorator *decorator = i->getUi()->getDecorator();
+		if (decorator) return decorator->GetFrameMargins();
+	}
+	return QPlatformWindow::frameMargins();
+}
 
+void UIWindow::checkDecorations()
+{
+	isDecorationsNeeded = false;
+	switch (window()->type())
+	{
+		case Qt::Window:
+		case Qt::Widget:
+		case Qt::Dialog:
+		case Qt::Tool:
+		case Qt::Drawer:
+			isDecorationsNeeded = true;
+			break;
+		default:
+			break;
+	}
+	if (window()->flags() & Qt::FramelessWindowHint || window()->windowState() == Qt::WindowFullScreen)
+		isDecorationsNeeded = false;
+	if (window()->flags() & Qt::BypassWindowManagerHint)
+		isDecorationsNeeded = false;
+}
