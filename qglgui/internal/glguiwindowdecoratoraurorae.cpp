@@ -32,11 +32,12 @@
 #include <QSettings>
 #include <QStringList>
 #include <QMargins>
-#include <qfile.h>
-#include <qguiapplication.h>
+#include <QFile>
+#include <QGuiApplication>
 #include <QImage>
 #include <QScreen>
-#include <qpaintengine.h>
+#include <QPaintEngine>
+#include <QPainter>
 #include <QWindow>
 
 using namespace QGL;
@@ -60,6 +61,8 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 	if (!LoadLayout(settings))throw std::runtime_error("Unable to load theme. Unable to load [Layout] section");
 	if (!LoadResources())throw std::runtime_error("Unable to load theme. Unable to load theme files");
 	if (!PrecacheResources())throw std::runtime_error("Unable to load theme. Unable to cache resources");
+	
+	
 }
 
 bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
@@ -108,7 +111,7 @@ bool GlUIWindowDecoratorAurorae::LoadLayout(QSettings &settings)
 	mPaddingBottom = settings.value("Layout/PaddingBottom").toUInt();
 	mPaddingRight = settings.value("Layout/PaddingRight").toUInt();
 	mPaddingLeft = settings.value("Layout/PaddingLeft").toUInt();
-
+	
 	return true;
 }
 
@@ -151,6 +154,9 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 
 void GlUIWindowDecoratorAurorae::renderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height)
 {
+	PROFILE_FUNCTION
+	
+	delete *image;
 	*image = new QImage(width, height, QImage::Format_ARGB32);
 	(*image)->fill(QColor(0, 0, 0, 0));
 	QPainter imagePainter(*image);
@@ -159,6 +165,8 @@ void GlUIWindowDecoratorAurorae::renderPart(QImage **image, const QString &eleme
 
 void GlUIWindowDecoratorAurorae::renderButton(GlUIWindowDecoratorAurorae::ButtonCache &cache, QSvgRenderer &source)
 {
+	PROFILE_FUNCTION
+	
 	renderPart(&cache.activeCenter, "active-center", source, mButtonWidth, mButtonHeight);
 	renderPart(&cache.hoverCenter, "hover-center", source, mButtonWidth, mButtonHeight);
 	renderPart(&cache.deactivatedCenter, "deactivated-center", source, mButtonWidth, mButtonHeight);
@@ -172,6 +180,10 @@ void GlUIWindowDecoratorAurorae::renderButton(GlUIWindowDecoratorAurorae::Button
 bool GlUIWindowDecoratorAurorae::PrecacheResources()
 {
 	PROFILE_FUNCTION
+	
+	mTitleFont = QFont("Arial", mTitleHeight);
+	mTitleFontMetrics = new QFontMetrics(mTitleFont);
+	
 
 	renderButton(mCloseButtonCache, mCloseButton);
 	renderButton(mMaximizeButtonCache, mMaximizeButton);
@@ -179,15 +191,15 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 	renderButton(mRestoreButtonCache, mRestoreButton);
 
 	//Prepare decoration fixed-sized blocks
-	renderPart(&mActiveDecoration.topLeft, "decoration-topleft", mDecoration, mBorderLeft, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mActiveDecoration.topRight, "decoration-topright", mDecoration, mBorderRight, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mActiveDecoration.bottomLeft, "decoration-bottomleft", mDecoration, mBorderLeft, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mActiveDecoration.bottomRight, "decoration-bottomright", mDecoration, mBorderRight, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mActiveDecoration.topLeft, "decoration-topleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mActiveDecoration.topRight, "decoration-topright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mActiveDecoration.bottomLeft, "decoration-bottomleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mActiveDecoration.bottomRight, "decoration-bottomright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
 
-	renderPart(&mInactiveDecoration.topLeft, "decoration-inactive-topleft", mDecoration, mBorderLeft, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mInactiveDecoration.topRight, "decoration-inactive-topright", mDecoration, mBorderRight, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mInactiveDecoration.bottomLeft, "decoration-inactive-bottomleft", mDecoration, mBorderLeft, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mInactiveDecoration.bottomRight, "decoration-inactive-bottomright", mDecoration, mBorderRight, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mInactiveDecoration.topLeft, "decoration-inactive-topleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mInactiveDecoration.topRight, "decoration-inactive-topright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mInactiveDecoration.bottomLeft, "decoration-inactive-bottomleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
+	renderPart(&mInactiveDecoration.bottomRight, "decoration-inactive-bottomright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
 
 	return true;
 }
@@ -196,7 +208,7 @@ QMargins GlUIWindowDecoratorAurorae::GetFrameMargins()
 {
 	PROFILE_FUNCTION
 
-	return QMargins(mBorderLeft, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop, mBorderRight, mBorderBottom);
+	return QMargins(mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop, mBorderRight, mBorderBottom);
 }
 
 void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
@@ -222,7 +234,7 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 	painter.drawImage(target, *(decoration->topRight));
 
 	target.setX(0);
-	target.setY(mTitleHeight + geom.height() + mTitleEdgeBottom + mTitleEdgeTop);
+	target.setY(mTitleFontMetrics->height() + geom.height() + mTitleEdgeBottom + mTitleEdgeTop);
 	painter.drawImage(target, *(decoration->bottomLeft));
 
 	target.setX(mBorderLeft + geom.width());
@@ -234,30 +246,32 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 	painter.drawImage(target, *(decoration->top));
 
 	target.setX(mBorderLeft);
-	target.setY(mTitleHeight + geom.height());
+	target.setY(mTitleEdgeBottom + mTitleEdgeTop + mTitleFontMetrics->height() + geom.height());
 	painter.drawImage(target, *(decoration->bottom));
 
 	target.setX(0);
-	target.setY(mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
+	target.setY(mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
 	painter.drawImage(target, *(decoration->left));
 
 	target.setX(mBorderLeft + geom.width());
-	target.setY(mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
+	target.setY(mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
 	painter.drawImage(target, *(decoration->right));
 	
 	//draw buttons
 	target.setX(mBorderLeft + geom.width() - mButtonSpacing - mButtonWidth);
-	target.setY(mButtonMarginTop + mTitleEdgeTop);
+	target.setY(mPaddingTop);
 	painter.drawImage(target, *(mCloseButtonCache.activeCenter));
 	
 
 	//draw text
-	target.setX(mBorderLeft);
-	target.setY(mTitleEdgeTop);
-	QRect rect(target, QSize(geom.width(), mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop));
+	
+	target.setX(mBorderLeft + mPaddingLeft);
+	target.setY(mPaddingTop);
+	QRect rect(target, QSize(geom.width(), mTitleFontMetrics->height()));
 	painter.setPen(textColor);
 	painter.setBrush(QBrush(textColor));
-	painter.drawText(rect, Qt::AlignCenter, window->title());
+	painter.setFont(mTitleFont);
+	painter.drawText(rect, mTitleAlignment, window->title());
 	
 	
 }
@@ -268,14 +282,14 @@ void GlUIWindowDecoratorAurorae::CacheBorders(bool isActive, int width, int heig
 
 	if (isActive)
 	{
-		renderPart(&mActiveDecoration.top, "decoration-top", mDecoration, width, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
+		renderPart(&mActiveDecoration.top, "decoration-top", mDecoration, width, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
 		renderPart(&mActiveDecoration.bottom, "decoration-bottom", mDecoration, width, mBorderBottom);
 		renderPart(&mActiveDecoration.left, "decoration-left", mDecoration, mBorderLeft, height);
 		renderPart(&mActiveDecoration.right, "decoration-right", mDecoration, mBorderRight, height);
 	}
 	else
 	{
-		renderPart(&mInactiveDecoration.top, "decoration-inactive-top", mDecoration, width, mTitleHeight + mTitleEdgeBottom + mTitleEdgeTop);
+		renderPart(&mInactiveDecoration.top, "decoration-inactive-top", mDecoration, width, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
 		renderPart(&mInactiveDecoration.bottom, "decoration-inactive-bottom", mDecoration, width, mBorderBottom);
 		renderPart(&mInactiveDecoration.left, "decoration-inactive-left", mDecoration, mBorderLeft, height);
 		renderPart(&mInactiveDecoration.right, "decoration-inactive-right", mDecoration, mBorderRight, height);

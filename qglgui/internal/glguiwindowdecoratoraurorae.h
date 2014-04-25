@@ -32,8 +32,10 @@
 #include <QRect>
 #include <QSettings>
 #include <QSvgRenderer>
+#include <QFont>
 
 class QImage;
+class QFontMetrics;
 
 namespace QGL
 {
@@ -117,6 +119,8 @@ private:
 	ButtonCache mMaximizeButtonCache;
 	ButtonCache mMinimizeButtonCache;
 	ButtonCache mRestoreButtonCache;
+	QFont mTitleFont;
+	QFontMetrics *mTitleFontMetrics;
 	
 	void renderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
 	void renderButton(ButtonCache &cache, QSvgRenderer &source);
