@@ -67,7 +67,7 @@ void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 		mCurrent->show();
 		QDesktopWidget desktop;
 		
-		QRect geometry = mCurrent->geometry();
+		QRect geometry = mCurrent->frameGeometry();
 		QPoint pos(desktop.geometry().width() - geometry.width(), desktop.geometry().height() - geometry.height()) ;
 		mCurrent->move(pos);
 	}
