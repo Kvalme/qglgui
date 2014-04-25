@@ -110,7 +110,7 @@ GlGuiInternalBase::Window::Window(UIWindow *w) :
 	PROFILE_FUNCTION
 
 }
-#include <iostream>
+
 void GlGuiInternalBase::InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION

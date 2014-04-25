@@ -35,7 +35,6 @@
 #include "styles/widgetgallery.h"
 
 #include <memory>
-#include <iostream>
 
 #include "libcppprofiler/src/cppprofiler.h"
 #include "qglgui/glfwhelper.h"

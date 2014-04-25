@@ -6,7 +6,7 @@
 #include "styles/widgetgallery.h"
 #include "tree/tree.h"
 #include <qdesktopwidget.h>
-#include <iostream>
+
 BasicQtApp::BasicQtApp(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::BasicQtApp),

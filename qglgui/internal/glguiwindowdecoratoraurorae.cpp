@@ -38,8 +38,6 @@
 #include <qpaintengine.h>
 #include <QWindow>
 
-#include <iostream>
-
 using namespace QGL;
 
 void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::string &name)
@@ -199,8 +197,6 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 	DecorationCache *decoration = window->isActive() ? &mActiveDecoration : &mInactiveDecoration;
 	
 	CacheBorders(window->isActive(), geom.width(), geom.height());
-	
-	std::cerr<<"Geom:"<<geom.x()<<":"<<geom.y()<<"->"<<geom.width()<<":"<<geom.height()<<std::endl;
 	
 	//corners
 	QPoint target(0, 0);

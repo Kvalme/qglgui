@@ -161,7 +161,7 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 
 	glEnd();
 }
-#include <iostream>
+
 void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *window)
 {
 	PROFILE_FUNCTION

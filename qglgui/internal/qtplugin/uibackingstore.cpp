@@ -52,6 +52,7 @@ UIBackingStore::~UIBackingStore()
 {
 	PROFILE_FUNCTION
 
+	delete mWindowImage;
 	clearMap();
 }
 
@@ -87,15 +88,11 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	QSize imageSize = image.size();
 	if (imageSize.isEmpty() || region.isEmpty()) return;
 
-	/*	QRegion clipped = QRect(0, 0, window->width(), window->height());
-		clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);*/
-
-	QRegion clipped = QRect(0, 0, imageSize.width(), imageSize.height());
+	QRegion clipped = QRect(0, 0, window->width(), window->height());
+	clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);
 
 	QRect bounds = clipped.boundingRect().translated(offset);
 	if (bounds.isNull()) return;
-
-	std::cerr << "Bounds:" << bounds.x() << ":" << bounds.y() << "->" << bounds.width() << ":" << bounds.height() << std::endl;
 
 	WId id = window->winId();
 
@@ -103,15 +100,17 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	win_id_to_backing_store_map[id] = this;
 
 	UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
-	GlUIWindowDecorator *decorator = i->getUi()->getDecorator();
-	if (decorator)
+	
+	if (UiWindow()->IsDecorated())
 	{
-		decorator->Render(window, &image);
+		GlUIWindowDecorator *decorator = i->getUi()->getDecorator();
+		if (decorator)
+		{
+			decorator->Render(window, &image);
+		}
 	}
 
 	QPixmap pix = grabWindow(id, QRect(QPoint(0, 0), image.size()));
-	std::cerr << "Pixmap:" << pix.rect().x() << ":" << pix.rect().y() << "->" << pix.width() << ":" << pix.height() << std::endl;
-	std::cerr << "Image:" << image.size().width() << ":" << image.size().height() << std::endl;
 	i->getUi()->iSetTexture(id, pix);
 }
 
@@ -121,7 +120,6 @@ QPaintDevice *UIBackingStore::paintDevice()
 
 	if (UiWindow()->IsDecorated())
 		return GetWindowPaintDevice();
-
 	else return &image;
 }
 
@@ -154,14 +152,23 @@ void UIBackingStore::resize(const QSize &size)
 
 	QImage::Format format = QGuiApplication::primaryScreen()->handle()->format();
 
-	QMargins margins = window()->frameMargins();
-
+	QMargins margins(0, 0, 0, 0);
+	
+	if (UiWindow()->IsDecorated())
+	{
+		margins = window()->frameMargins();
+	}
+	
 	QSize sizeWithMargins = size + QSize(margins.left() + margins.right(), margins.top() + margins.bottom());
 
 	if (image.size() != sizeWithMargins)
 	{
 		image = QImage(sizeWithMargins, format);
+		image.fill(Qt::transparent);
 	}
+	
+	delete mWindowImage;
+	mWindowImage = nullptr;
 
 	clearMap();
 }
@@ -210,7 +217,7 @@ QPaintDevice *UIBackingStore::GetWindowPaintDevice()
 {
 	QMargins margins = UiWindow()->frameMargins();
 
-	if (!margins.isNull() && margins != mLastWindowMargins)
+	if ((!margins.isNull() && margins != mLastWindowMargins) || !mWindowImage)
 	{
 		delete mWindowImage;
 
