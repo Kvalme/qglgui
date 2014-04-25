@@ -6,7 +6,7 @@
 #include "styles/widgetgallery.h"
 #include "tree/tree.h"
 #include <qdesktopwidget.h>
-
+#include <iostream>
 BasicQtApp::BasicQtApp(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::BasicQtApp),
@@ -20,8 +20,8 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	ui->selectedSample->addItem("Styles");
 	ui->selectedSample->addItem("Tree");
 	
-	setGeometry(QRect(0, 0, 100, 100));
-	move(0,0);
+	setGeometry(QRect(0, 0, 200, 200));
+	move(0, 0);
 }
 
 BasicQtApp::~BasicQtApp()
@@ -38,6 +38,7 @@ void BasicQtApp::on_horizontalSlider_sliderMoved(int position)
 
 	float amount = (float)position / (float)ui->horizontalSlider->maximum();
 	setWindowOpacity(1.0 - amount);
+	
 }
 
 void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)

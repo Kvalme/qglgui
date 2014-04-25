@@ -34,9 +34,11 @@
 #include <QImage>
 
 #include <map>
+#include "uiwindow.h"
 
 namespace QGL
 {
+
 class UIBackingStore : public QPlatformBackingStore
 {
 public:
@@ -57,8 +59,12 @@ public:
 private:
 	void resize(const QSize &size);
 	void clearMap();
+	QPaintDevice* GetWindowPaintDevice();
+	UIWindow* UiWindow() { return static_cast<UIWindow*>(window()->handle());}
 
 	QImage image;
+	QImage *mWindowImage = 0;
+	QMargins mLastWindowMargins;
 	QSize mRequestedSize;
 
 	std::map<WId, QRect> window_area_map;

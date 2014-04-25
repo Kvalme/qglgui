@@ -54,6 +54,7 @@ UIWindow::UIWindow(QWindow *window) :
 {
 	PROFILE_FUNCTION
 
+	setWindowFlags(window->flags());
 	if (window->windowState() == Qt::WindowNoState)
 		setGeometry(window->geometry());
 	else
@@ -289,6 +290,8 @@ void UIWindow::propagateSizeHints()
 
 QMargins UIWindow::frameMargins() const
 {
+	PROFILE_FUNCTION
+	
 	if (isDecorationsNeeded)
 	{
 		UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
@@ -300,6 +303,8 @@ QMargins UIWindow::frameMargins() const
 
 void UIWindow::checkDecorations()
 {
+	PROFILE_FUNCTION
+	
 	isDecorationsNeeded = false;
 	switch (window()->type())
 	{

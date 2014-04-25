@@ -81,6 +81,8 @@ public:
 	bool startSystemResize(const QPoint &pos, Qt::Corner corner);
 
 	void propagateSizeHints();
+	
+	bool IsDecorated() const { return isDecorationsNeeded;}
 
 
 private:

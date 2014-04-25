@@ -183,11 +183,15 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 
 QMargins GlUIWindowDecoratorAurorae::GetFrameMargins()
 {
+	PROFILE_FUNCTION
+	
 	return QMargins(mBorderLeft, mTitleHeight, mBorderRight, mBorderBottom);
 }
 
 void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 {
+	PROFILE_FUNCTION
+	
 	//Render fixed parts
 	QPainter painter(image);
 	QRect geom = window->geometry();
@@ -233,6 +237,8 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 
 void GlUIWindowDecoratorAurorae::CacheBorders(bool isActive, int width, int height)
 {
+	PROFILE_FUNCTION
+	
 	if (isActive)
 	{
 		renderPart(&mActiveDecoration.top, "decoration-top", mDecoration, width, mTitleHeight);

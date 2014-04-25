@@ -29,6 +29,7 @@
 #include "uibackingstore.h"
 #include "libcppprofiler/src/cppprofiler.h"
 #include "uiintegration.h"
+#include "uiwindow.h"
 #include <qglgui/internal/glguiinternalbase.h>
 #include <qguiapplication.h>
 #include <QScreen>
@@ -86,10 +87,10 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	QSize imageSize = image.size();
 	if (imageSize.isEmpty() || region.isEmpty()) return;
 
-	QRegion clipped = QRect(0, 0, window->width(), window->height());
-	clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);
+	/*	QRegion clipped = QRect(0, 0, window->width(), window->height());
+		clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);*/
 
-//	QRegion clipped = QRect(0, 0, imageSize.width(), imageSize.height());
+	QRegion clipped = QRect(0, 0, imageSize.width(), imageSize.height());
 
 	QRect bounds = clipped.boundingRect().translated(offset);
 	if (bounds.isNull()) return;
@@ -110,7 +111,7 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 
 	QPixmap pix = grabWindow(id, QRect(QPoint(0, 0), image.size()));
 	std::cerr << "Pixmap:" << pix.rect().x() << ":" << pix.rect().y() << "->" << pix.width() << ":" << pix.height() << std::endl;
-	std::cerr << "Image:" << image.size().width()<<":"<<image.size().height()<<std::endl;
+	std::cerr << "Image:" << image.size().width() << ":" << image.size().height() << std::endl;
 	i->getUi()->iSetTexture(id, pix);
 }
 
@@ -118,7 +119,10 @@ QPaintDevice *UIBackingStore::paintDevice()
 {
 	PROFILE_FUNCTION
 
-	return &image;
+	if (UiWindow()->IsDecorated())
+		return GetWindowPaintDevice();
+
+	else return &image;
 }
 
 void UIBackingStore::resize(const QSize &size, const QRegion &staticContents)
@@ -130,6 +134,8 @@ void UIBackingStore::resize(const QSize &size, const QRegion &staticContents)
 
 void UIBackingStore::beginPaint(const QRegion &r)
 {
+	PROFILE_FUNCTION
+
 	QPlatformBackingStore::beginPaint(r);
 
 	resize(mRequestedSize);
@@ -137,11 +143,15 @@ void UIBackingStore::beginPaint(const QRegion &r)
 
 void UIBackingStore::endPaint()
 {
+	PROFILE_FUNCTION
+
 	QPlatformBackingStore::endPaint();
 }
 
 void UIBackingStore::resize(const QSize &size)
 {
+	PROFILE_FUNCTION
+
 	QImage::Format format = QGuiApplication::primaryScreen()->handle()->format();
 
 	QMargins margins = window()->frameMargins();
@@ -152,7 +162,7 @@ void UIBackingStore::resize(const QSize &size)
 	{
 		image = QImage(sizeWithMargins, format);
 	}
-	
+
 	clearMap();
 }
 
@@ -195,3 +205,30 @@ QPixmap UIBackingStore::grabWindow(WId window, const QRect &rect) const
 
 	return QPixmap::fromImage(image.copy(adjusted));
 }
+
+QPaintDevice *UIBackingStore::GetWindowPaintDevice()
+{
+	QMargins margins = UiWindow()->frameMargins();
+
+	if (!margins.isNull() && margins != mLastWindowMargins)
+	{
+		delete mWindowImage;
+
+		uint8_t *bits = const_cast<uint8_t *>(image.constBits());
+		uint32_t offset = margins.top() * image.bytesPerLine() + margins.left() * 4;
+		uint32_t w = window()->geometry().width();
+		uint32_t h = window()->geometry().height();
+		mWindowImage = new QImage(bits + offset, w, h, image.bytesPerLine(), image.format());
+	}
+
+	if (margins.isNull())
+	{
+		delete mWindowImage;
+		mWindowImage = 0;
+	}
+
+	mLastWindowMargins = margins;
+
+	return (mWindowImage ? mWindowImage : &image);
+}
+
