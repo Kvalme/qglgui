@@ -6,6 +6,12 @@
 #include "styles/widgetgallery.h"
 #include "tree/tree.h"
 #include <qdesktopwidget.h>
+#include <QDir>
+
+#include "qglgui/glgui.h"
+using namespace QGL;
+
+extern std::shared_ptr<GlGui> gui;
 
 BasicQtApp::BasicQtApp(QWidget *parent) :
 	QMainWindow(parent),
@@ -22,6 +28,13 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	
 	setGeometry(QRect(0, 0, 200, 200));
 	move(0, 0);
+	
+	//List decorations
+	QDir dir("../../../windowdecorations");
+	QStringList decorations = dir.entryList();
+	decorations.removeFirst();
+	decorations.removeFirst();
+	ui->selectedDecoration->addItems(decorations);
 }
 
 BasicQtApp::~BasicQtApp()
@@ -58,5 +71,10 @@ void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 		QPoint pos(desktop.geometry().width() - geometry.width(), desktop.geometry().height() - geometry.height()) ;
 		mCurrent->move(pos);
 	}
+}
+
+void BasicQtApp::on_selectedDecoration_currentIndexChanged(const QString &text)
+{
+	gui->SetWindowTheme("../../../windowdecorations", text.toUtf8().data());
 }
 

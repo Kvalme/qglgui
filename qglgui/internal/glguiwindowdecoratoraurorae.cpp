@@ -32,6 +32,7 @@
 #include <QSettings>
 #include <QStringList>
 #include <QMargins>
+#include <qfile.h>
 #include <qguiapplication.h>
 #include <QImage>
 #include <QScreen>
@@ -128,11 +129,23 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 {
 	PROFILE_FUNCTION
 	
-	if (!mCloseButton.load(QString((mThemePath + "close.svgz").c_str())) && !mCloseButton.load(QString((mThemePath + "close.svg").c_str()))) return false;
-	if (!mMaximizeButton.load(QString((mThemePath + "maximize.svgz").c_str())) && !mMaximizeButton.load(QString((mThemePath + "maximize.svg").c_str()))) return false;
-	if (!mMinimizeButton.load(QString((mThemePath + "minimize.svgz").c_str())) && !mMinimizeButton.load(QString((mThemePath + "minimize.svg").c_str()))) return false;
-	if (!mRestoreButton.load(QString((mThemePath + "restore.svgz").c_str())) && !mRestoreButton.load(QString((mThemePath + "restore.svg").c_str()))) return false;
-	if (!mDecoration.load(QString((mThemePath + "decoration.svgz").c_str())) && !mDecoration.load(QString((mThemePath + "decoration.svg").c_str()))) return false;
+	auto loadFile = [&](std::string name, QSvgRenderer &renderer)
+	{
+		if (QFile::exists(QString((mThemePath + name + ".svgz").c_str())))
+			if (!renderer.load(QString((mThemePath + name + ".svgz").c_str()))) return false;
+
+		if (QFile::exists(QString((mThemePath + name + ".svg").c_str())))
+			if (!renderer.load(QString((mThemePath + name + ".svg").c_str()))) return false;
+			
+		return true;
+	};
+	
+	if (!loadFile("close", mCloseButton))return false;
+	if (!loadFile("maximize", mMaximizeButton))return false;
+	if (!loadFile("minimize", mMinimizeButton))return false;
+	if (!loadFile("restore", mRestoreButton))return false;
+	if (!loadFile("decoration", mDecoration))return false;
+	
 	return true;
 }
 

@@ -18,6 +18,7 @@ public:
 private slots:
     void on_horizontalSlider_sliderMoved(int position);
     void on_selectedSample_currentIndexChanged ( const QString & text );
+	void on_selectedDecoration_currentIndexChanged ( const QString & text );
 
 private:
     Ui::BasicQtApp *ui;
