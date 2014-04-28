@@ -232,6 +232,7 @@ void UIWindow::lower()
 	PROFILE_FUNCTION
 
 	z_level = 0.0;
+	mIsDecorationUpdateNeeded = true;
 }
 
 void UIWindow::raise()
@@ -245,6 +246,7 @@ void UIWindow::raise()
 	top_level_window = this;
 
 	z_level = 1.0;
+	mIsDecorationUpdateNeeded = true;
 }
 
 void UIWindow::setOpacity(qreal level)
@@ -331,5 +333,5 @@ void UIWindow::checkDecorations()
 	if (window()->flags() & Qt::BypassWindowManagerHint)
 		isDecorationsNeeded = false;
 	
-	if (isDecorationsNeeded) mIsDecorationUpdateNeeded = true;
+	mIsDecorationUpdateNeeded = true;
 }

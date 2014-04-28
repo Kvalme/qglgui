@@ -54,8 +54,6 @@ public:
 
 	QPixmap grabWindow(WId window, const QRect &rect) const;
 
-	static UIBackingStore *backingStoreByWinId(WId id);
-
 private:
 	void resize(const QSize &size);
 	void clearMap();
@@ -68,6 +66,5 @@ private:
 	QSize mRequestedSize;
 
 	std::map<WId, QRect> window_area_map;
-	static std::map<WId, UIBackingStore *> win_id_to_backing_store_map;
 };
 }

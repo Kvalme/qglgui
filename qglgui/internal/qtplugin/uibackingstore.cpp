@@ -38,14 +38,12 @@
 
 using namespace QGL;
 
-std::map<WId, UIBackingStore *> UIBackingStore::win_id_to_backing_store_map;
-
 extern void qt_scrollRectInImage(QImage &img, const QRect &rect, const QPoint &offset);
 
 UIBackingStore::UIBackingStore(QWindow *window) : QPlatformBackingStore(window)
 {
 	PROFILE_FUNCTION
-
+	
 }
 
 UIBackingStore::~UIBackingStore()
@@ -56,26 +54,10 @@ UIBackingStore::~UIBackingStore()
 	clearMap();
 }
 
-UIBackingStore *UIBackingStore::backingStoreByWinId(WId id)
-{
-	PROFILE_FUNCTION
-
-	auto fnd = win_id_to_backing_store_map.find(id);
-	return (fnd == win_id_to_backing_store_map.end() ? nullptr : fnd->second);
-}
-
 void UIBackingStore::clearMap()
 {
 	PROFILE_FUNCTION
 
-	for (auto winareas : window_area_map)
-	{
-		auto backing_store = win_id_to_backing_store_map.find(winareas.first);
-		if (backing_store != win_id_to_backing_store_map.end() && backing_store->second == this)
-		{
-			win_id_to_backing_store_map.erase(backing_store);
-		}
-	}
 	window_area_map.clear();
 }
 #include <iostream>
@@ -86,18 +68,25 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	Q_UNUSED(region);
 
 	QSize imageSize = image.size();
-	if (imageSize.isEmpty() || region.isEmpty()) return;
-
+	if (imageSize.isEmpty() || region.isEmpty())
+	{
+		std::cerr<<"Redraw aborted. Nothing changed!"<<std::endl;
+		return;
+	}
+	
 	QRegion clipped = QRect(0, 0, window->width(), window->height());
 	clipped &= QRect(0, 0, imageSize.width(), imageSize.height()).translated(-offset);
 
 	QRect bounds = clipped.boundingRect().translated(offset);
-	if (bounds.isNull()) return;
+	if (bounds.isNull())
+	{
+		std::cerr<<"Redraw aborted. Empty bounds!"<<std::endl;
+		return;
+	}
 
 	WId id = window->winId();
 
 	window_area_map[id] = bounds;
-	win_id_to_backing_store_map[id] = this;
 
 	UIIntegration *i = static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration);
 	
@@ -106,7 +95,6 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 		GlUIWindowDecorator *decorator = i->getUi()->getDecorator();
 		if (decorator && (decorator->IsDecorationChanged() || UiWindow()->IsDecorationUpdateNeeded()))
 		{
-			std::cerr<<"Redrawing decorations: isDecChanged?"<<decorator->IsDecorationChanged()<<", isDecUpdNeed:"<<UiWindow()->IsDecorationUpdateNeeded()<<std::endl;
 			decorator->Render(window, &image);
 			UiWindow()->SetDecorationUpdate(false);
 		}

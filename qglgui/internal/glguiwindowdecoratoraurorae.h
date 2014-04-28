@@ -50,6 +50,8 @@ public:
 	virtual void Render(QWindow *window, QPaintDevice *image);
 	
 	virtual bool IsDecorationChanged() const;
+	
+	virtual ~GlUIWindowDecoratorAurorae();
 
 private:
 	bool LoadGeneral(QSettings &settings);

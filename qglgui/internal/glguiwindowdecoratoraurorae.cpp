@@ -40,6 +40,8 @@
 #include <QPainter>
 #include <QWindow>
 
+#include <iostream>
+
 using namespace QGL;
 
 void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::string &name)
@@ -62,8 +64,29 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 	if (!LoadLayout(settings))throw std::runtime_error("Unable to load theme. Unable to load [Layout] section");
 	if (!LoadResources())throw std::runtime_error("Unable to load theme. Unable to load theme files");
 	if (!PrecacheResources())throw std::runtime_error("Unable to load theme. Unable to cache resources");
+}
 
-
+GlUIWindowDecoratorAurorae::~GlUIWindowDecoratorAurorae()
+{
+	PROFILE_FUNCTION
+	
+	delete mTitleFontMetrics;
+	auto clearCache = [&](ButtonCache *cache)
+	{
+		delete cache->activeCenter;
+		delete cache->hoverCenter;
+		delete cache->pressedCenter;
+		delete cache->deactivatedCenter;
+		delete cache->inactiveCenter;
+		delete cache->hoverInactiveCenter;
+		delete cache->deactivatedInactiveCenter;
+		
+	};
+	
+	clearCache(&mCloseButtonCache);
+	clearCache(&mMaximizeButtonCache);
+	clearCache(&mMinimizeButtonCache);
+	clearCache(&mRestoreButtonCache);
 }
 
 bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
@@ -209,13 +232,14 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 	RenderFrame(window, image);
 
 	QPainter painter(image);
-	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
+	painter.setCompositionMode(QPainter::CompositionMode_Source);
 
 	//draw buttons
 	QPoint target(mBorderLeft + window->width() - mButtonSpacing - mButtonWidth, mPaddingTop);
 	painter.drawImage(target, *(mCloseButtonCache.activeCenter));
 
 	//draw title
+	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
 	QColor textColor = window->isActive() ? mActiveTextColor : mInactiveTextColor;
 	target.setX(mBorderLeft + mPaddingLeft);
 	target.setY(mPaddingTop);
@@ -230,15 +254,24 @@ void GlUIWindowDecoratorAurorae::RenderFrame(QWindow *window, QPaintDevice *imag
 {
 	PROFILE_FUNCTION
 
+	std::cerr<<"!AHTUNG! Rendering frame!"<<std::endl;
+	
 	QString prefix("decoration-");
 	if (!window->isActive()) prefix += "inactive-";
 
 	const int right = window->width() + mBorderLeft;
 	const int titleHeight = mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop;
 	const int bottom = window->height() + titleHeight;
-
+	
 	QPoint target(0, 0);
 	QPainter imagePainter(image);
+	imagePainter.setCompositionMode(QPainter::CompositionMode_Source);
+	
+	//Clean up image first
+	imagePainter.fillRect(QRect(0, 0, window->frameGeometry().width(), titleHeight), QColor(0, 0, 0, 0));
+	imagePainter.fillRect(QRect(0, 0, mBorderLeft, window->frameGeometry().height()), QColor(0, 0, 0, 0));
+	imagePainter.fillRect(QRect(right, 0, mBorderRight, window->frameGeometry().height()), QColor(0, 0, 0, 0));
+	imagePainter.fillRect(QRect(0, bottom, window->frameGeometry().width(), mBorderBottom), QColor(0, 0, 0, 0));
 
 	mDecoration.render(&imagePainter, prefix + "topleft", QRect(QPoint(0, 0), QSize(mBorderLeft, titleHeight)));
 	mDecoration.render(&imagePainter, prefix + "top", QRect(QPoint(mBorderLeft, 0), QSize(window->width(), titleHeight)));
