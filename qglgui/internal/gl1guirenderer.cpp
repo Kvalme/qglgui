@@ -53,6 +53,7 @@ Gl1GuiRenderer::~Gl1GuiRenderer()
 	{
 		delete[] entry.second.mTextureBuffer;
 	}
+	mWindows.clear();
 }
 
 void Gl1GuiRenderer::Render()
@@ -171,7 +172,7 @@ void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *wind
 
 	if (glIsTexture(window->mTexId) == GL_FALSE)
 	{
-		glGenTextures(1, &window->mTexId);
+		glGenTextures(1, &window->mTexId);--track-origins=yes
 	}
 
 	glBindTexture(GL_TEXTURE_2D, window->mTexId);

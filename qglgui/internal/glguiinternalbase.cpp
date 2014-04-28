@@ -50,6 +50,9 @@ GlGuiInternalBase::~GlGuiInternalBase()
 {
 	PROFILE_FUNCTION
 
+	windows.clear();
+	delete guiRenderer;
+	delete mDecorator;
 }
 
 void GlGuiInternalBase::RegisterWindowFactory(std::function<void(const std::string &name)> factory)
