@@ -84,6 +84,7 @@ protected:
 	
 	UIWindow *mKeyboardGrabWindow;
 	UIWindow *mMouseGrabWindow;
+	QWindow *mActiveWindow = nullptr;
 
 	QWindow * handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
 	Window* getWindowByPoint(QPoint point);

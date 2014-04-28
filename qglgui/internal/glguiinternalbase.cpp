@@ -119,7 +119,15 @@ void GlGuiInternalBase::InjectMouseButtonEvent(int screenId, QPoint position, Qt
 	PROFILE_FUNCTION
 
 	QWindow *wnd = handleMouseEvent(screenId, position, button, modifiers);
-	if (wnd) wnd->requestActivate();
+/*	if (wnd && mActiveWindow && wnd != mActiveWindow)
+	{
+		mActiveWindow.
+	}*/
+	if (wnd)
+	{
+		mActiveWindow = wnd;
+		mActiveWindow->requestActivate();
+	}
 	if (button != Qt::LeftButton) mMouseGrabWindow = nullptr;
 }
 
@@ -250,10 +258,9 @@ void GlGuiInternalBase::SetWindowTheme(const std::string &path, const std::strin
 	if (mDecorator)
 	{
 		mDecorator->SetTheme(path, name);
-		for(auto w : windows)
+		for(auto &w : windows)
 		{
 			QWindowSystemInterface::handleThemeChange(w.second.wnd->window());
 		}
-		
 	}
 }
