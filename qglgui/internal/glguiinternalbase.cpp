@@ -245,5 +245,12 @@ void GlGuiInternalBase::RegisterWindowDecorator(GlUIWindowDecorator *decorator)
 void GlGuiInternalBase::SetWindowTheme(const std::string &path, const std::string &name)
 {
 	if (mDecorator)
+	{
 		mDecorator->SetTheme(path, name);
+		for(auto w : windows)
+		{
+			QWindowSystemInterface::handleThemeChange(w.second.wnd->window());
+		}
+		
+	}
 }

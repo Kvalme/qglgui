@@ -83,6 +83,9 @@ public:
 	void propagateSizeHints();
 	
 	bool IsDecorated() const { return isDecorationsNeeded;}
+	
+	bool IsDecorationUpdateNeeded() const { return mIsDecorationUpdateNeeded;}
+	void SetDecorationUpdate(bool state = false) { mIsDecorationUpdateNeeded = state;}
 
 
 private:
@@ -103,6 +106,7 @@ private:
 
 	static UIWindow *top_level_window;
 	bool isDecorationsNeeded = false;
+	bool mIsDecorationUpdateNeeded = true;
 };
 
 }

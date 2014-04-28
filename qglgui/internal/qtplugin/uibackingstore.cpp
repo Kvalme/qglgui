@@ -104,9 +104,11 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	if (UiWindow()->IsDecorated())
 	{
 		GlUIWindowDecorator *decorator = i->getUi()->getDecorator();
-		if (decorator)
+		if (decorator && (decorator->IsDecorationChanged() || UiWindow()->IsDecorationUpdateNeeded()))
 		{
+			std::cerr<<"Redrawing decorations: isDecChanged?"<<decorator->IsDecorationChanged()<<", isDecUpdNeed:"<<UiWindow()->IsDecorationUpdateNeeded()<<std::endl;
 			decorator->Render(window, &image);
+			UiWindow()->SetDecorationUpdate(false);
 		}
 	}
 
@@ -126,7 +128,7 @@ QPaintDevice *UIBackingStore::paintDevice()
 void UIBackingStore::resize(const QSize &size, const QRegion &staticContents)
 {
 	PROFILE_FUNCTION
-
+	UiWindow()->SetDecorationUpdate(true);
 	mRequestedSize = size;
 }
 
@@ -164,7 +166,7 @@ void UIBackingStore::resize(const QSize &size)
 	if (image.size() != sizeWithMargins)
 	{
 		image = QImage(sizeWithMargins, format);
-		image.fill(Qt::transparent);
+		image.fill(QColor(0, 0, 0, 0));
 	}
 	
 	delete mWindowImage;

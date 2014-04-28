@@ -66,7 +66,7 @@ UIWindow::UIWindow(QWindow *window) :
 	win_id = ++counter;
 
 	raise();
-	
+	mIsDecorationUpdateNeeded = true;
 	checkDecorations();
 }
 
@@ -96,6 +96,7 @@ void UIWindow::requestActivateWindow()
 
 	if (visible)
 	{
+		if (!window()->isActive()) mIsDecorationUpdateNeeded = true;
 		QWindowSystemInterface::handleWindowActivated(window());
 	}
 }
@@ -147,6 +148,7 @@ void UIWindow::setGeometryImpl(const QRect &rect)
 
 	if (visible)
 	{
+		mIsDecorationUpdateNeeded = true;
 		QWindowSystemInterface::handleGeometryChange(window(), adjusted);
 		QWindowSystemInterface::handleExposeEvent(window(), QRect(QPoint(), adjusted.size()));
 	}
@@ -163,6 +165,8 @@ void UIWindow::setVisible(bool vis)
 
 	if (vis)
 	{
+		mIsDecorationUpdateNeeded = true;
+
 		if (window()->type() != Qt::ToolTip)
 			QWindowSystemInterface::handleWindowActivated(window());
 
@@ -217,6 +221,8 @@ void UIWindow::setWindowState(Qt::WindowState state)
 void UIWindow::setWindowFlags(Qt::WindowFlags flags)
 {
 	PROFILE_FUNCTION
+
+	mIsDecorationUpdateNeeded = true;
 
 	QPlatformWindow::setWindowFlags(flags);
 }
@@ -278,6 +284,8 @@ bool UIWindow::startSystemResize(const QPoint &pos, Qt::Corner corner)
 {
 	PROFILE_FUNCTION
 
+	mIsDecorationUpdateNeeded = true;
+
 	setMouseGrabEnabled(true);
 
 	return QPlatformWindow::startSystemResize(pos, corner);
@@ -322,4 +330,6 @@ void UIWindow::checkDecorations()
 		isDecorationsNeeded = false;
 	if (window()->flags() & Qt::BypassWindowManagerHint)
 		isDecorationsNeeded = false;
+	
+	if (isDecorationsNeeded) mIsDecorationUpdateNeeded = true;
 }

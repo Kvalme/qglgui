@@ -48,13 +48,14 @@ public:
 	virtual QMargins GetFrameMargins();
 	
 	virtual void Render(QWindow *window, QPaintDevice *image);
+	
+	virtual bool IsDecorationChanged() const;
 
 private:
 	bool LoadGeneral(QSettings &settings);
 	bool LoadLayout(QSettings &settings);
 	bool LoadResources();
 	bool PrecacheResources();
-	void CacheBorders(bool isActive, int width, int height);
 	QColor SplitColor(QStringList color);
 
 	std::string mThemePath;
@@ -90,17 +91,6 @@ private:
 	
 	QSvgRenderer mDecoration;
 	
-	struct DecorationCache
-	{
-		QImage *topLeft = nullptr;
-		QImage *topRight = nullptr;
-		QImage *bottomLeft = nullptr;
-		QImage *bottomRight = nullptr;
-		QImage *top = nullptr;
-		QImage *right = nullptr;
-		QImage *bottom = nullptr;
-		QImage *left = nullptr;
-	};
 	struct ButtonCache
 	{
 		QImage *activeCenter = nullptr;
@@ -113,8 +103,6 @@ private:
 		QImage *deactivatedInactiveCenter = nullptr;
 	};
 	
-	DecorationCache mActiveDecoration;
-	DecorationCache mInactiveDecoration;
 	ButtonCache mCloseButtonCache;
 	ButtonCache mMaximizeButtonCache;
 	ButtonCache mMinimizeButtonCache;
@@ -122,8 +110,11 @@ private:
 	QFont mTitleFont;
 	QFontMetrics *mTitleFontMetrics;
 	
-	void renderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
-	void renderButton(ButtonCache &cache, QSvgRenderer &source);
+	bool mIsUpdateNeeded = true;
+	
+	void RenderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
+	void RenderButton(ButtonCache &cache, QSvgRenderer &source);
+	void RenderFrame(QWindow *window, QPaintDevice *image);
 	
 };
 

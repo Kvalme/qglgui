@@ -46,6 +46,7 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 {
 	PROFILE_FUNCTION
 
+	mIsUpdateNeeded = true;
 	mThemeName = name;
 	mThemePath = path + "/" + name + "/";
 
@@ -61,8 +62,8 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 	if (!LoadLayout(settings))throw std::runtime_error("Unable to load theme. Unable to load [Layout] section");
 	if (!LoadResources())throw std::runtime_error("Unable to load theme. Unable to load theme files");
 	if (!PrecacheResources())throw std::runtime_error("Unable to load theme. Unable to cache resources");
-	
-	
+
+
 }
 
 bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
@@ -111,7 +112,7 @@ bool GlUIWindowDecoratorAurorae::LoadLayout(QSettings &settings)
 	mPaddingBottom = settings.value("Layout/PaddingBottom").toUInt();
 	mPaddingRight = settings.value("Layout/PaddingRight").toUInt();
 	mPaddingLeft = settings.value("Layout/PaddingLeft").toUInt();
-	
+
 	return true;
 }
 
@@ -152,10 +153,10 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 	return true;
 }
 
-void GlUIWindowDecoratorAurorae::renderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height)
+void GlUIWindowDecoratorAurorae::RenderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height)
 {
 	PROFILE_FUNCTION
-	
+
 	delete *image;
 	*image = new QImage(width, height, QImage::Format_ARGB32);
 	(*image)->fill(QColor(0, 0, 0, 0));
@@ -163,43 +164,31 @@ void GlUIWindowDecoratorAurorae::renderPart(QImage **image, const QString &eleme
 	source.render(&imagePainter, elementId);
 }
 
-void GlUIWindowDecoratorAurorae::renderButton(GlUIWindowDecoratorAurorae::ButtonCache &cache, QSvgRenderer &source)
+void GlUIWindowDecoratorAurorae::RenderButton(GlUIWindowDecoratorAurorae::ButtonCache &cache, QSvgRenderer &source)
 {
 	PROFILE_FUNCTION
-	
-	renderPart(&cache.activeCenter, "active-center", source, mButtonWidth, mButtonHeight);
-	renderPart(&cache.hoverCenter, "hover-center", source, mButtonWidth, mButtonHeight);
-	renderPart(&cache.deactivatedCenter, "deactivated-center", source, mButtonWidth, mButtonHeight);
-	renderPart(&cache.pressedCenter, "pressed-center", source, mButtonWidth, mButtonHeight);
-	renderPart(&cache.deactivatedInactiveCenter, "deactivated-inactive-center", source, mButtonWidth, mButtonHeight);
-	renderPart(&cache.inactiveCenter, "inactive-center", source, mButtonWidth, mButtonHeight);
-	renderPart(&cache.hoverInactiveCenter, "hover-inactive-center", source, mButtonWidth, mButtonHeight);
+
+	RenderPart(&cache.activeCenter, "active-center", source, mButtonWidth, mButtonHeight);
+	RenderPart(&cache.hoverCenter, "hover-center", source, mButtonWidth, mButtonHeight);
+	RenderPart(&cache.deactivatedCenter, "deactivated-center", source, mButtonWidth, mButtonHeight);
+	RenderPart(&cache.pressedCenter, "pressed-center", source, mButtonWidth, mButtonHeight);
+	RenderPart(&cache.deactivatedInactiveCenter, "deactivated-inactive-center", source, mButtonWidth, mButtonHeight);
+	RenderPart(&cache.inactiveCenter, "inactive-center", source, mButtonWidth, mButtonHeight);
+	RenderPart(&cache.hoverInactiveCenter, "hover-inactive-center", source, mButtonWidth, mButtonHeight);
 }
 
 
 bool GlUIWindowDecoratorAurorae::PrecacheResources()
 {
 	PROFILE_FUNCTION
-	
+
 	mTitleFont = QFont("Arial", mTitleHeight);
 	mTitleFontMetrics = new QFontMetrics(mTitleFont);
-	
 
-	renderButton(mCloseButtonCache, mCloseButton);
-	renderButton(mMaximizeButtonCache, mMaximizeButton);
-	renderButton(mMinimizeButtonCache, mMinimizeButton);
-	renderButton(mRestoreButtonCache, mRestoreButton);
-
-	//Prepare decoration fixed-sized blocks
-	renderPart(&mActiveDecoration.topLeft, "decoration-topleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mActiveDecoration.topRight, "decoration-topright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mActiveDecoration.bottomLeft, "decoration-bottomleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mActiveDecoration.bottomRight, "decoration-bottomright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-
-	renderPart(&mInactiveDecoration.topLeft, "decoration-inactive-topleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mInactiveDecoration.topRight, "decoration-inactive-topright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mInactiveDecoration.bottomLeft, "decoration-inactive-bottomleft", mDecoration, mBorderLeft, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	renderPart(&mInactiveDecoration.bottomRight, "decoration-inactive-bottomright", mDecoration, mBorderRight, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
+	RenderButton(mCloseButtonCache, mCloseButton);
+	RenderButton(mMaximizeButtonCache, mMaximizeButton);
+	RenderButton(mMinimizeButtonCache, mMinimizeButton);
+	RenderButton(mRestoreButtonCache, mRestoreButton);
 
 	return true;
 }
@@ -214,85 +203,57 @@ QMargins GlUIWindowDecoratorAurorae::GetFrameMargins()
 void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 {
 	PROFILE_FUNCTION
+	
+	mIsUpdateNeeded = false;
 
-	//Render fixed parts
+	RenderFrame(window, image);
+
 	QPainter painter(image);
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
-	
-	QRect geom = window->geometry();
-//	QMargins m = window->frameMargins();
-	DecorationCache *decoration = window->isActive() ? &mActiveDecoration : &mInactiveDecoration;
-	QColor textColor = window->isActive() ? mActiveTextColor : mInactiveTextColor;
 
-	CacheBorders(window->isActive(), geom.width(), geom.height());
-
-	//corners
-	QPoint target(0, 0);
-	painter.drawImage(target, *(decoration->topLeft));
-
-	target.setX(mBorderLeft + geom.width());
-	painter.drawImage(target, *(decoration->topRight));
-
-	target.setX(0);
-	target.setY(mTitleFontMetrics->height() + geom.height() + mTitleEdgeBottom + mTitleEdgeTop);
-	painter.drawImage(target, *(decoration->bottomLeft));
-
-	target.setX(mBorderLeft + geom.width());
-	painter.drawImage(target, *(decoration->bottomRight));
-
-	//draw borders
-	target.setX(mBorderLeft);
-	target.setY(0);
-	painter.drawImage(target, *(decoration->top));
-
-	target.setX(mBorderLeft);
-	target.setY(mTitleEdgeBottom + mTitleEdgeTop + mTitleFontMetrics->height() + geom.height());
-	painter.drawImage(target, *(decoration->bottom));
-
-	target.setX(0);
-	target.setY(mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	painter.drawImage(target, *(decoration->left));
-
-	target.setX(mBorderLeft + geom.width());
-	target.setY(mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-	painter.drawImage(target, *(decoration->right));
-	
 	//draw buttons
-	target.setX(mBorderLeft + geom.width() - mButtonSpacing - mButtonWidth);
-	target.setY(mPaddingTop);
+	QPoint target(mBorderLeft + window->width() - mButtonSpacing - mButtonWidth, mPaddingTop);
 	painter.drawImage(target, *(mCloseButtonCache.activeCenter));
-	
 
-	//draw text
-	
+	//draw title
+	QColor textColor = window->isActive() ? mActiveTextColor : mInactiveTextColor;
 	target.setX(mBorderLeft + mPaddingLeft);
 	target.setY(mPaddingTop);
-	QRect rect(target, QSize(geom.width(), mTitleFontMetrics->height()));
+	QRect rect(target, QSize(window->width(), mTitleFontMetrics->height()));
 	painter.setPen(textColor);
 	painter.setBrush(QBrush(textColor));
 	painter.setFont(mTitleFont);
 	painter.drawText(rect, mTitleAlignment, window->title());
-	
-	
 }
 
-void GlUIWindowDecoratorAurorae::CacheBorders(bool isActive, int width, int height)
+void GlUIWindowDecoratorAurorae::RenderFrame(QWindow *window, QPaintDevice *image)
 {
 	PROFILE_FUNCTION
 
-	if (isActive)
-	{
-		renderPart(&mActiveDecoration.top, "decoration-top", mDecoration, width, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-		renderPart(&mActiveDecoration.bottom, "decoration-bottom", mDecoration, width, mBorderBottom);
-		renderPart(&mActiveDecoration.left, "decoration-left", mDecoration, mBorderLeft, height);
-		renderPart(&mActiveDecoration.right, "decoration-right", mDecoration, mBorderRight, height);
-	}
-	else
-	{
-		renderPart(&mInactiveDecoration.top, "decoration-inactive-top", mDecoration, width, mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop);
-		renderPart(&mInactiveDecoration.bottom, "decoration-inactive-bottom", mDecoration, width, mBorderBottom);
-		renderPart(&mInactiveDecoration.left, "decoration-inactive-left", mDecoration, mBorderLeft, height);
-		renderPart(&mInactiveDecoration.right, "decoration-inactive-right", mDecoration, mBorderRight, height);
-	}
+	QString prefix("decoration-");
+	if (!window->isActive()) prefix += "inactive-";
+
+	const int right = window->width() + mBorderLeft;
+	const int titleHeight = mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop;
+	const int bottom = window->height() + titleHeight;
+
+	QPoint target(0, 0);
+	QPainter imagePainter(image);
+
+	mDecoration.render(&imagePainter, prefix + "topleft", QRect(QPoint(0, 0), QSize(mBorderLeft, titleHeight)));
+	mDecoration.render(&imagePainter, prefix + "top", QRect(QPoint(mBorderLeft, 0), QSize(window->width(), titleHeight)));
+	mDecoration.render(&imagePainter, prefix + "topright", QRect(QPoint(right, 0), QSize(mBorderRight, titleHeight)));
+
+	mDecoration.render(&imagePainter, prefix + "left", QRect(QPoint(0, titleHeight), QSize(mBorderLeft, window->height())));
+	mDecoration.render(&imagePainter, prefix + "right", QRect(QPoint(right, titleHeight), QSize(mBorderRight, window->height())));
+
+	mDecoration.render(&imagePainter, prefix + "bottomleft", QRect(QPoint(0, bottom), QSize(mBorderLeft, mBorderBottom)));
+	mDecoration.render(&imagePainter, prefix + "bottom", QRect(QPoint(mBorderLeft, bottom), QSize(window->width(), mBorderBottom)));
+	mDecoration.render(&imagePainter, prefix + "bottomright", QRect(QPoint(right, bottom), QSize(mBorderRight, mBorderBottom)));
+}
+
+bool GlUIWindowDecoratorAurorae::IsDecorationChanged() const
+{
+	return mIsUpdateNeeded;
 }
 

@@ -47,6 +47,7 @@ public:
 	virtual void SetTheme(const std::string &path, const std::string &name) = 0;
 	virtual QMargins GetFrameMargins() = 0;
 	virtual void Render(QWindow *window, QPaintDevice *image) = 0;
+	virtual bool IsDecorationChanged() const = 0;
 	
 	virtual ~GlUIWindowDecorator(){};
 	
