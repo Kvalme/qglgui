@@ -41,8 +41,6 @@
 #include <QPainter>
 #include <QWindow>
 
-#include <iostream>
-
 using namespace QGL;
 
 void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::string &name)
@@ -253,8 +251,6 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 void GlUIWindowDecoratorAurorae::RenderFrame(QWindow *window, QPaintDevice *image)
 {
 	PROFILE_FUNCTION
-
-	std::cerr << "!AHTUNG! Rendering frame!" << std::endl;
 
 	QString prefix("decoration-");
 	if (!window->isActive()) prefix += "inactive-";
