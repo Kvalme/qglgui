@@ -267,6 +267,7 @@ void GlGuiInternalBase::SetWindowTheme(const std::string &path, const std::strin
 		mDecorator->SetTheme(path, name);
 		for(auto &w : windows)
 		{
+			w.second.wnd->setWindowModified(true);
 			QWindowSystemInterface::handleThemeChange(w.second.wnd->window());
 		}
 	}

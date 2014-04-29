@@ -145,11 +145,15 @@ void UIWindow::setGeometryImpl(const QRect &rect)
 		if (adjusted.top() + adjusted.height() < margins.top()) adjusted.translate(0, margins.top());
 	}
 
+	if (visible && (geometry().width() != adjusted.width() || geometry().height() != adjusted.height()))
+	{
+		mIsDecorationUpdateNeeded = true;
+	}
+
 	QPlatformWindow::setGeometry(adjusted);
 
 	if (visible)
 	{
-		mIsDecorationUpdateNeeded = true;
 		QWindowSystemInterface::handleGeometryChange(window(), adjusted);
 		QWindowSystemInterface::handleExposeEvent(window(), QRect(QPoint(), adjusted.size()));
 	}
@@ -287,7 +291,8 @@ bool UIWindow::setMouseGrabEnabled(bool grab)
 void UIWindow::windowEvent(QEvent *event)
 {
 	PROFILE_FUNCTION
-
+	
+	QPlatformWindow::windowEvent(event);
 }
 
 bool UIWindow::startSystemResize(const QPoint &pos, Qt::Corner corner)
