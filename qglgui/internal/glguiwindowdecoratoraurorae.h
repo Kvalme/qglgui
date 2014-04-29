@@ -134,7 +134,7 @@ private:
 	void RenderButton(ButtonCache &cache, QSvgRenderer &source);
 	void RenderFrame(QWindow *window, QPaintDevice *image);
 	void ProceedTitlebarActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
-	
+	void ProceedResizeActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 };
 
 }

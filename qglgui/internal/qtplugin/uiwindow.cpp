@@ -98,6 +98,7 @@ void UIWindow::requestActivateWindow()
 	{
 		if (!window()->isActive()) mIsDecorationUpdateNeeded = true;
 		QWindowSystemInterface::handleWindowActivated(window());
+		raise();
 	}
 }
 
@@ -241,7 +242,14 @@ void UIWindow::raise()
 
 	if (top_level_window)
 	{
-		top_level_window->lower();
+		if (top_level_window->window()->isAncestorOf(window()))
+		{
+			top_level_window->z_level = 0.9;
+		}
+		else
+		{
+			top_level_window->lower();
+		}
 	}
 	top_level_window = this;
 

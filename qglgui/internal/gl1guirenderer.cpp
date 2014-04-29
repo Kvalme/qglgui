@@ -65,9 +65,11 @@ void Gl1GuiRenderer::Render()
 
 	GLboolean blendStatus = glIsEnabled(GL_BLEND);
 	GLboolean tex2DStatus = glIsEnabled(GL_TEXTURE_2D);
+	GLboolean depthTestStatus = glIsEnabled(GL_DEPTH_TEST);
 
 	if (tex2DStatus != GL_TRUE) glEnable(GL_TEXTURE_2D);
 	if (blendStatus != GL_TRUE) glEnable(GL_BLEND);
+	if (depthTestStatus == GL_TRUE) glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glMatrixMode(GL_PROJECTION);
@@ -77,12 +79,18 @@ void Gl1GuiRenderer::Render()
 	glPushMatrix(); //Save current matrix
 
 	//Render all windows
+	std::multimap<float, WindowRenderInformation> windowOrder;
 	for (auto & entry : mWindows)
 	{
 		if (!entry.second.mWindow->isVisible())continue;
-
-		glLoadIdentity();
 		UpdateTexture(&entry.second);
+		windowOrder.insert(std::make_pair(entry.second.mWindow->getZLevel(), entry.second));
+		
+	}
+	
+	for (auto &entry : windowOrder)
+	{
+		glLoadIdentity();
 		RenderWindow(entry.second);
 	}
 
@@ -95,6 +103,7 @@ void Gl1GuiRenderer::Render()
 
 	if (tex2DStatus == GL_FALSE) glDisable(GL_TEXTURE_2D);
 	if (blendStatus == GL_FALSE) glDisable(GL_BLEND);
+	if (depthTestStatus == GL_TRUE) glEnable(GL_DEPTH_TEST);
 }
 
 void Gl1GuiRenderer::RemoveUneededWindows()

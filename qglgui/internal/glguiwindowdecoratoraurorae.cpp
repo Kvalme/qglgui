@@ -233,7 +233,6 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 	RenderFrame(window, image);
 
 	QPainter painter(image);
-	painter.setCompositionMode(QPainter::CompositionMode_Source);
 
 	//draw buttons
 	QPoint target(mBorderLeft + window->width() - mButtonSpacing - mButtonWidth, mPaddingTop);
@@ -273,6 +272,8 @@ void GlUIWindowDecoratorAurorae::RenderFrame(QWindow *window, QPaintDevice *imag
 	imagePainter.fillRect(QRect(0, 0, mBorderLeft, window->frameGeometry().height()), QColor(0, 0, 0, 0));
 	imagePainter.fillRect(QRect(right, 0, mBorderRight, window->frameGeometry().height()), QColor(0, 0, 0, 0));
 	imagePainter.fillRect(QRect(0, bottom, window->frameGeometry().width(), mBorderBottom), QColor(0, 0, 0, 0));
+
+	imagePainter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
 	mBounds.mTopLeft = QRect(QPoint(0, 0), QSize(mBorderLeft, titleHeight));
 	mBounds.mTitleBar = QRect(QPoint(mBorderLeft, 0), QSize(window->width(), titleHeight));
@@ -324,6 +325,10 @@ bool GlUIWindowDecoratorAurorae::handleMouseEvent(QWindow *wnd, QPoint local, QP
 	{
 		ProceedTitlebarActions(wnd, local, position, buttons, modifiers);
 	}
+	else
+	{
+		ProceedResizeActions(wnd, local, position, buttons, modifiers);
+	}
 	return true;
 }
 
@@ -350,3 +355,11 @@ void GlUIWindowDecoratorAurorae::ProceedTitlebarActions(QWindow *wnd, QPoint loc
 	}
 }
 
+void GlUIWindowDecoratorAurorae::ProceedResizeActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+//	UIWindow *window = static_cast<UIWindow*>(wnd->handle());
+
+//	if (buttons == Qt::NoButton && window->IsMoving()) window->MarkAsResizing(false);
+	
+	
+}
