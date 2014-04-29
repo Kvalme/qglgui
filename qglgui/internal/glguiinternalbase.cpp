@@ -164,9 +164,16 @@ QWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt::
 	}
 
 	if (!wnd) return nullptr;
-
+	
 	QPointF local = wnd->mapFromGlobal(position);
-
+	QPoint l(local.x(), local.y());
+	
+	if (mDecorator->handleMouseEvent(wnd, l, position, Qt::MouseButtons(b), modifiers))
+	{
+		//Click was handled by decorator - no need to pass it to QT
+		return wnd;
+	}
+	
 	QWindowSystemInterface::handleMouseEvent(wnd, local, position, Qt::MouseButtons(b), modifiers);
 	return wnd;
 }
@@ -181,7 +188,7 @@ GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
 		Window *tmp_wnd = &w_pair.second;
 		if (!tmp_wnd->wnd) continue;
 		if (!tmp_wnd->wnd->isVisible())continue;
-		QRect geom = tmp_wnd->wnd->geometry();
+		QRect geom = tmp_wnd->wnd->window()->frameGeometry();
 
 		if (geom.contains(point))
 		{

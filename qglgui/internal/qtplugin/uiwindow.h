@@ -86,7 +86,10 @@ public:
 	
 	bool IsDecorationUpdateNeeded() const { return mIsDecorationUpdateNeeded;}
 	void SetDecorationUpdate(bool state = false) { mIsDecorationUpdateNeeded = state;}
-
+	
+	void MarkAsMoving(bool isMoving, QPoint startPosition = QPoint()) { mIsMoving = isMoving; mMoveStartPosition = startPosition;}
+	QPoint GetMoveStartPosition() const { return mMoveStartPosition;}
+	bool IsMoving() const { return mIsMoving;}
 
 private:
 	void setFrameMarginsEnabled(bool enabled);
@@ -107,6 +110,8 @@ private:
 	static UIWindow *top_level_window;
 	bool isDecorationsNeeded = false;
 	bool mIsDecorationUpdateNeeded = true;
+	bool mIsMoving = false;
+	QPoint mMoveStartPosition;
 };
 
 }

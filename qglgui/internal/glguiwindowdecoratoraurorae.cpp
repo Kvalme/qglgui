@@ -27,6 +27,7 @@
  */
 
 #include "glguiwindowdecoratoraurorae.h"
+#include "qtplugin/uiwindow.h"
 
 #include "libcppprofiler/src/cppprofiler.h"
 #include <QSettings>
@@ -69,9 +70,9 @@ void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::st
 GlUIWindowDecoratorAurorae::~GlUIWindowDecoratorAurorae()
 {
 	PROFILE_FUNCTION
-	
+
 	delete mTitleFontMetrics;
-	auto clearCache = [&](ButtonCache *cache)
+	auto clearCache = [&](ButtonCache * cache)
 	{
 		delete cache->activeCenter;
 		delete cache->hoverCenter;
@@ -80,9 +81,9 @@ GlUIWindowDecoratorAurorae::~GlUIWindowDecoratorAurorae()
 		delete cache->inactiveCenter;
 		delete cache->hoverInactiveCenter;
 		delete cache->deactivatedInactiveCenter;
-		
+
 	};
-	
+
 	clearCache(&mCloseButtonCache);
 	clearCache(&mMaximizeButtonCache);
 	clearCache(&mMinimizeButtonCache);
@@ -226,7 +227,7 @@ QMargins GlUIWindowDecoratorAurorae::GetFrameMargins()
 void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 {
 	PROFILE_FUNCTION
-	
+
 	mIsUpdateNeeded = false;
 
 	RenderFrame(window, image);
@@ -254,39 +255,98 @@ void GlUIWindowDecoratorAurorae::RenderFrame(QWindow *window, QPaintDevice *imag
 {
 	PROFILE_FUNCTION
 
-	std::cerr<<"!AHTUNG! Rendering frame!"<<std::endl;
-	
+	std::cerr << "!AHTUNG! Rendering frame!" << std::endl;
+
 	QString prefix("decoration-");
 	if (!window->isActive()) prefix += "inactive-";
 
 	const int right = window->width() + mBorderLeft;
 	const int titleHeight = mTitleFontMetrics->height() + mTitleEdgeBottom + mTitleEdgeTop;
 	const int bottom = window->height() + titleHeight;
-	
+
 	QPoint target(0, 0);
 	QPainter imagePainter(image);
 	imagePainter.setCompositionMode(QPainter::CompositionMode_Source);
-	
+
 	//Clean up image first
 	imagePainter.fillRect(QRect(0, 0, window->frameGeometry().width(), titleHeight), QColor(0, 0, 0, 0));
 	imagePainter.fillRect(QRect(0, 0, mBorderLeft, window->frameGeometry().height()), QColor(0, 0, 0, 0));
 	imagePainter.fillRect(QRect(right, 0, mBorderRight, window->frameGeometry().height()), QColor(0, 0, 0, 0));
 	imagePainter.fillRect(QRect(0, bottom, window->frameGeometry().width(), mBorderBottom), QColor(0, 0, 0, 0));
 
-	mDecoration.render(&imagePainter, prefix + "topleft", QRect(QPoint(0, 0), QSize(mBorderLeft, titleHeight)));
-	mDecoration.render(&imagePainter, prefix + "top", QRect(QPoint(mBorderLeft, 0), QSize(window->width(), titleHeight)));
-	mDecoration.render(&imagePainter, prefix + "topright", QRect(QPoint(right, 0), QSize(mBorderRight, titleHeight)));
+	mBounds.mTopLeft = QRect(QPoint(0, 0), QSize(mBorderLeft, titleHeight));
+	mBounds.mTitleBar = QRect(QPoint(mBorderLeft, 0), QSize(window->width(), titleHeight));
+	mBounds.mTopRight = QRect(QPoint(right, 0), QSize(mBorderRight, titleHeight));
 
-	mDecoration.render(&imagePainter, prefix + "left", QRect(QPoint(0, titleHeight), QSize(mBorderLeft, window->height())));
-	mDecoration.render(&imagePainter, prefix + "right", QRect(QPoint(right, titleHeight), QSize(mBorderRight, window->height())));
+	mBounds.mLeft = QRect(QPoint(0, titleHeight), QSize(mBorderLeft, window->height()));
+	mBounds.mRight = QRect(QPoint(right, titleHeight), QSize(mBorderRight, window->height()));
 
-	mDecoration.render(&imagePainter, prefix + "bottomleft", QRect(QPoint(0, bottom), QSize(mBorderLeft, mBorderBottom)));
-	mDecoration.render(&imagePainter, prefix + "bottom", QRect(QPoint(mBorderLeft, bottom), QSize(window->width(), mBorderBottom)));
-	mDecoration.render(&imagePainter, prefix + "bottomright", QRect(QPoint(right, bottom), QSize(mBorderRight, mBorderBottom)));
+	mBounds.mBottomLeft = QRect(QPoint(0, bottom), QSize(mBorderLeft, mBorderBottom));
+	mBounds.mBottom = QRect(QPoint(mBorderLeft, bottom), QSize(window->width(), mBorderBottom));
+	mBounds.mBottomRight = QRect(QPoint(right, bottom), QSize(mBorderRight, mBorderBottom));
+
+	mDecoration.render(&imagePainter, prefix + "topleft", mBounds.mTopLeft);
+	mDecoration.render(&imagePainter, prefix + "top", mBounds.mTitleBar);
+	mDecoration.render(&imagePainter, prefix + "topright", mBounds.mTopRight);
+
+	mDecoration.render(&imagePainter, prefix + "left", mBounds.mLeft);
+	mDecoration.render(&imagePainter, prefix + "right", mBounds.mRight);
+
+	mDecoration.render(&imagePainter, prefix + "bottomleft", mBounds.mBottomLeft);
+	mDecoration.render(&imagePainter, prefix + "bottom", mBounds.mBottom);
+	mDecoration.render(&imagePainter, prefix + "bottomright", mBounds.mBottomRight);
 }
 
 bool GlUIWindowDecoratorAurorae::IsDecorationChanged() const
 {
 	return mIsUpdateNeeded;
+}
+
+bool GlUIWindowDecoratorAurorae::Bounds::IsInsideBounds(QPoint local)
+{
+	return mTopLeft.contains(local) || mTitleBar.contains(local) || mTopRight.contains(local) ||
+		   mRight.contains(local) || mLeft.contains(local) ||
+		   mBottomLeft.contains(local) || mBottom.contains(local) || mBottomRight.contains(local);
+}
+
+
+bool GlUIWindowDecoratorAurorae::handleMouseEvent(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+	//Correct local position accroding to decoration size
+	local.setX(local.x() + mBorderLeft);
+	local.setY(local.y() + mBounds.mTitleBar.height());
+
+	//If we are not inside decoration - ignore event
+	if (!mBounds.IsInsideBounds(local))return false;
+
+	//If we inside title bar - perform move
+	if (mBounds.mTitleBar.contains(local))
+	{
+		ProceedTitlebarActions(wnd, local, position, buttons, modifiers);
+	}
+	return true;
+}
+
+void GlUIWindowDecoratorAurorae::ProceedTitlebarActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
+{
+	UIWindow *window = static_cast<UIWindow*>(wnd->handle());
+	
+	if (buttons == Qt::NoButton && window->IsMoving()) window->MarkAsMoving(false);
+	if (((buttons & Qt::LeftButton) == Qt::LeftButton))
+	{
+		if (!window->IsMoving())
+		{
+			window->MarkAsMoving(true, position);
+		}
+		else
+		{
+			QPoint oldPos = window->GetMoveStartPosition();
+			QPoint delta = position - oldPos;
+			QRect geom = wnd->geometry();
+			geom.translate(delta.x(), delta.y());
+			wnd->setGeometry(geom);
+			window->MarkAsMoving(true, position);
+		}
+	}
 }
 

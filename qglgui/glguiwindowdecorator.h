@@ -51,6 +51,7 @@ public:
 	
 	virtual ~GlUIWindowDecorator(){};
 	
+	virtual bool handleMouseEvent(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons arg4, Qt::KeyboardModifiers modifiers) = 0;
 };
 
 	

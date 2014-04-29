@@ -72,7 +72,7 @@ Qt::MouseButtons MouseButtons(int mouseButtons)
 	Qt::MouseButtons buttons = Qt::NoButton;
 	for (int b = GLFW_MOUSE_BUTTON_1; b < GLFW_MOUSE_BUTTON_LAST; ++b)
 	{
-		if ((mouseButtons & (1 < b)) == 0)continue;
+		if ((mouseButtons & (1 << b)) == 0)continue;
 
 		buttons |= MouseButton(b, GLFW_PRESS);
 	}

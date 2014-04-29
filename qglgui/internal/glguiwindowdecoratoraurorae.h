@@ -52,6 +52,8 @@ public:
 	virtual bool IsDecorationChanged() const;
 	
 	virtual ~GlUIWindowDecoratorAurorae();
+	
+	virtual bool handleMouseEvent(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 
 private:
 	bool LoadGeneral(QSettings &settings);
@@ -112,11 +114,26 @@ private:
 	QFont mTitleFont;
 	QFontMetrics *mTitleFontMetrics;
 	
+	struct Bounds
+	{
+		QRect mTopLeft;
+		QRect mTitleBar;
+		QRect mTopRight;
+		QRect mRight;
+		QRect mBottomRight;
+		QRect mBottom;
+		QRect mBottomLeft;
+		QRect mLeft;
+		
+		bool IsInsideBounds(QPoint local);
+	} mBounds;
+	
 	bool mIsUpdateNeeded = true;
 	
 	void RenderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
 	void RenderButton(ButtonCache &cache, QSvgRenderer &source);
 	void RenderFrame(QWindow *window, QPaintDevice *image);
+	void ProceedTitlebarActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 	
 };
 
