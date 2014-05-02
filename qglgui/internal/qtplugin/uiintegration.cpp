@@ -79,7 +79,7 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 
 QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
 {
-	return event_dispatcher;
+//	return event_dispatcher;
 #if defined(Q_OS_UNIX)
 	return createUnixEventDispatcher();
 #elif defined(Q_OS_WIN)

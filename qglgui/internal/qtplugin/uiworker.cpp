@@ -76,7 +76,8 @@ UIWorker::~UIWorker()
 void UIWorker::Update()
 {
 	PROFILE_FUNCTION
-
+	std::lock_guard<std::mutex> guard(mEventMutex);
+	
 	app->processEvents();
 }
 
@@ -85,5 +86,15 @@ int UIWorker::CreateScreen(QRect viewport)
 	PROFILE_FUNCTION
 
 	return mPlatform->addScreen(viewport);
+}
+
+void UIWorker::BeginEvent()
+{
+	mEventMutex.lock();
+}
+
+void UIWorker::EndEvent()
+{
+	mEventMutex.unlock();
 }
 

@@ -29,6 +29,7 @@
 #pragma once
 
 #include <memory>
+#include <mutex>
 
 #include <QRect>
 
@@ -50,11 +51,14 @@ public:
 
 	void Update();
 	int CreateScreen(QRect viewport);
+	
+	void BeginEvent();
+	void EndEvent();
 private:
 	QGuiApplication *guiApp;
 	QApplication *app;
 	GlGuiInternalBase *gui;
 	UIIntegration *mPlatform;
-
+	std::mutex mEventMutex;
 };
 }
