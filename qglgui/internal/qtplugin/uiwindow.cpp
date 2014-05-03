@@ -54,11 +54,17 @@ UIWindow::UIWindow(QWindow *window) :
 {
 	PROFILE_FUNCTION
 
+	QRect geom(window->geometry());
+	QScreen *screen = window->screen();
+	QRect screenGeom(screen->availableGeometry());
+	int x = screenGeom.x() + screenGeom.width()/2. - geom.width()/2.;
+	int y = screenGeom.y() + screenGeom.height()/2. - geom.height()/2.;
+	geom.setX(x);
+	geom.setY(y);
+	
+	setGeometry(geom);
 	setWindowFlags(window->flags());
-	if (window->windowState() == Qt::WindowNoState)
-		setGeometry(window->geometry());
-	else
-		setWindowState(window->windowState());
+	setWindowState(window->windowState());
 
 	QWindowSystemInterface::flushWindowSystemEvents();
 
