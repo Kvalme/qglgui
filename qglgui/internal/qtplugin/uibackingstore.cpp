@@ -60,19 +60,17 @@ void UIBackingStore::clearMap()
 
 	window_area_map.clear();
 }
-#include <iostream>
+
 void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint &offset)
 {
 	PROFILE_FUNCTION
 	
-	std::cerr<<__FUNCTION__<<std::endl;
 
 	Q_UNUSED(region);
 
 	QSize imageSize = image.size();
 	if (imageSize.isEmpty() || region.isEmpty())
 	{
-		std::cerr<<"Redraw aborted. Nothing changed!"<<std::endl;
 		return;
 	}
 	
@@ -82,7 +80,6 @@ void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint 
 	QRect bounds = clipped.boundingRect().translated(offset);
 	if (bounds.isNull())
 	{
-		std::cerr<<"Redraw aborted. Empty bounds!"<<std::endl;
 		return;
 	}
 
@@ -126,8 +123,6 @@ void UIBackingStore::beginPaint(const QRegion &r)
 {
 	PROFILE_FUNCTION
 
-	std::cerr<<__FUNCTION__<<std::endl;
-	
 	QPlatformBackingStore::beginPaint(r);
 
 	resize(mRequestedSize);
@@ -137,8 +132,6 @@ void UIBackingStore::endPaint()
 {
 	PROFILE_FUNCTION
 	
-	std::cerr<<__FUNCTION__<<std::endl;
-
 	QPlatformBackingStore::endPaint();
 }
 
