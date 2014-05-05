@@ -28,6 +28,7 @@
 
 #include "glguiwindowdecoratoraurorae.h"
 #include "qtplugin/uiwindow.h"
+#include "gluiwindowdecoratorauroraebuttons.h"
 
 #include "libcppprofiler/src/cppprofiler.h"
 #include <QSettings>
@@ -70,22 +71,10 @@ GlUIWindowDecoratorAurorae::~GlUIWindowDecoratorAurorae()
 	PROFILE_FUNCTION
 
 	delete mTitleFontMetrics;
-	auto clearCache = [&](ButtonCache * cache)
+	for (unsigned int a = 0; a < mButtons.size(); ++a)
 	{
-		delete cache->activeCenter;
-		delete cache->hoverCenter;
-		delete cache->pressedCenter;
-		delete cache->deactivatedCenter;
-		delete cache->inactiveCenter;
-		delete cache->hoverInactiveCenter;
-		delete cache->deactivatedInactiveCenter;
-
-	};
-
-	clearCache(&mCloseButtonCache);
-	clearCache(&mMaximizeButtonCache);
-	clearCache(&mMinimizeButtonCache);
-	clearCache(&mRestoreButtonCache);
+		delete mButtons[a];
+	}
 }
 
 bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
@@ -166,10 +155,14 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 		return true;
 	};
 
-	if (!loadFile("close", mCloseButton))return false;
-	if (!loadFile("maximize", mMaximizeButton))return false;
+	mButtons.clear();
+	GlUIWindowDecoratorAuroraeButton *button;
+	button = new GlUIWindowDecoratorAuroraeButtonClose;
+	if (!loadFile("close", button->mRenderer))return false;
+	mButtons.push_back(button);
+/*	if (!loadFile("maximize", mMaximizeButton))return false;
 	if (!loadFile("minimize", mMinimizeButton))return false;
-	if (!loadFile("restore", mRestoreButton))return false;
+	if (!loadFile("restore", mRestoreButton))return false;*/
 	if (!loadFile("decoration", mDecoration))return false;
 
 	return true;
@@ -186,20 +179,6 @@ void GlUIWindowDecoratorAurorae::RenderPart(QImage **image, const QString &eleme
 	source.render(&imagePainter, elementId);
 }
 
-void GlUIWindowDecoratorAurorae::RenderButton(GlUIWindowDecoratorAurorae::ButtonCache &cache, QSvgRenderer &source)
-{
-	PROFILE_FUNCTION
-
-	RenderPart(&cache.activeCenter, "active-center", source, mButtonWidth, mButtonHeight);
-	RenderPart(&cache.hoverCenter, "hover-center", source, mButtonWidth, mButtonHeight);
-	RenderPart(&cache.deactivatedCenter, "deactivated-center", source, mButtonWidth, mButtonHeight);
-	RenderPart(&cache.pressedCenter, "pressed-center", source, mButtonWidth, mButtonHeight);
-	RenderPart(&cache.deactivatedInactiveCenter, "deactivated-inactive-center", source, mButtonWidth, mButtonHeight);
-	RenderPart(&cache.inactiveCenter, "inactive-center", source, mButtonWidth, mButtonHeight);
-	RenderPart(&cache.hoverInactiveCenter, "hover-inactive-center", source, mButtonWidth, mButtonHeight);
-}
-
-
 bool GlUIWindowDecoratorAurorae::PrecacheResources()
 {
 	PROFILE_FUNCTION
@@ -207,10 +186,10 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 	mTitleFont = QFont("Arial", mTitleHeight);
 	mTitleFontMetrics = new QFontMetrics(mTitleFont);
 
-	RenderButton(mCloseButtonCache, mCloseButton);
-	RenderButton(mMaximizeButtonCache, mMaximizeButton);
-	RenderButton(mMinimizeButtonCache, mMinimizeButton);
-	RenderButton(mRestoreButtonCache, mRestoreButton);
+	for(GlUIWindowDecoratorAuroraeButton *button : mButtons)
+	{
+		button->RenderButton(mButtonWidth, mButtonHeight);
+	}
 
 	return true;
 }
@@ -233,14 +212,19 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 	QPainter painter(image);
 
 	//draw buttons
-	QPoint target(mBorderLeft + window->width() - mButtonSpacing - mButtonWidth, mPaddingTop);
-	painter.drawImage(target, *(mCloseButtonCache.activeCenter));
+//	int bid = 0;
+	for(GlUIWindowDecoratorAuroraeButton *button : mButtons)
+	{
+		QRect bounds = QRect(mBorderLeft + window->width() - mButtonSpacing - mButtonWidth, mPaddingTop, mButtonWidth, mButtonHeight);
+		button->SetBounds(bounds);
+		QPoint target(bounds.x(), bounds.y());
+		painter.drawImage(target, *(button->GetImage(window)));
+	}
 
 	//draw title
 	painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::HighQualityAntialiasing);
 	QColor textColor = window->isActive() ? mActiveTextColor : mInactiveTextColor;
-	target.setX(mBorderLeft + mPaddingLeft);
-	target.setY(mPaddingTop);
+	QPoint target(mBorderLeft + mPaddingLeft, mPaddingTop);
 	QRect rect(target, QSize(window->width(), mTitleFontMetrics->height()));
 	painter.setPen(textColor);
 	painter.setBrush(QBrush(textColor));
@@ -316,16 +300,31 @@ bool GlUIWindowDecoratorAurorae::handleMouseEvent(QWindow *wnd, QPoint local, QP
 	//If we are not inside decoration - ignore event
 	if (!mBounds.IsInsideBounds(local))return false;
 
-	//If we inside title bar - perform move
+	//Check for buttons first
+	for (GlUIWindowDecoratorAuroraeButton *button : mButtons)
+	{
+		if (button->GetBounds().contains(local))
+		{
+			if (button->ProceedMouse(wnd, local, position, buttons, modifiers))
+			{
+				mIsUpdateNeeded = true;
+				return true;
+			}
+		}
+	}
+	
 	if (mBounds.mTitleBar.contains(local))
 	{
 		ProceedTitlebarActions(wnd, local, position, buttons, modifiers);
+		return true;
 	}
-	else
+	else if(mBounds.mBottom.contains(local))
 	{
 		ProceedResizeActions(wnd, local, position, buttons, modifiers);
+		return true;
 	}
-	return true;
+	
+	return false;
 }
 
 void GlUIWindowDecoratorAurorae::ProceedTitlebarActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)

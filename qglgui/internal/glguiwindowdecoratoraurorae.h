@@ -40,6 +40,8 @@ class QFontMetrics;
 namespace QGL
 {
 
+class GlUIWindowDecoratorAuroraeButton;
+	
 class GlUIWindowDecoratorAurorae : public GlUIWindowDecorator
 {
 public:
@@ -55,6 +57,8 @@ public:
 	
 	virtual bool handleMouseEvent(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 
+	static void RenderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
+	
 private:
 	bool LoadGeneral(QSettings &settings);
 	bool LoadLayout(QSettings &settings);
@@ -88,29 +92,15 @@ private:
 	uint32_t mPaddingRight;
 	uint32_t mPaddingLeft;
 	
-	QSvgRenderer mCloseButton;
-	QSvgRenderer mMaximizeButton;
-	QSvgRenderer mMinimizeButton;
-	QSvgRenderer mRestoreButton;
-	
 	QSvgRenderer mDecoration;
-	
-	struct ButtonCache
-	{
-		QImage *activeCenter = nullptr;
-		QImage *hoverCenter = nullptr;
-		QImage *pressedCenter = nullptr;
-		QImage *deactivatedCenter = nullptr;
-		
-		QImage *inactiveCenter = nullptr;
-		QImage *hoverInactiveCenter = nullptr;
-		QImage *deactivatedInactiveCenter = nullptr;
-	};
-	
-	ButtonCache mCloseButtonCache;
-	ButtonCache mMaximizeButtonCache;
-	ButtonCache mMinimizeButtonCache;
-	ButtonCache mRestoreButtonCache;
+
+	std::vector<GlUIWindowDecoratorAuroraeButton*> mButtons;
+
+/*	Button mCloseButtonCache;
+	Button mMaximizeButtonCache;
+	Button mMinimizeButtonCache;
+	Button mRestoreButtonCache;*/
+
 	QFont mTitleFont;
 	QFontMetrics *mTitleFontMetrics;
 	
@@ -124,14 +114,12 @@ private:
 		QRect mBottom;
 		QRect mBottomLeft;
 		QRect mLeft;
-		
+
 		bool IsInsideBounds(QPoint local);
 	} mBounds;
 	
 	bool mIsUpdateNeeded = true;
 	
-	void RenderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
-	void RenderButton(ButtonCache &cache, QSvgRenderer &source);
 	void RenderFrame(QWindow *window, QPaintDevice *image);
 	void ProceedTitlebarActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 	void ProceedResizeActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
