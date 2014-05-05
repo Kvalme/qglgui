@@ -34,6 +34,11 @@
 
 using namespace QGL;
 
+void GlUIWindowDecoratorAuroraeButton::ResetState()
+{
+	mButtonState = (mButtonState == STATE::DEACTIVATED ? mButtonState : STATE::ACTIVE);
+}
+
 QImage *GlUIWindowDecoratorAuroraeButton::GetImage(QWindow *wnd)
 {
 	PROFILE_FUNCTION
@@ -94,6 +99,7 @@ bool GlUIWindowDecoratorAuroraeButtonClose::ProceedMouse(QWindow *wnd, QPoint lo
 	else if (((buttons & Qt::LeftButton) == Qt::LeftButton))
 	{
 		mButtonState = STATE::PRESSED;
+		return true;
 	}
 	
 	return false;

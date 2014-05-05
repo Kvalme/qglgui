@@ -64,6 +64,8 @@ void UIBackingStore::clearMap()
 void UIBackingStore::flush(QWindow *window, const QRegion &region, const QPoint &offset)
 {
 	PROFILE_FUNCTION
+	
+	std::cerr<<__FUNCTION__<<std::endl;
 
 	Q_UNUSED(region);
 
@@ -124,6 +126,8 @@ void UIBackingStore::beginPaint(const QRegion &r)
 {
 	PROFILE_FUNCTION
 
+	std::cerr<<__FUNCTION__<<std::endl;
+	
 	QPlatformBackingStore::beginPaint(r);
 
 	resize(mRequestedSize);
@@ -132,6 +136,8 @@ void UIBackingStore::beginPaint(const QRegion &r)
 void UIBackingStore::endPaint()
 {
 	PROFILE_FUNCTION
+	
+	std::cerr<<__FUNCTION__<<std::endl;
 
 	QPlatformBackingStore::endPaint();
 }

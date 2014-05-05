@@ -41,6 +41,8 @@
 #include <QPaintEngine>
 #include <QPainter>
 #include <QWindow>
+#include <qevent.h>
+#include <qpa/qwindowsysteminterface.h>
 
 using namespace QGL;
 
@@ -307,10 +309,13 @@ bool GlUIWindowDecoratorAurorae::handleMouseEvent(QWindow *wnd, QPoint local, QP
 		{
 			if (button->ProceedMouse(wnd, local, position, buttons, modifiers))
 			{
+				QWindowSystemInterface::handleExposeEvent(wnd, QRegion(wnd->geometry()));
 				mIsUpdateNeeded = true;
 				return true;
 			}
 		}
+		else
+			button->ResetState();
 	}
 	
 	if (mBounds.mTitleBar.contains(local))

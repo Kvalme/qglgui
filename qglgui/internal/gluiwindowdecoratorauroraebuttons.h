@@ -44,6 +44,7 @@ class GlUIWindowDecoratorAuroraeButton
 		QRect GetBounds() const { return mBounds;}
 		void SetBounds(QRect bounds) { mBounds = bounds;}
 		void RenderButton(int width, int height);
+		void ResetState();
 		QSvgRenderer mRenderer;
 		
 		virtual ~GlUIWindowDecoratorAuroraeButton();
@@ -59,7 +60,6 @@ class GlUIWindowDecoratorAuroraeButton
 			QImage *mHoverInactiveCenter = nullptr;
 			QImage *mDeactivatedInactiveCenter = nullptr;
 		} mCache;
-
 		enum class STATE
 		{
 			ACTIVE,
@@ -67,6 +67,7 @@ class GlUIWindowDecoratorAuroraeButton
 			PRESSED,
 			DEACTIVATED,
 		} mButtonState = STATE::ACTIVE;
+
 		QRect mBounds;
 };
 
