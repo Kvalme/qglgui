@@ -35,6 +35,7 @@
 #include <assert.h>
 #include <qpa/qwindowsysteminterface.h>
 #include <QApplication>
+#include <QWidget>
 
 using namespace QGL;
 
@@ -183,6 +184,28 @@ GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
 	PROFILE_FUNCTION
 
 	Window *wnd = nullptr;
+	//check active window and it parent's first
+	if(mActiveWindow)
+	{
+		if (mActiveWindow->frameGeometry().contains(point))
+		{
+			for (auto &w_pair : windows)
+			{
+				if (w_pair.second.wnd->window() == mActiveWindow)return &(w_pair.second);
+			}
+		}
+		for (auto &w_pair : windows)
+		{
+			Window *tmp_wnd = &w_pair.second;
+			if (!tmp_wnd->wnd->window()->isAncestorOf(mActiveWindow))continue;
+			QRect geom = tmp_wnd->wnd->window()->frameGeometry();
+			if (geom.contains(point))
+			{
+				return tmp_wnd;
+			}
+		}
+	}
+
 	for (auto & w_pair : windows)
 	{
 		Window *tmp_wnd = &w_pair.second;
@@ -267,8 +290,8 @@ void GlGuiInternalBase::SetWindowTheme(const std::string &path, const std::strin
 		mDecorator->SetTheme(path, name);
 		for(auto &w : windows)
 		{
-			w.second.wnd->setWindowModified(true);
 			QWindowSystemInterface::handleThemeChange(w.second.wnd->window());
+			QWindowSystemInterface::handleExposeEvent(w.second.wnd->window(), QRegion(w.second.wnd->window()->geometry()));
 		}
 	}
 }
