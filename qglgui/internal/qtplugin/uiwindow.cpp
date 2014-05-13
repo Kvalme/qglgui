@@ -242,6 +242,7 @@ void UIWindow::lower()
 {
 	PROFILE_FUNCTION
 
+	if (window()->isModal()) return;
 	z_level = 0.0;
 	mIsDecorationUpdateNeeded = true;
 }
@@ -252,6 +253,8 @@ void UIWindow::raise()
 
 	if (top_level_window)
 	{
+		if (top_level_window->window()->isModal())return;
+
 		if (top_level_window->window()->isAncestorOf(window()))
 		{
 			top_level_window->z_level = 0.9;

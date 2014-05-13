@@ -6,6 +6,7 @@
 #include "styles/widgetgallery.h"
 #include "tree/tree.h"
 #include <qdesktopwidget.h>
+#include <qmessagebox.h>
 #include <QDir>
 
 #include "qglgui/glgui.h"
@@ -51,8 +52,15 @@ void BasicQtApp::on_horizontalSlider_sliderMoved(int position)
 
 	float amount = (float)position / (float)ui->horizontalSlider->maximum();
 	setWindowOpacity(1.0 - amount);
-	
+	if (amount > 0.0) QMessageBox::critical(this, "Some shit happens", "Some shit happens");
 }
+
+void BasicQtApp::on_horizontalSlider_valueChanged(int position)
+{
+	PROFILE_FUNCTION
+	on_horizontalSlider_sliderMoved(position);
+}
+
 
 void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 {

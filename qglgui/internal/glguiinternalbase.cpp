@@ -34,6 +34,7 @@
 
 #include <assert.h>
 #include <qpa/qwindowsysteminterface.h>
+#include <qpaintengine.h>
 #include <QApplication>
 #include <QWidget>
 
@@ -120,14 +121,14 @@ void GlGuiInternalBase::InjectMouseButtonEvent(int screenId, QPoint position, Qt
 	PROFILE_FUNCTION
 
 	QWindow *wnd = handleMouseEvent(screenId, position, button, modifiers);
-/*	if (wnd && mActiveWindow && wnd != mActiveWindow)
-	{
-		mActiveWindow.
-	}*/
+
 	if (wnd)
 	{
-		mActiveWindow = wnd;
-		mActiveWindow->requestActivate();
+		QWidget *activeWidget = QApplication::activeWindow();
+		QWindow *active = activeWidget ? activeWidget->windowHandle() : nullptr;
+
+		if (active && active->isModal())return;
+		wnd->requestActivate();
 	}
 	if (button != Qt::LeftButton) mMouseGrabWindow = nullptr;
 }
@@ -165,16 +166,16 @@ QWindow *GlGuiInternalBase::handleMouseEvent(int screenId, QPoint position, Qt::
 	}
 
 	if (!wnd) return nullptr;
-	
+
 	QPointF local = wnd->mapFromGlobal(position);
 	QPoint l(local.x(), local.y());
-	
+
 	if (mDecorator->handleMouseEvent(wnd, l, position, Qt::MouseButtons(b), modifiers))
 	{
 		//Click was handled by decorator - no need to pass it to QT
 		return wnd;
 	}
-	
+
 	QWindowSystemInterface::handleMouseEvent(wnd, local, position, Qt::MouseButtons(b), modifiers);
 	return wnd;
 }
@@ -184,20 +185,22 @@ GlGuiInternalBase::Window *GlGuiInternalBase::getWindowByPoint(QPoint point)
 	PROFILE_FUNCTION
 
 	Window *wnd = nullptr;
+	QWidget *activeWidget = QApplication::activeWindow();
+	QWindow *activeWindow = activeWidget ? activeWidget->windowHandle() : nullptr;
 	//check active window and it parent's first
-	if(mActiveWindow)
+	if (activeWindow)
 	{
-		if (mActiveWindow->frameGeometry().contains(point))
+		if (activeWindow->frameGeometry().contains(point))
 		{
-			for (auto &w_pair : windows)
+			for (auto & w_pair : windows)
 			{
-				if (w_pair.second.wnd->window() == mActiveWindow)return &(w_pair.second);
+				if (w_pair.second.wnd->window() == activeWindow)return &(w_pair.second);
 			}
 		}
-		for (auto &w_pair : windows)
+		for (auto & w_pair : windows)
 		{
 			Window *tmp_wnd = &w_pair.second;
-			if (!tmp_wnd->wnd->window()->isAncestorOf(mActiveWindow))continue;
+			if (!tmp_wnd->wnd->window()->isAncestorOf(activeWindow))continue;
 			QRect geom = tmp_wnd->wnd->window()->frameGeometry();
 			if (geom.contains(point))
 			{
@@ -240,7 +243,7 @@ void GlGuiInternalBase::iGrabMouse(UIWindow *wnd)
 void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
-	
+
 	QWindow *wnd = mMouseGrabWindow ? mMouseGrabWindow->window() : nullptr;
 	if (!wnd)
 	{
@@ -248,47 +251,59 @@ void GlGuiInternalBase::InjectMouseWheelEvent(int screenId, QPoint position, dou
 		wnd = w ? w->wnd->window() : nullptr;
 	}
 	if (!wnd) return;
-	
+
 	QPointF local = wnd->mapFromGlobal(position);
-	
+
 	QPoint angDelta(deltax, deltay);
 	QPoint pxDelta(angDelta * 10);
-	
+
 	QWindowSystemInterface::handleWheelEvent(wnd, local, position, pxDelta, angDelta, modifiers);
 }
 
 bool GlGuiInternalBase::IsKeyboardGrabbed()
 {
+	PROFILE_FUNCTION
+
 	return (mKeyboardGrabWindow != nullptr);
 }
 
 bool GlGuiInternalBase::IsMouseGrabbed()
 {
+	PROFILE_FUNCTION
+
 	return (mMouseGrabWindow != nullptr);
 }
 
 bool GlGuiInternalBase::IsPointInsideWindow(QPoint point)
 {
+	PROFILE_FUNCTION
+
 	return (getWindowByPoint(point) != nullptr);
 }
 
 bool GlGuiInternalBase::IsFocusWindow()
 {
+	PROFILE_FUNCTION
+
 	return (QApplication::focusWidget() != nullptr);
 }
 
 void GlGuiInternalBase::RegisterWindowDecorator(GlUIWindowDecorator *decorator)
 {
+	PROFILE_FUNCTION
+
 	delete mDecorator;
 	mDecorator = decorator;
 }
 
 void GlGuiInternalBase::SetWindowTheme(const std::string &path, const std::string &name)
 {
+	PROFILE_FUNCTION
+
 	if (mDecorator)
 	{
 		mDecorator->SetTheme(path, name);
-		for(auto &w : windows)
+		for (auto & w : windows)
 		{
 			QWindowSystemInterface::handleThemeChange(w.second.wnd->window());
 			QWindowSystemInterface::handleExposeEvent(w.second.wnd->window(), QRegion(w.second.wnd->window()->geometry()));
