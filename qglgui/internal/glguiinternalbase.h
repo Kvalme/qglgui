@@ -44,7 +44,7 @@ public:
 	GlGuiInternalBase(const std::string &fontDir);
 	virtual ~GlGuiInternalBase();
 	
-	virtual int CreateScreen(QRect viewport) = 0;
+	virtual int CreateScreen(QRect viewport, float dpix = 100, float dpiy = 100) = 0;
 	virtual void CreateWindow(const std::string &name) = 0;
 	virtual void RegisterWindowFactory(std::function<void(const std::string &name)> factory);
 	virtual void RegisterRenderer(GlGuiRenderer *renderer);

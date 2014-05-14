@@ -74,6 +74,7 @@ private slots:
     void changeStyle(const QString &styleName);
     void changePalette();
     void advanceProgressBar();
+    void onDefaultButtonReleased();
 
 private:
     void createTopLeftGroupBox();

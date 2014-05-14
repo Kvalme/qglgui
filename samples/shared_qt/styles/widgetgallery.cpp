@@ -42,6 +42,7 @@
 
 #include "norwegianwoodstyle.h"
 #include "widgetgallery.h"
+#include <iostream>
 
 //! [0]
 WidgetGallery::WidgetGallery(QWidget *parent)
@@ -109,6 +110,8 @@ WidgetGallery::WidgetGallery(QWidget *parent)
 
     setWindowTitle(tr("Styles"));
     changeStyle("NorwegianWood");
+    
+    connect(defaultPushButton, SIGNAL(released()), this, SLOT(onDefaultButtonReleased()));
 }
 //! [4]
 
@@ -274,3 +277,8 @@ void WidgetGallery::createProgressBar()
     timer->start(1000);
 }
 //! [13]
+
+void WidgetGallery::onDefaultButtonReleased()
+{
+    std::cerr<<"Released"<<std::endl;
+}

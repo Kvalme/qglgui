@@ -39,10 +39,10 @@ class UIWorker;
 class GlGuiSingleThread : public GlGuiInternalBase
 {
 public:
-	GlGuiSingleThread(const std::string &fontDir, QRect viewport);
+	GlGuiSingleThread(const std::string &fontDir, QRect viewport, float dpix = 100, float dpiy = 100);
 	virtual ~GlGuiSingleThread();
 	
-	virtual int CreateScreen(QRect viewport);
+	virtual int CreateScreen(QRect viewport, float dpix = 100, float dpiy = 100);
 	virtual void CreateWindow(const std::string &name);
 	virtual void Render();
 	virtual void Update();

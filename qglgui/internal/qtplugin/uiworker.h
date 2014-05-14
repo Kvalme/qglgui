@@ -46,11 +46,11 @@ class UIIntegration;
 class UIWorker
 {
 public:
-	UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport);
+	UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport, float dpix, float dpiy);
 	~UIWorker();
 
 	void Update();
-	int CreateScreen(QRect viewport);
+	int CreateScreen(QRect viewport, float dpix, float dpiy);
 	
 	void BeginEvent();
 	void EndEvent();

@@ -40,10 +40,10 @@ class UIWorker;
 class GlGuiMultiThread : public GlGuiInternalBase
 {
 public:
-	GlGuiMultiThread(const std::string &fontDir, QRect viewport);
+	GlGuiMultiThread(const std::string &fontDir, QRect viewport, float dpix = 100, float dpiy = 100);
 	virtual ~GlGuiMultiThread();
 	
-	virtual int CreateScreen(QRect viewport);
+	virtual int CreateScreen(QRect viewport, float dpix = 100, float dpiy = 100);
 	virtual void CreateWindow(const std::string &name);
 	virtual void Render();
 	virtual void Update();

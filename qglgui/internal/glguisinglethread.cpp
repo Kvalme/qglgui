@@ -36,12 +36,12 @@
 
 using namespace QGL;
 
-GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir, QRect viewport)
+GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir, QRect viewport, float dpix, float dpiy)
 	: GlGuiInternalBase(fontDir)
 {
 	PROFILE_FUNCTION
 
-	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport));
+	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport, dpix, dpiy));
 }
 
 GlGuiSingleThread::~GlGuiSingleThread()
@@ -80,8 +80,8 @@ void GlGuiSingleThread::iSetTexture(unsigned int winId, QPixmap pixmap)
 	QGL::GlGuiInternalBase::iSetTexture(winId, pixmap);
 }
 
-int GlGuiSingleThread::CreateScreen(QRect viewport)
+int GlGuiSingleThread::CreateScreen(QRect viewport, float dpix, float dpiy)
 {
-	return uiWorker->CreateScreen(viewport);
+	return uiWorker->CreateScreen(viewport, dpix, dpiy);
 }
 

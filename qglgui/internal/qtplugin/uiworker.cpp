@@ -40,7 +40,7 @@
 
 using namespace QGL;
 
-UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport)
+UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport, float dpix, float dpiy)
 {
 	PROFILE_FUNCTION
 
@@ -59,7 +59,7 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect vie
 	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 	
 	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
-	static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration)->init(viewport);
+	static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration)->init(viewport, dpix, dpiy);
 
 
 	app = new QApplication(argc, argv);
@@ -81,11 +81,11 @@ void UIWorker::Update()
 	app->processEvents();
 }
 
-int UIWorker::CreateScreen(QRect viewport)
+int UIWorker::CreateScreen(QRect viewport, float dpix, float dpiy)
 {
 	PROFILE_FUNCTION
 
-	return mPlatform->addScreen(viewport);
+	return mPlatform->addScreen(viewport, dpix, dpiy);
 }
 
 void UIWorker::BeginEvent()

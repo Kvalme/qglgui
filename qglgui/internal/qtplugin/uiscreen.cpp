@@ -32,13 +32,19 @@
 #include <QWindow>
 #include <qguiapplication.h>
 
+#include <iostream>
+
 using namespace QGL;
 
-UIScreen::UIScreen(QRect viewport)
+UIScreen::UIScreen(QRect viewport, float dpix, float dpiy) :
+	geometry_(viewport),
+	mDpix(dpix),
+	mDpiy(dpiy)
 {
 	PROFILE_FUNCTION
 
-	geometry_ = viewport;
+	mPhysicalSize.setWidth(((float)geometry_.width() / dpix) * 25.4);
+	mPhysicalSize.setHeight(((float)geometry_.height() / dpiy) * 25.4);
 }
 
 UIScreen::~UIScreen()

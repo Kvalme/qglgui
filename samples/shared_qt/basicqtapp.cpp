@@ -9,6 +9,8 @@
 #include <qmessagebox.h>
 #include <QDir>
 
+#include <iostream>
+
 #include "qglgui/glgui.h"
 using namespace QGL;
 
@@ -36,6 +38,10 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	decorations.removeFirst();
 	decorations.removeFirst();
 	ui->selectedDecoration->addItems(decorations);
+	
+	QDesktopWidget w;
+	std::cout<<w.physicalDpiX()<<":"<<w.physicalDpiY()<<std::endl;
+//	w.
 }
 
 BasicQtApp::~BasicQtApp()

@@ -41,7 +41,7 @@ public:
 	UIIntegration(QGL::GlGuiInternalBase *gui);
 	~UIIntegration();
 
-	void init(QRect viewport);
+	void init(QRect viewport, float dpix, float dpiy);
 	bool hasCapability(QPlatformIntegration::Capability cap) const;
 
 	QPlatformWindow *createPlatformWindow(QWindow *window) const;
@@ -57,7 +57,7 @@ public:
 		return ui;
 	}
 
-	int addScreen(QRect viewport);
+	int addScreen(QRect viewport, float dpix, float dpiy);
 
 private:
 	QAbstractEventDispatcher *event_dispatcher;

@@ -87,17 +87,17 @@ QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
 #endif
 }
 
-void UIIntegration::init(QRect viewport)
+void UIIntegration::init(QRect viewport, float dpix, float dpiy)
 {
 	PROFILE_FUNCTION
 
 //	QGuiApplicationPrivate::instance()->setEventDispatcher(event_dispatcher);
-	addScreen(viewport);
+	addScreen(viewport, dpix, dpiy);
 }
 
-int UIIntegration::addScreen(QRect viewport)
+int UIIntegration::addScreen(QRect viewport, float dpix, float dpiy)
 {
-	UIScreen *s = new UIScreen(viewport);
+	UIScreen *s = new UIScreen(viewport, dpix, dpiy);
 	mScreens.push_back(s);
 	screenAdded(s);
 	return mScreenId++;

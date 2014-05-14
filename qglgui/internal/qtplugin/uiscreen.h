@@ -37,7 +37,7 @@ namespace QGL
 class UIScreen: public QPlatformScreen
 {
 public:
-	UIScreen(QRect viewport);
+	UIScreen(QRect viewport, float dpix, float dpiy);
 	virtual ~UIScreen();
 
 	QRect geometry() const
@@ -52,9 +52,17 @@ public:
 	{
 		return QImage::Format_ARGB32;
 	}
+	QDpi logicalDpi() const
+	{
+		return QDpi(mDpix, mDpiy);
+	}
+	virtual QSizeF physicalSize() const { return mPhysicalSize;}
 
 private:
 	QRect geometry_;
+	float mDpix;
+	float mDpiy;
+	QSizeF mPhysicalSize;
 };
 
 }

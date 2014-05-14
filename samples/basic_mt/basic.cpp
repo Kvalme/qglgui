@@ -84,8 +84,17 @@ void GuiThread(int w, int h)
 {
 	PROFILE_FUNCTION
 	
+	//try to get dpi
+	int wmm, hmm;
+	glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &wmm, &hmm);
+	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	float w_inch = (float)wmm * 0.0393700787;
+	float h_inch = (float)hmm * 0.0393700787;
+	float dpix = mode->width/w_inch;
+	float dpiy = mode->height/h_inch;
+	
 	//GlGui should be created in new thread to operate correctly.
-	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h));
+	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h), dpix, dpiy);
 	
 	while(!doExit)
 	{

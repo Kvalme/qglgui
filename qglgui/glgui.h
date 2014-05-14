@@ -60,17 +60,21 @@ public:
 	 * @param mode threading mode
 	 * @param fontDir path to font directory
 	 * @param viewport viewport for primary screen GUI that will be used as screen size.
+	 * @param dpix screen DPI along x axis
+	 * @param dpiy screen DPI along y axis
 	 * @return pointer to created gui
 	 */
-	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir, QRect viewport);
+	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir, QRect viewport, float dpix = 100, float dpiy = 100);
 	
 	/**
 	 * Creates QT screen.
 	 * 
 	 * @param viewport viewport of the newly created screen
+	 * @param dpix screen DPI along x axis
+	 * @param dpiy screen DPI along y axis
 	 * @return screen id. -1 in case of error.
 	 */
-	virtual int CreateScreen(QRect viewport) = 0;
+	virtual int CreateScreen(QRect viewport, float dpix = 100, float dpiy = 100) = 0;
 
 	/**
 	 * Registers window factory.
