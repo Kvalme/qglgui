@@ -16,6 +16,8 @@ find_package(Qt5Core 5.2 REQUIRED)
 find_package(Qt5Gui 5.2 REQUIRED)
 find_package(Qt5Widgets 5.2 REQUIRED)
 find_package(Qt5Svg 5.2 REQUIRED)
+find_package(Qt5Qml 5.2 REQUIRED)
+find_package(Qt5Quick 5.2 REQUIRED)
 find_package(Freetype REQUIRED)
 
 

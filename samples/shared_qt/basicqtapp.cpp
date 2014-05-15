@@ -5,6 +5,7 @@
 
 #include "styles/widgetgallery.h"
 #include "tree/tree.h"
+#include "QtQuick2/qtquick2applicationviewer.h"
 #include <qdesktopwidget.h>
 #include <qmessagebox.h>
 #include <QDir>
@@ -26,6 +27,7 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	ui->selectedSample->addItem("None");
 	ui->selectedSample->addItem("Styles");
 	ui->selectedSample->addItem("Tree");
+	ui->selectedSample->addItem("QtQuick2");
 	
 	setGeometry(QRect(0, 0, 200, 200));
 	move(0, 0);
@@ -69,6 +71,13 @@ void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 	
 	if (text == "Styles") mCurrent = new WidgetGallery;
 	else if (text == "Tree") mCurrent = new tree;
+	else if (text == "QtQuick2")
+	{
+		QtQuick2ApplicationViewer *app = new QtQuick2ApplicationViewer;
+		app->setMainQmlFile("main.qml");
+		app->showExpanded();
+		mCurrent = nullptr;
+	}
 
 	if (mCurrent)
 	{
