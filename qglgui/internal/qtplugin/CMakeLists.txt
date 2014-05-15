@@ -2,8 +2,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories(${PROJECT_SOURCE_DIR})
+add_definitions(-DQT_STATICPLUGIN)
 
-set(qtplugin_SOURCES uiwindow.cpp uibackingstore.cpp uiscreen.cpp uiintegration.cpp uiworker.cpp)
+set(qtplugin_SOURCES uiopenglcontext.cpp uiwindow.cpp uibackingstore.cpp uiscreen.cpp uiintegration.cpp uiworker.cpp)
 
 add_library(qglgui_qtplugin OBJECT ${qtplugin_SOURCES})
 set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Core_INCLUDE_DIRS}")

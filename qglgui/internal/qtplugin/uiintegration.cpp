@@ -31,6 +31,7 @@
 #include "uiwindow.h"
 #include "uiscreen.h"
 #include "uibackingstore.h"
+#include "uiopenglcontext.h"
 
 #if defined(Q_OS_UNIX)
 #include <QtPlatformSupport/private/qgenericunixeventdispatcher_p.h>
@@ -53,9 +54,34 @@
 
 #include "qglgui/internal/glguiinternalbase.h"
 
+#include <qpa/qplatformintegrationplugin.h>
+
 using namespace QGL;
 
-UIIntegration::UIIntegration(GlGuiInternalBase *gui)
+UIIntegration* UIIntegration::instance = nullptr;
+
+class QGLIntegrationPlugin : public QPlatformIntegrationPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.5.2" FILE "QGL.json")
+public:
+    QPlatformIntegration *create(const QString&, const QStringList&);
+};
+
+QPlatformIntegration *QGLIntegrationPlugin::create(const QString& system, const QStringList& paramList)
+{
+    if (!system.compare(QLatin1String("QGL"), Qt::CaseInsensitive))
+	{
+		UIIntegration::instance->init();
+        return UIIntegration::instance;
+	}
+
+    return 0;
+}
+
+#include "uiintegration.moc"
+
+UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
 {
 	PROFILE_FUNCTION
 
@@ -75,6 +101,7 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 
 //	QCoreApplicationPrivate::eventDispatcher = event_dispatcher;
 	ui = gui;
+	instance = this;
 }
 
 QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
@@ -87,12 +114,12 @@ QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
 #endif
 }
 
-void UIIntegration::init(QRect viewport)
+void UIIntegration::init()
 {
 	PROFILE_FUNCTION
 
 //	QGuiApplicationPrivate::instance()->setEventDispatcher(event_dispatcher);
-	addScreen(viewport);
+	addScreen(mDefaultViewport);
 }
 
 int UIIntegration::addScreen(QRect viewport)
@@ -165,7 +192,15 @@ bool UIIntegration::hasCapability(QPlatformIntegration::Capability cap) const
 			return true;
 		case WindowMasks:
 			return true;
+		case OpenGL:
+			return true;
 		default:
 			return QPlatformIntegration::hasCapability(cap);
 	}
 }
+
+QPlatformOpenGLContext *UIIntegration::createPlatformOpenGLContext(QOpenGLContext *context) const
+{
+	return new UIOpenGLContext;
+}
+

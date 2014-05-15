@@ -38,6 +38,8 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	decorations.removeFirst();
 	decorations.removeFirst();
 	ui->selectedDecoration->addItems(decorations);
+	
+	QApplication::setStyle("windows");
 }
 
 BasicQtApp::~BasicQtApp()
