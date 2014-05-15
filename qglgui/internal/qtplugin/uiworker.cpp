@@ -32,6 +32,7 @@
 #include <QtWidgets/QApplication>
 #include "QtGui/qpa/qplatformthemefactory_p.h"
 #include "QtGui/qpa/qplatformtheme.h"
+#include <QtPlugin>
 
 #include "qglgui/internal/qtplugin/uiintegration.h"
 #include "qglgui/internal/glguiinternalbase.h"
@@ -40,7 +41,9 @@
 
 using namespace QGL;
 
-UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport, float dpix, float dpiy)
+Q_IMPORT_PLUGIN(QGLIntegrationPlugin);
+
+UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport)
 {
 	PROFILE_FUNCTION
 
@@ -50,19 +53,19 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect vie
 	char **argv = nullptr;
 
 	qputenv("QT_QPA_FONTDIR", fontDir.c_str());
+	qputenv("QT_QPA_PLATFORM", "QGL");
 
 	QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, true);
 
-	QGuiApplicationPrivate::platform_name = new QString("QGL");
-	mPlatform = new UIIntegration(this->gui);
-	QGuiApplicationPrivate::platform_integration = mPlatform;
+//	QGuiApplicationPrivate::platform_name = new QString("QGL");
+	mPlatform = new UIIntegration(this->gui, viewport);
+//	QGuiApplicationPrivate::platform_integration = mPlatform;
 	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 	
-	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
-	static_cast<UIIntegration *>(QGuiApplicationPrivate::platform_integration)->init(viewport, dpix, dpiy);
-
+//	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
 
 	app = new QApplication(argc, argv);
+
 	app->setQuitOnLastWindowClosed(false);
 }
 

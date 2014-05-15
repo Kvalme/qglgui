@@ -48,9 +48,34 @@
 
 #include "qglgui/internal/glguiinternalbase.h"
 
+#include <qpa/qplatformintegrationplugin.h>
+
 using namespace QGL;
 
-UIIntegration::UIIntegration(GlGuiInternalBase *gui)
+UIIntegration* UIIntegration::instance = nullptr;
+
+class QGLIntegrationPlugin : public QPlatformIntegrationPlugin
+{
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.5.2" FILE "QGL.json")
+public:
+    QPlatformIntegration *create(const QString&, const QStringList&);
+};
+
+QPlatformIntegration *QGLIntegrationPlugin::create(const QString& system, const QStringList& paramList)
+{
+    if (!system.compare(QLatin1String("QGL"), Qt::CaseInsensitive))
+	{
+		UIIntegration::instance->init();
+        return UIIntegration::instance;
+	}
+
+    return 0;
+}
+
+#include "uiintegration.moc"
+
+UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
 {
 	PROFILE_FUNCTION
 
@@ -65,6 +90,7 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 
 //	QCoreApplicationPrivate::eventDispatcher = event_dispatcher;
 	ui = gui;
+	instance = this;
 }
 
 QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
@@ -77,12 +103,12 @@ QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
 #endif
 }
 
-void UIIntegration::init(QRect viewport, float dpix, float dpiy)
+void UIIntegration::init()
 {
 	PROFILE_FUNCTION
 
 //	QGuiApplicationPrivate::instance()->setEventDispatcher(event_dispatcher);
-	addScreen(viewport, dpix, dpiy);
+	addScreen(mDefaultViewport);
 }
 
 int UIIntegration::addScreen(QRect viewport, float dpix, float dpiy)

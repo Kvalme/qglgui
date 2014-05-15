@@ -2,6 +2,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include_directories(${PROJECT_SOURCE_DIR})
+add_definitions(-DQT_STATICPLUGIN)
 
 set(qtplugin_SOURCES uifontdatabase.cpp uiwindow.cpp uibackingstore.cpp uiscreen.cpp uiintegration.cpp uiworker.cpp)
 

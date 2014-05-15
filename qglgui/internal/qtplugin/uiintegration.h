@@ -38,10 +38,10 @@ class UIScreen;
 class UIIntegration: public QPlatformIntegration
 {
 public:
-	UIIntegration(QGL::GlGuiInternalBase *gui);
+	UIIntegration(QGL::GlGuiInternalBase *gui, QRect viewport);
 	~UIIntegration();
 
-	void init(QRect viewport, float dpix, float dpiy);
+	void init();
 	bool hasCapability(QPlatformIntegration::Capability cap) const;
 
 	QPlatformWindow *createPlatformWindow(QWindow *window) const;
@@ -59,6 +59,8 @@ public:
 
 	int addScreen(QRect viewport, float dpix, float dpiy);
 
+	static UIIntegration *instance;
+	
 private:
 	QAbstractEventDispatcher *event_dispatcher;
 	QPlatformFontDatabase *font_database;
@@ -66,6 +68,7 @@ private:
 	GlGuiInternalBase *ui;
 	int mScreenId = 0;
 	std::vector<UIScreen *> mScreens;
+	QRect mDefaultViewport;
 };
 
 }
