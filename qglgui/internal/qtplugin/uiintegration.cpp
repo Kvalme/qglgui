@@ -31,16 +31,11 @@
 #include "uiwindow.h"
 #include "uiscreen.h"
 #include "uibackingstore.h"
+#include "uifontdatabase.h"
 
 #if defined(Q_OS_UNIX)
 #include <QtPlatformSupport/private/qgenericunixeventdispatcher_p.h>
-#if defined(Q_OS_MAC)
-#include <qpa/qplatformfontdatabase.h>
-#else
-#include <QtPlatformSupport/private/qgenericunixfontdatabase_p.h>
-#endif
 #elif defined(Q_OS_WIN)
-#include <QtPlatformSupport/private/qbasicfontdatabase_p.h>
 #include <QtCore/private/qeventdispatcher_win_p.h>
 #endif
 
@@ -61,16 +56,11 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui)
 
 #if defined(Q_OS_UNIX)
 	event_dispatcher = createUnixEventDispatcher();
-#if defined(Q_OS_MAC)
-	font_database = new QPlatformFontDatabase();
-#else
-	font_database = new QGenericUnixFontDatabase();
-#endif
 #elif defined(Q_OS_WIN)
 	event_dispatcher = new QEventDispatcherWin32;
-	font_database = new QBasicFontDatabase();
 #endif
 
+	font_database = new UIFontDatabase;
 	services_ = new QPlatformServices;
 
 //	QCoreApplicationPrivate::eventDispatcher = event_dispatcher;
