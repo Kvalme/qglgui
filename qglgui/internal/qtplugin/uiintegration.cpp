@@ -52,25 +52,25 @@
 
 using namespace QGL;
 
-UIIntegration* UIIntegration::instance = nullptr;
+UIIntegration *UIIntegration::instance = nullptr;
 
 class QGLIntegrationPlugin : public QPlatformIntegrationPlugin
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.5.2" FILE "QGL.json")
+	Q_OBJECT
+	Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.5.2" FILE "QGL.json")
 public:
-    QPlatformIntegration *create(const QString&, const QStringList&);
+	QPlatformIntegration *create(const QString &, const QStringList &);
 };
 
-QPlatformIntegration *QGLIntegrationPlugin::create(const QString& system, const QStringList& paramList)
+QPlatformIntegration *QGLIntegrationPlugin::create(const QString &system, const QStringList &paramList)
 {
-    if (!system.compare(QLatin1String("QGL"), Qt::CaseInsensitive))
+	if (!system.compare(QLatin1String("QGL"), Qt::CaseInsensitive))
 	{
 		UIIntegration::instance->init();
-        return UIIntegration::instance;
+		return UIIntegration::instance;
 	}
 
-    return 0;
+	return 0;
 }
 
 #include "uiintegration.moc"
@@ -91,6 +91,7 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
 //	QCoreApplicationPrivate::eventDispatcher = event_dispatcher;
 	ui = gui;
 	instance = this;
+	mDefaultViewport = viewport;
 }
 
 QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
@@ -126,8 +127,8 @@ UIIntegration::~UIIntegration()
 //	delete event_dispatcher;
 	delete font_database;
 	delete services_;
-	
-	for(UIScreen *s : mScreens) delete s;
+
+	for (UIScreen * s : mScreens) delete s;
 }
 
 QPlatformBackingStore *UIIntegration::createPlatformBackingStore(QWindow *window) const
