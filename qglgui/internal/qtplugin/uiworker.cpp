@@ -43,7 +43,7 @@ using namespace QGL;
 
 Q_IMPORT_PLUGIN(QGLIntegrationPlugin);
 
-UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport)
+UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport, float dpix, float dpiy)
 {
 	PROFILE_FUNCTION
 
@@ -57,12 +57,7 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect vie
 
 	QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, true);
 
-//	QGuiApplicationPrivate::platform_name = new QString("QGL");
-	mPlatform = new UIIntegration(this->gui, viewport);
-//	QGuiApplicationPrivate::platform_integration = mPlatform;
-	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
-	
-//	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
+	mPlatform = new UIIntegration(this->gui, viewport, dpix, dpiy);
 
 	app = new QApplication(argc, argv);
 
@@ -93,11 +88,15 @@ int UIWorker::CreateScreen(QRect viewport, float dpix, float dpiy)
 
 void UIWorker::BeginEvent()
 {
+	PROFILE_FUNCTION
+
 	mEventMutex.lock();
 }
 
 void UIWorker::EndEvent()
 {
+	PROFILE_FUNCTION
+
 	mEventMutex.unlock();
 }
 

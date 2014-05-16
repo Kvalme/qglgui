@@ -75,15 +75,9 @@ QPlatformIntegration *QGLIntegrationPlugin::create(const QString &system, const 
 
 #include "uiintegration.moc"
 
-UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
+UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport, float dpix, float dpiy)
 {
 	PROFILE_FUNCTION
-
-#if defined(Q_OS_UNIX)
-	event_dispatcher = createUnixEventDispatcher();
-#elif defined(Q_OS_WIN)
-	event_dispatcher = new QEventDispatcherWin32;
-#endif
 
 	font_database = new UIFontDatabase;
 	services_ = new QPlatformServices;
@@ -92,6 +86,8 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
 	ui = gui;
 	instance = this;
 	mDefaultViewport = viewport;
+	mDpix = dpix;
+	mDpiy = dpiy;
 }
 
 QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const
@@ -108,8 +104,7 @@ void UIIntegration::init()
 {
 	PROFILE_FUNCTION
 
-//	QGuiApplicationPrivate::instance()->setEventDispatcher(event_dispatcher);
-	addScreen(mDefaultViewport);
+	addScreen(mDefaultViewport, mDpix, mDpiy);
 }
 
 int UIIntegration::addScreen(QRect viewport, float dpix, float dpiy)

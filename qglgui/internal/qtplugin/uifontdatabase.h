@@ -30,6 +30,9 @@
 
 #include <qpa/qplatformfontdatabase.h>
 
+namespace QGL
+{
+
 class UIFontDatabase : public QPlatformFontDatabase
 {
 public:
@@ -55,3 +58,6 @@ private:
 	QString mDefaultFontFamily;
 
 };
+
+	
+}

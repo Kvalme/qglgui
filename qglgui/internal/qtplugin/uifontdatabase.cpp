@@ -38,6 +38,9 @@
 #include <QtPlatformSupport/private/qbasicfontdatabase_p.h>
 #endif
 
+#include "libcppprofiler/src/cppprofiler.h"
+
+using namespace QGL;
 
 UIFontDatabase::UIFontDatabase()
 {
@@ -55,16 +58,22 @@ UIFontDatabase::UIFontDatabase()
 
 UIFontDatabase::~UIFontDatabase()
 {
+	PROFILE_FUNCTION
+
 	delete mFontDatabase;
 }
 
 QStringList UIFontDatabase::addApplicationFont(const QByteArray &fontData, const QString &fileName)
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->addApplicationFont(fontData, fileName);
 }
 
 QFont UIFontDatabase::defaultFont() const
 {
+	PROFILE_FUNCTION
+
 	QFont fnt = mFontDatabase->defaultFont();
 	fnt.setPointSize(11);
 	return fnt;
@@ -72,51 +81,70 @@ QFont UIFontDatabase::defaultFont() const
 
 QStringList UIFontDatabase::fallbacksForFamily(const QString &family, QFont::Style style, QFont::StyleHint styleHint, QChar::Script script) const
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->fallbacksForFamily(family, style, styleHint, script);
 }
 
 QString UIFontDatabase::fontDir() const
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->fontDir();
 }
 
 QFontEngine *UIFontDatabase::fontEngine(const QFontDef &fontDef, QChar::Script script, void *handle)
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->fontEngine(fontDef, script, handle);
 }
 
 QFontEngine *UIFontDatabase::fontEngine(const QByteArray &fontData, qreal pixelSize, QFont::HintingPreference hintingPreference)
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->fontEngine(fontData, pixelSize, hintingPreference);
 }
 
 QFontEngineMulti *UIFontDatabase::fontEngineMulti(QFontEngine *fontEngine, QChar::Script script)
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->fontEngineMulti(fontEngine, script);
 }
 
 bool UIFontDatabase::fontsAlwaysScalable() const
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->fontsAlwaysScalable();
 }
 
 void UIFontDatabase::populateFontDatabase()
 {
+	PROFILE_FUNCTION
+
 	mFontDatabase->populateFontDatabase();
 }
 
 void UIFontDatabase::releaseHandle(void *handle)
 {
+	PROFILE_FUNCTION
+
 	mFontDatabase->releaseHandle(handle);
 }
 
 QString UIFontDatabase::resolveFontFamilyAlias(const QString &family) const
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->resolveFontFamilyAlias(family);
 }
 
 QList< int > UIFontDatabase::standardSizes() const
 {
+	PROFILE_FUNCTION
+
 	return mFontDatabase->standardSizes();
 }
-
