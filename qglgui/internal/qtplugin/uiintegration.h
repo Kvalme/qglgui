@@ -29,6 +29,8 @@
 #pragma once
 #include <qpa/qplatformintegration.h>
 
+#include <thread>
+
 namespace QGL
 {
 
@@ -63,6 +65,8 @@ public:
 
 	static UIIntegration *instance;
 	
+	static std::thread::id guiThreadId;
+
 private:
 	QAbstractEventDispatcher *event_dispatcher;
 	QPlatformFontDatabase *font_database;

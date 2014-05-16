@@ -29,8 +29,21 @@
 
 #include "uiopenglcontext.h"
 #include "libcppprofiler/src/cppprofiler.h"
+#include "uiintegration.h"
 
 #include <iostream>
+
+using namespace QGL;
+
+GLAPI void GLAPIENTRY glEnable( GLenum cap )
+{
+	std::cerr<<"glEnable:"<<UIIntegration::guiThreadId<<" "<<std::this_thread::get_id()<<std::endl;
+	if (UIIntegration::guiThreadId != std::this_thread::get_id()) ::glEnable(cap);
+}
+GLAPI void GLAPIENTRY glDisable( GLenum cap )
+{
+	std::cerr<<"glDisable:"<<UIIntegration::guiThreadId<<" "<<std::this_thread::get_id()<<std::endl;
+}
 
 QFunctionPointer UIOpenGLContext::getProcAddress(const QByteArray &procName)
 {

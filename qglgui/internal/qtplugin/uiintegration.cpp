@@ -59,6 +59,8 @@
 using namespace QGL;
 
 UIIntegration *UIIntegration::instance = nullptr;
+std::thread::id UIIntegration::guiThreadId;
+
 
 class QGLIntegrationPlugin : public QPlatformIntegrationPlugin
 {
@@ -103,6 +105,7 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
 	ui = gui;
 	instance = this;
 	mDefaultViewport = viewport;
+	guiThreadId = std::this_thread::get_id();
 }
 
 QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const

@@ -31,6 +31,9 @@
 
 #include <qpa/qplatformopenglcontext.h>
 
+namespace QGL
+{
+
 class UIOpenGLContext : public QPlatformOpenGLContext
 {
 public:
@@ -41,3 +44,4 @@ public:
 	virtual QSurfaceFormat format() const;
 };
 
+}
