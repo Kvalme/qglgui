@@ -53,7 +53,7 @@ GlGuiMultiThread::~GlGuiMultiThread()
 void GlGuiMultiThread::CreateWindow(const std::string &name)
 {
 	PROFILE_FUNCTION
-	
+
 	if (mGuiThreadId != std::this_thread::get_id())
 	{
 		std::lock_guard<std::mutex> guard(mMainMutex);
@@ -69,74 +69,74 @@ void GlGuiMultiThread::CreateWindow(const std::string &name)
 void GlGuiMultiThread::Render()
 {
 	PROFILE_FUNCTION
-	
+
 	assert(mGuiThreadId != std::this_thread::get_id());
 	assert(guiRenderer);
-	
+
 	guiRenderer->Render();
 }
 
 void GlGuiMultiThread::Update()
 {
 	PROFILE_FUNCTION
-	
+
 	std::lock_guard<std::mutex> guard(mMainMutex);
-	
+
 	for (std::function<void(void)> &f : mTasks)
 	{
 		f();
 	}
 	mTasks.clear();
-	
+
 	uiWorker->Update();
 }
 
 int GlGuiMultiThread::CreateScreen(QRect viewport, float dpix, float dpiy)
 {
 	PROFILE_FUNCTION
-	
+
 	return -1;
 }
 
 void GlGuiMultiThread::InjectCharacterEvent(QChar character)
 {
 	PROFILE_FUNCTION
-	
+
 	QGL::GlGuiInternalBase::InjectCharacterEvent(character);
 }
 
 void GlGuiMultiThread::InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
-	
+
 	QGL::GlGuiInternalBase::InjectKeyboardEvent(eventType, key, modifiers);
 }
 
 void GlGuiMultiThread::InjectMouseButtonEvent(int screenId, QPoint position, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
-	
+
 	QGL::GlGuiInternalBase::InjectMouseButtonEvent(screenId, position, button, modifiers);
 }
 
 void GlGuiMultiThread::InjectMouseMoveEvent(int screenId, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
-	
+
 	QGL::GlGuiInternalBase::InjectMouseMoveEvent(screenId, position, buttons, modifiers);
 }
 
 void GlGuiMultiThread::InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers)
 {
 	PROFILE_FUNCTION
-	
+
 	GlGuiInternalBase::InjectMouseWheelEvent(screenId, position, deltax, deltay, modifiers);
 }
 
 void GlGuiMultiThread::SetWindowTheme(const std::string &path, const std::string &name)
 {
 	PROFILE_FUNCTION
-	
+
 	if (mGuiThreadId != std::this_thread::get_id())
 	{
 		std::lock_guard<std::mutex> guard(mMainMutex);
@@ -147,3 +147,11 @@ void GlGuiMultiThread::SetWindowTheme(const std::string &path, const std::string
 		QGL::GlGuiInternalBase::SetWindowTheme(path, name);
 	}
 }
+
+void GlGuiMultiThread::RunGuiTask(std::function< void(void) > task)
+{
+	PROFILE_FUNCTION
+
+	mTasks.push_back(task);
+}
+

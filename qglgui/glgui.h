@@ -204,6 +204,12 @@ public:
 	 */
 	virtual bool IsFocusWindow() = 0;
 	
+	/**
+	 * Runs task in GUI thread
+	 * @param task task to be executed
+	 */
+	virtual void RunGuiTask(std::function<void(void)> task) = 0;
+	
 protected:
 	GlGui();
 	GlGui(GlGui &);

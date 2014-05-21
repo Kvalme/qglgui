@@ -40,6 +40,8 @@ class QFontMetrics;
 namespace QGL
 {
 
+class GlGui;
+
 class GlUIWindowDecoratorAuroraeButton;
 	
 class GlUIWindowDecoratorAurorae : public GlUIWindowDecorator
@@ -53,12 +55,14 @@ public:
 	
 	virtual bool IsDecorationChanged() const;
 	
+	GlUIWindowDecoratorAurorae(GlGui *gui);
+		
 	virtual ~GlUIWindowDecoratorAurorae();
 	
 	virtual bool handleMouseEvent(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 
 	static void RenderPart(QImage **image, const QString &elementId, QSvgRenderer &source, int width, int height);
-	
+    
 private:
 	bool LoadGeneral(QSettings &settings);
 	bool LoadLayout(QSettings &settings);
@@ -96,11 +100,6 @@ private:
 
 	std::vector<GlUIWindowDecoratorAuroraeButton*> mButtons;
 
-/*	Button mCloseButtonCache;
-	Button mMaximizeButtonCache;
-	Button mMinimizeButtonCache;
-	Button mRestoreButtonCache;*/
-
 	QFont mTitleFont;
 	QFontMetrics *mTitleFontMetrics;
 	
@@ -123,6 +122,8 @@ private:
 	void RenderFrame(QWindow *window, QPaintDevice *image);
 	void ProceedTitlebarActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 	void ProceedResizeActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+	
+	GlGui *mGui;
 };
 
 }

@@ -34,6 +34,11 @@
 
 using namespace QGL;
 
+GlUIWindowDecoratorAuroraeButton::GlUIWindowDecoratorAuroraeButton(GlGui *gui):
+	mGui(gui)
+{
+}
+
 void GlUIWindowDecoratorAuroraeButton::ResetState()
 {
 	mButtonState = (mButtonState == STATE::DEACTIVATED ? mButtonState : STATE::ACTIVE);
@@ -44,13 +49,18 @@ QImage *GlUIWindowDecoratorAuroraeButton::GetImage(QWindow *wnd)
 	PROFILE_FUNCTION
 
 	bool isActive = wnd->isActive();
-	switch(mButtonState)
+	switch (mButtonState)
 	{
-		case STATE::ACTIVE: return isActive ? mCache.mActiveCenter : mCache.mInactiveCenter;
-		case STATE::DEACTIVATED: return isActive ? mCache.mDeactivatedCenter : mCache.mDeactivatedInactiveCenter;
-		case STATE::HOVER: return isActive ? mCache.mHoverCenter : mCache.mHoverInactiveCenter;
-		case STATE::PRESSED: return isActive ? mCache.mPressedCenter : mCache.mInactiveCenter;
-		default: return nullptr;
+		case STATE::ACTIVE:
+			return isActive ? mCache.mActiveCenter : mCache.mInactiveCenter;
+		case STATE::DEACTIVATED:
+			return isActive ? mCache.mDeactivatedCenter : mCache.mDeactivatedInactiveCenter;
+		case STATE::HOVER:
+			return isActive ? mCache.mHoverCenter : mCache.mHoverInactiveCenter;
+		case STATE::PRESSED:
+			return isActive ? mCache.mPressedCenter : mCache.mInactiveCenter;
+		default:
+			return nullptr;
 	}
 }
 
@@ -70,7 +80,7 @@ void GlUIWindowDecoratorAuroraeButton::RenderButton(int width, int height)
 GlUIWindowDecoratorAuroraeButton::~GlUIWindowDecoratorAuroraeButton()
 {
 	PROFILE_FUNCTION
-	
+
 	delete mCache.mActiveCenter;
 	delete mCache.mHoverCenter;
 	delete mCache.mDeactivatedCenter;
@@ -85,7 +95,7 @@ bool GlUIWindowDecoratorAuroraeButtonClose::ProceedMouse(QWindow *wnd, QPoint lo
 	PROFILE_FUNCTION
 
 	if (mButtonState == STATE::DEACTIVATED) return false;
-	
+
 	if (buttons == Qt::NoButton && mButtonState != STATE::PRESSED)
 	{
 		mButtonState = STATE::HOVER;
@@ -93,7 +103,8 @@ bool GlUIWindowDecoratorAuroraeButtonClose::ProceedMouse(QWindow *wnd, QPoint lo
 	}
 	else if (buttons == Qt::NoButton && mButtonState == STATE::PRESSED)
 	{
-		wnd->close();
+        mGui->RunGuiTask(std::bind(&QWindow::close, wnd));
+
 		return true;
 	}
 	else if (((buttons & Qt::LeftButton) == Qt::LeftButton))
@@ -101,7 +112,7 @@ bool GlUIWindowDecoratorAuroraeButtonClose::ProceedMouse(QWindow *wnd, QPoint lo
 		mButtonState = STATE::PRESSED;
 		return true;
 	}
-	
+
 	return false;
 }
 

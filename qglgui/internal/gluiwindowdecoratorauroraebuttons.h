@@ -29,70 +29,84 @@
 #pragma once
 #include <QRect>
 #include <QSvgRenderer>
+#include <qglgui/glgui.h>
 
 class QImage;
 class QWindow;
 
 namespace QGL
 {
-	
+class GlUIWindowDecoratorAurorae;
+
 class GlUIWindowDecoratorAuroraeButton
 {
-	public:
-		virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers) = 0;
-		QImage* GetImage(QWindow *wnd);
-		QRect GetBounds() const { return mBounds;}
-		void SetBounds(QRect bounds) { mBounds = bounds;}
-		void RenderButton(int width, int height);
-		void ResetState();
-		QSvgRenderer mRenderer;
-		
-		virtual ~GlUIWindowDecoratorAuroraeButton();
-	protected:
-		struct ButtonCache
-		{
-			QImage *mActiveCenter = nullptr;
-			QImage *mHoverCenter = nullptr;
-			QImage *mPressedCenter = nullptr;
-			QImage *mDeactivatedCenter = nullptr;
-			
-			QImage *mInactiveCenter = nullptr;
-			QImage *mHoverInactiveCenter = nullptr;
-			QImage *mDeactivatedInactiveCenter = nullptr;
-		} mCache;
-		enum class STATE
-		{
-			ACTIVE,
-			HOVER,
-			PRESSED,
-			DEACTIVATED,
-		} mButtonState = STATE::ACTIVE;
+public:
+	virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers) = 0;
+	QImage *GetImage(QWindow *wnd);
+	QRect GetBounds() const
+	{
+		return mBounds;
+	}
+	void SetBounds(QRect bounds)
+	{
+		mBounds = bounds;
+	}
+	void RenderButton(int width, int height);
+	void ResetState();
+	QSvgRenderer mRenderer;
 
-		QRect mBounds;
+	virtual ~GlUIWindowDecoratorAuroraeButton();
+	GlUIWindowDecoratorAuroraeButton(QGL::GlGui *gui);
+protected:
+	struct ButtonCache
+	{
+		QImage *mActiveCenter = nullptr;
+		QImage *mHoverCenter = nullptr;
+		QImage *mPressedCenter = nullptr;
+		QImage *mDeactivatedCenter = nullptr;
+
+		QImage *mInactiveCenter = nullptr;
+		QImage *mHoverInactiveCenter = nullptr;
+		QImage *mDeactivatedInactiveCenter = nullptr;
+	} mCache;
+	enum class STATE
+	{
+		ACTIVE,
+		HOVER,
+		PRESSED,
+		DEACTIVATED,
+	} mButtonState = STATE::ACTIVE;
+
+	QRect mBounds;
+    QGL::GlGui *mGui;
 };
 
 class GlUIWindowDecoratorAuroraeButtonClose : public GlUIWindowDecoratorAuroraeButton
 {
 public:
-		virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+    GlUIWindowDecoratorAuroraeButtonClose(QGL::GlGui *gui) : GlUIWindowDecoratorAuroraeButton(gui) {}
+	virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 };
 
 class GlUIWindowDecoratorAuroraeButtonMinimize : public GlUIWindowDecoratorAuroraeButton
 {
 public:
-		virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+    GlUIWindowDecoratorAuroraeButtonMinimize(QGL::GlGui *gui) : GlUIWindowDecoratorAuroraeButton(gui) {}
+	virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 };
 
 class GlUIWindowDecoratorAuroraeButtonMaximize : public GlUIWindowDecoratorAuroraeButton
 {
 public:
-		virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+    GlUIWindowDecoratorAuroraeButtonMaximize(QGL::GlGui *gui) : GlUIWindowDecoratorAuroraeButton(gui) {}
+	virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 };
 
 class GlUIWindowDecoratorAuroraeButtonRestore : public GlUIWindowDecoratorAuroraeButton
 {
 public:
-		virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
+    GlUIWindowDecoratorAuroraeButtonRestore(QGL::GlGui *gui) : GlUIWindowDecoratorAuroraeButton(gui) {}
+	virtual bool ProceedMouse(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers);
 };
 
 }

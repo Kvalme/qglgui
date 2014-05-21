@@ -46,6 +46,12 @@
 
 using namespace QGL;
 
+GlUIWindowDecoratorAurorae::GlUIWindowDecoratorAurorae(GlGui *gui) :
+	mGui(gui)
+{
+
+}
+
 void GlUIWindowDecoratorAurorae::SetTheme(const std::string &path, const std::string &name)
 {
 	PROFILE_FUNCTION
@@ -159,12 +165,12 @@ bool GlUIWindowDecoratorAurorae::LoadResources()
 
 	mButtons.clear();
 	GlUIWindowDecoratorAuroraeButton *button;
-	button = new GlUIWindowDecoratorAuroraeButtonClose;
+	button = new GlUIWindowDecoratorAuroraeButtonClose(mGui);
 	if (!loadFile("close", button->mRenderer))return false;
 	mButtons.push_back(button);
-/*	if (!loadFile("maximize", mMaximizeButton))return false;
-	if (!loadFile("minimize", mMinimizeButton))return false;
-	if (!loadFile("restore", mRestoreButton))return false;*/
+	/*	if (!loadFile("maximize", mMaximizeButton))return false;
+		if (!loadFile("minimize", mMinimizeButton))return false;
+		if (!loadFile("restore", mRestoreButton))return false;*/
 	if (!loadFile("decoration", mDecoration))return false;
 
 	return true;
@@ -188,7 +194,7 @@ bool GlUIWindowDecoratorAurorae::PrecacheResources()
 	mTitleFont = QFont("Arial", mTitleHeight);
 	mTitleFontMetrics = new QFontMetrics(mTitleFont);
 
-	for(GlUIWindowDecoratorAuroraeButton *button : mButtons)
+	for (GlUIWindowDecoratorAuroraeButton * button : mButtons)
 	{
 		button->RenderButton(mButtonWidth, mButtonHeight);
 	}
@@ -215,7 +221,7 @@ void GlUIWindowDecoratorAurorae::Render(QWindow *window, QPaintDevice *image)
 
 	//draw buttons
 //	int bid = 0;
-	for(GlUIWindowDecoratorAuroraeButton *button : mButtons)
+	for (GlUIWindowDecoratorAuroraeButton * button : mButtons)
 	{
 		QRect bounds = QRect(mBorderLeft + window->width() - mButtonSpacing - mButtonWidth, mPaddingTop, mButtonWidth, mButtonHeight);
 		button->SetBounds(bounds);
@@ -303,7 +309,7 @@ bool GlUIWindowDecoratorAurorae::handleMouseEvent(QWindow *wnd, QPoint local, QP
 	if (!mBounds.IsInsideBounds(local))return false;
 
 	//Check for buttons first
-	for (GlUIWindowDecoratorAuroraeButton *button : mButtons)
+	for (GlUIWindowDecoratorAuroraeButton * button : mButtons)
 	{
 		if (button->GetBounds().contains(local))
 		{
@@ -317,25 +323,25 @@ bool GlUIWindowDecoratorAurorae::handleMouseEvent(QWindow *wnd, QPoint local, QP
 		else
 			button->ResetState();
 	}
-	
+
 	if (mBounds.mTitleBar.contains(local))
 	{
 		ProceedTitlebarActions(wnd, local, position, buttons, modifiers);
 		return true;
 	}
-	else if(mBounds.mBottom.contains(local))
+	else if (mBounds.mBottom.contains(local))
 	{
 		ProceedResizeActions(wnd, local, position, buttons, modifiers);
 		return true;
 	}
-	
+
 	return false;
 }
 
 void GlUIWindowDecoratorAurorae::ProceedTitlebarActions(QWindow *wnd, QPoint local, QPoint position, Qt::MouseButtons buttons, Qt::KeyboardModifiers modifiers)
 {
-	UIWindow *window = static_cast<UIWindow*>(wnd->handle());
-	
+	UIWindow *window = static_cast<UIWindow *>(wnd->handle());
+
 	if (buttons == Qt::NoButton && window->IsMoving()) window->MarkAsMoving(false);
 	if (((buttons & Qt::LeftButton) == Qt::LeftButton))
 	{
@@ -360,6 +366,6 @@ void GlUIWindowDecoratorAurorae::ProceedResizeActions(QWindow *wnd, QPoint local
 //	UIWindow *window = static_cast<UIWindow*>(wnd->handle());
 
 //	if (buttons == Qt::NoButton && window->IsMoving()) window->MarkAsResizing(false);
-	
-	
+
+
 }

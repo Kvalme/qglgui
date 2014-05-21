@@ -42,6 +42,7 @@ class GlUIWindowDecorator
 public:
 	/**
 	 * Set theme
+	 * @param path path to theme file
 	 * @param name theme name
 	 */
 	virtual void SetTheme(const std::string &path, const std::string &name) = 0;

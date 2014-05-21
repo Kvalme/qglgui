@@ -73,6 +73,8 @@ public:
 	virtual GlUIWindowDecorator* getDecorator() { return mDecorator;}
 	virtual const UIWindow* iGetKeyboardGrab() const { return mKeyboardGrabWindow;}
 	virtual const UIWindow* iGetMouseGrab() const { return mMouseGrabWindow;}
+	
+	virtual void RunGuiTask(std::function< void(void) > task);
 
 protected:
 	struct Window
@@ -84,7 +86,6 @@ protected:
 	
 	UIWindow *mKeyboardGrabWindow;
 	UIWindow *mMouseGrabWindow;
-//	QWindow *mActiveWindow = nullptr;
 
 	QWindow * handleMouseEvent (int screenId, QPoint position, Qt::MouseButtons b, Qt::KeyboardModifiers modifiers);
 	Window* getWindowByPoint(QPoint point);

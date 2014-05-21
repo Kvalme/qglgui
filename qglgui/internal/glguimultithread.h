@@ -54,7 +54,9 @@ public:
 	virtual void InjectCharacterEvent(QChar character);
 	virtual void InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers);
 	virtual void InjectMouseWheelEvent(int screenId, QPoint position, double deltax, double deltay, Qt::KeyboardModifiers modifiers);
-	
+
+	virtual void RunGuiTask(std::function< void(void) > task);
+    
 private:
 	std::shared_ptr<UIWorker> uiWorker;
 	std::mutex mMainMutex;

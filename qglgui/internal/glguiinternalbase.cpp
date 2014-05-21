@@ -45,7 +45,7 @@ GlGuiInternalBase::GlGuiInternalBase(const std::string &fontDir) :
 	mMouseGrabWindow(nullptr)
 {
 	PROFILE_FUNCTION
-	mDecorator = new GlUIWindowDecoratorAurorae;
+	mDecorator = new GlUIWindowDecoratorAurorae(this);
 }
 
 GlGuiInternalBase::~GlGuiInternalBase()
@@ -310,3 +310,11 @@ void GlGuiInternalBase::SetWindowTheme(const std::string &path, const std::strin
 		}
 	}
 }
+
+void GlGuiInternalBase::RunGuiTask(std::function< void(void) > task)
+{
+	PROFILE_FUNCTION
+
+	task();
+}
+
