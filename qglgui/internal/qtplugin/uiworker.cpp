@@ -68,7 +68,7 @@ UIWorker::~UIWorker()
 {
 	PROFILE_FUNCTION
 
-	delete app;
+//	delete app;
 }
 
 void UIWorker::Update()
