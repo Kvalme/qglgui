@@ -19,22 +19,25 @@ find_package(Qt5Svg 5.2 REQUIRED)
 find_package(Freetype REQUIRED)
 
 
-option(BUILD_SAMPLES "Build sample applications" ON)
-option(ENABLE_PROFILING "Enable profiling" OFF)
+option(QGL_BUILD_SAMPLES "Build sample applications" ON)
+option(QGL_ENABLE_PROFILING "Enable profiling" OFF)
 
-option(ENABLE_GL1_RENDERER "Enable basic GL1 renderer (glBegin/End)" OFF)
-option(ENABLE_GL2_RENDERER "Enable basic GL2 renderer (VBO + fixed pipeline)" OFF)
-option(ENABLE_GL3_RENDERER "Enable basic GL3 renderer (VBO + built-in shaders)" OFF)
+option(QGL_ENABLE_GL1_RENDERER "Enable basic GL1 renderer (glBegin/End)" OFF)
+option(QGL_ENABLE_GL2_RENDERER "Enable basic GL2 renderer (VBO + fixed pipeline)" OFF)
+option(QGL_ENABLE_GL3_RENDERER "Enable basic GL3 renderer (VBO + built-in shaders)" OFF)
 
-if (ENABLE_PROFILING)
+set(QGL_CPPPROFILER_PATH "." CACHE STRING "Path to libcppprofiler location")
+include_directories(${QGL_CPPPROFILER_PATH})
+
+if (QGL_ENABLE_PROFILING)
 	add_definitions(-DENABLE_PROFILING)
 	add_subdirectory(libcppprofiler)
 	set(PROFILER_LIB cppprofiler-static)
-endif (ENABLE_PROFILING)
+endif (QGL_ENABLE_PROFILING)
 
 add_subdirectory(qglgui)
 
-if (BUILD_SAMPLES)
+if (QGL_BUILD_SAMPLES)
 	
 	find_package(glfw3)
 	
@@ -43,7 +46,7 @@ if (BUILD_SAMPLES)
 	else ()
 		add_subdirectory(samples)
 	endif (NOT GLFW3_FOUND)
-endif (BUILD_SAMPLES)
+endif (QGL_BUILD_SAMPLES)
 
 
 

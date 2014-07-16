@@ -2,7 +2,11 @@ include_directories(${GLFW3_INCLUDEDIR} ${PROJECT_SOURCE_DIR})
 
 add_subdirectory(qtplugin)
 
-set(QGLGUI_INTERNAL_SOURCES gluiwindowdecoratorauroraebuttons.cpp gl1guirenderer.cpp glguimultithread.cpp glguiinternalbase.cpp glguisinglethread.cpp glguiwindowdecoratoraurorae.cpp)
+set(QGLGUI_INTERNAL_SOURCES gluiwindowdecoratorauroraebuttons.cpp glguimultithread.cpp glguiinternalbase.cpp glguisinglethread.cpp glguiwindowdecoratoraurorae.cpp)
+
+if (QGL_ENABLE_GL1_RENDERER)
+    list(APPEND QGLGUI_INTERNAL_SOURCES gl1guirenderer.cpp)
+endif (QGL_ENABLE_GL1_RENDERER)
 
 add_library(qglgui_internal OBJECT ${QGLGUI_INTERNAL_SOURCES})
 set_property(TARGET qglgui_internal APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Core_INCLUDE_DIRS}")
