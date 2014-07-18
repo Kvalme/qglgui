@@ -22,7 +22,7 @@ find_package(Freetype REQUIRED)
 option(QGL_BUILD_SAMPLES "Build sample applications" ON)
 option(QGL_ENABLE_PROFILING "Enable profiling" OFF)
 
-option(QGL_ENABLE_GL1_RENDERER "Enable basic GL1 renderer (glBegin/End)" OFF)
+option(QGL_ENABLE_GL1_RENDERER "Enable basic GL1 renderer (glBegin/End)" ON)
 option(QGL_ENABLE_GL2_RENDERER "Enable basic GL2 renderer (VBO + fixed pipeline)" OFF)
 option(QGL_ENABLE_GL3_RENDERER "Enable basic GL3 renderer (VBO + built-in shaders)" OFF)
 
