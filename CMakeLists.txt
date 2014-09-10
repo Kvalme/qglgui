@@ -38,7 +38,6 @@ endif (QGL_ENABLE_PROFILING)
 add_subdirectory(qglgui)
 
 if (QGL_BUILD_SAMPLES)
-	
 	find_package(glfw3)
 	
 	if (NOT GLFW3_FOUND)
