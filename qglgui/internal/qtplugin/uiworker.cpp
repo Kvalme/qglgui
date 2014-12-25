@@ -57,13 +57,9 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect vie
 
 	QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, true);
 
-//	QGuiApplicationPrivate::platform_name = new QString("QGL");
 	mPlatform = new UIIntegration(this->gui, viewport);
-//	QGuiApplicationPrivate::platform_integration = mPlatform;
 	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 	
-//	guiApp = new QGuiApplication(argc, argv, QCoreApplication::ApplicationFlags);
-
 	app = new QApplication(argc, argv);
 
 	app->setQuitOnLastWindowClosed(false);

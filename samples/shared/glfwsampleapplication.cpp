@@ -58,7 +58,7 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 
 	glfwSetErrorCallback(glfwError);
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_RESIZABLE, 0);
 

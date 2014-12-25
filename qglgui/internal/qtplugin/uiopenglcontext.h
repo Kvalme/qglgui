@@ -42,6 +42,11 @@ public:
 	virtual bool makeCurrent(QPlatformSurface *surface);
 	virtual void swapBuffers(QPlatformSurface *surface);
 	virtual QSurfaceFormat format() const;
+	
+	UIOpenGLContext();
+	virtual ~UIOpenGLContext();
+private:
+	void *mGlLibrary;
 };
 
 }

@@ -26,32 +26,22 @@
  *
  *
  */
-
 #include "uiopenglcontext.h"
 #include "libcppprofiler/src/cppprofiler.h"
 #include "uiintegration.h"
 
 #include <iostream>
+#include <dlfcn.h>
 
 using namespace QGL;
-
-GLAPI void GLAPIENTRY glEnable( GLenum cap )
-{
-	std::cerr<<"glEnable:"<<UIIntegration::guiThreadId<<" "<<std::this_thread::get_id()<<std::endl;
-	if (UIIntegration::guiThreadId != std::this_thread::get_id()) ::glEnable(cap);
-}
-GLAPI void GLAPIENTRY glDisable( GLenum cap )
-{
-	std::cerr<<"glDisable:"<<UIIntegration::guiThreadId<<" "<<std::this_thread::get_id()<<std::endl;
-}
 
 QFunctionPointer UIOpenGLContext::getProcAddress(const QByteArray &procName)
 {
 	PROFILE_FUNCTION
 
-	std::cerr<<"Requested function:"<<procName.constData()<<std::endl;
-	
-	return NULL;
+	void *fun = dlsym(mGlLibrary, procName.constData());
+	std::cerr<<"Requested function:"<<procName.constData()<<" have pointer:"<<fun<<std::endl;
+	return (QFunctionPointer)fun;
 }
 
 void UIOpenGLContext::doneCurrent()
@@ -83,6 +73,21 @@ QSurfaceFormat UIOpenGLContext::format() const
 	fmt.setBlueBufferSize(8);
 	fmt.setAlphaBufferSize(8);
 	fmt.setStencilBufferSize(8);
+	fmt.setRenderableType(QSurfaceFormat::OpenGL);
 	
 	return fmt;
+}
+
+UIOpenGLContext::UIOpenGLContext()
+{
+	mGlLibrary = dlopen("libGL.so", RTLD_NOW);
+	if (!mGlLibrary) throw std::runtime_error("Unable to open libGL.so");
+}
+
+UIOpenGLContext::~UIOpenGLContext()
+{
+	if (mGlLibrary)
+	{
+		dlclose(mGlLibrary);
+	}
 }
