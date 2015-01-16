@@ -40,6 +40,8 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	ui->selectedDecoration->addItems(decorations);
 	
 	QApplication::setStyle("windows");
+
+    on_selectedSample_currentIndexChanged("QtQuick2");
 }
 
 BasicQtApp::~BasicQtApp()

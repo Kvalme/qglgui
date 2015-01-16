@@ -28,11 +28,15 @@
 
 #pragma once
 #include <qpa/qplatformintegration.h>
+#include <../qtdeclarative-opensource-src-5.2.1/src/quick/scenegraph/qsgcontextplugin_p.h>
+#include <qplugin.h>
 
 #include <thread>
 
 namespace QGL
 {
+
+class UIOpenGLContext;
 
 class GlGuiInternalBase;
 class UIScreen;
@@ -75,6 +79,21 @@ private:
 	int mScreenId = 0;
 	std::vector<UIScreen *> mScreens;
 	QRect mDefaultViewport;
+	UIOpenGLContext *mContext;
+};
+
+class ContextPlugin : public QSGContextPlugin
+{
+	Q_OBJECT
+
+	Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QSGContextFactoryInterface" FILE "customcontext.json")
+
+public:
+	ContextPlugin(QObject *parent = 0);
+
+	QStringList keys() const;
+	QSGContext *create(const QString &key) const;
+	QQuickTextureFactory *createTextureFactoryFromImage(const QImage &image);
 };
 
 }

@@ -30,10 +30,14 @@
 #include "libcppprofiler/src/cppprofiler.h"
 #include "uiintegration.h"
 
+#include "samples/shared/glfwsampleapplication.h"
+
 #include <iostream>
 #include <dlfcn.h>
 
 using namespace QGL;
+
+void *useProgram;
 
 QFunctionPointer UIOpenGLContext::getProcAddress(const QByteArray &procName)
 {
@@ -47,19 +51,36 @@ QFunctionPointer UIOpenGLContext::getProcAddress(const QByteArray &procName)
 void UIOpenGLContext::doneCurrent()
 {
 	PROFILE_FUNCTION
+	std::cerr<<__FUNCTION__<<std::endl;
+
+	GlfwSampleApplication::ReleaseContext();
 }
 
 bool UIOpenGLContext::makeCurrent(QPlatformSurface *surface)
 {
 	PROFILE_FUNCTION
-	
+    std::cerr<<__FUNCTION__<<std::endl;
+	GlfwSampleApplication::LockContext();
+
+	void (*bindFramebuffer)(GLenum, GLuint);
+	bindFramebuffer = (void(*)(GLenum, GLuint))getProcAddress("glBindFramebuffer");
+	(*bindFramebuffer)(GL_FRAMEBUFFER, 1);
+
 	return true;
 }
 
 void UIOpenGLContext::swapBuffers(QPlatformSurface *surface)
 {
 	PROFILE_FUNCTION
+	std::cerr<<__FUNCTION__<<std::endl;
+	void(*prog)(GLuint) = (void(*)(GLuint))useProgram;
+    prog(0);
 
+	void (*bindFramebuffer)(GLenum, GLuint);
+	bindFramebuffer = (void(*)(GLenum, GLuint))getProcAddress("glBindFramebuffer");
+	(*bindFramebuffer)(GL_FRAMEBUFFER, 0);
+
+    GlfwSampleApplication::ReleaseContext();
 }
 
 QSurfaceFormat UIOpenGLContext::format() const
@@ -82,6 +103,7 @@ UIOpenGLContext::UIOpenGLContext()
 {
 	mGlLibrary = dlopen("libGL.so", RTLD_NOW);
 	if (!mGlLibrary) throw std::runtime_error("Unable to open libGL.so");
+    useProgram = dlsym(mGlLibrary, "glUseProgram");
 }
 
 UIOpenGLContext::~UIOpenGLContext()

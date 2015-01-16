@@ -29,6 +29,7 @@
 #include "uiwindow.h"
 #include "libcppprofiler/src/cppprofiler.h"
 #include "uiintegration.h"
+#include "uiopenglcontext.h"
 #include <qglgui/internal/glguiinternalbase.h>
 #include <qglgui/glguiwindowdecorator.h>
 
@@ -37,8 +38,11 @@
 
 #include <private/qwindow_p.h>
 #include <private/qguiapplication_p.h>
+#include <QOpenGLFramebufferObjectFormat>
+#include <QOpenGLContext>
+#include <QtQuick/qquickwindow.h>
 
-
+#include <iostream>
 using namespace QGL;
 
 std::map<WId, UIWindow *> UIWindow::windows_by_win_id;
@@ -53,14 +57,15 @@ UIWindow::UIWindow(QWindow *window) :
 	opacity_level(1.0)
 {
 	PROFILE_FUNCTION
-
+    std::cerr<<__FUNCTION__<<std::endl;
 	QRect geom(window->geometry());
 	QScreen *screen = window->screen();
 	QRect screenGeom(screen->availableGeometry());
 	int x = screenGeom.x() + screenGeom.width()/2. - geom.width()/2.;
 	int y = screenGeom.y() + screenGeom.height()/2. - geom.height()/2.;
-	geom.setX(x);
-	geom.setY(y);
+	/*geom.setX(x);
+	geom.setY(y);*/
+	geom.setRect(x, y, geom.width(), geom.height());
 	
 	setGeometry(geom);
 	setWindowFlags(window->flags());
@@ -74,6 +79,53 @@ UIWindow::UIWindow(QWindow *window) :
 	raise();
 	mIsDecorationUpdateNeeded = true;
 	checkDecorations();
+	std::cerr<<"UIWindow:"<<geom.width()<<":"<<geom.height()<<std::endl;
+    QQuickWindow *quickWindow = qobject_cast<QQuickWindow*>(window);
+    if (quickWindow)
+    {
+		UIOpenGLContext *context = new UIOpenGLContext;
+		void (*genFramebuffers)(int, GLuint*);
+		void (*bindFramebuffer)(GLenum, GLuint);
+		void (*genRenderbuffers)(int, GLuint*);
+		void (*bindRenderbuffer)(GLenum, GLuint);
+		void (*renderbufferStorage)(GLenum, GLenum, GLsizei, GLsizei);
+		void (*framebufferRenderbuffer)(GLenum, GLenum, GLenum, GLuint);
+		void (*framebufferTexture2D)(GLenum, GLenum, GLenum, GLuint, GLint);
+
+		genFramebuffers = (void(*)(int, GLuint*))context->getProcAddress("glGenFramebuffers");
+		bindFramebuffer = (void(*)(GLenum, GLuint))context->getProcAddress("glBindFramebuffer");
+		genRenderbuffers = (void(*)(int, GLuint*))context->getProcAddress("glGenRenderbuffers");
+		bindRenderbuffer = (void(*)(GLenum, GLuint))context->getProcAddress("glBindRenderbuffer");
+		renderbufferStorage = (void(*)(GLenum, GLenum, GLsizei, GLsizei))context->getProcAddress("glRenderbufferStorage");
+		framebufferRenderbuffer = (void(*)(GLenum, GLenum, GLenum, GLuint))context->getProcAddress("glFramebufferRenderbuffer");
+		framebufferTexture2D =(void(*)(GLenum, GLenum, GLenum, GLuint, GLint))context->getProcAddress("glFramebufferTexture2D");
+
+		GLuint fb, colorRb, depthStencilRb;
+		(*genFramebuffers)(1, &fb);
+		(*bindFramebuffer)(GL_FRAMEBUFFER, fb);
+
+		glGenTextures(1, &colorRb);
+		glBindTexture(GL_TEXTURE_2D, colorRb);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//NULL means reserve texture memory, but texels are undefined
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, geom.width(), geom.height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+
+		(*framebufferTexture2D)(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorRb, 0);
+
+		(*genRenderbuffers)(1, &depthStencilRb);
+		(*bindRenderbuffer)(GL_RENDERBUFFER, depthStencilRb);
+		(*renderbufferStorage)(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, geom.width(), geom.height());
+		(*framebufferRenderbuffer)(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencilRb);
+		
+		std::cerr<<"Set render target:"<<geom.width()<<":"<<geom.height()<<std::endl;
+		quickWindow->setRenderTarget(fb, QSize(geom.width(), geom.height()));
+
+		(*bindFramebuffer)(GL_FRAMEBUFFER, 0);
+
+    }
 }
 
 UIWindow::~UIWindow()
@@ -121,7 +173,7 @@ void UIWindow::setFrameMarginsEnabled(bool enabled)
 void UIWindow::setGeometry(const QRect &rect)
 {
 	PROFILE_FUNCTION
-
+	std::cerr<<"geom:"<<rect.left()<<":"<<rect.top()<<"->"<<rect.right()<<":"<<rect.bottom()<<std::endl;
 	if (window()->windowState() != Qt::WindowNoState) return;
 
 	position_includes_frame = qt_window_private(window())->positionPolicy == QWindowPrivate::WindowFrameInclusive;
@@ -198,6 +250,7 @@ void UIWindow::setVisible(bool vis)
 	}
 
 	visible = vis;
+
 }
 
 void UIWindow::setWindowState(Qt::WindowState state)

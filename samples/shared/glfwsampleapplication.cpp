@@ -39,6 +39,8 @@ std::function<void(int, int, int, int)> GlfwSampleApplication::mKeyboardCallback
 std::function<void(unsigned int)> GlfwSampleApplication::mCharCallback;
 std::function<void(double, double, double, double, int)> GlfwSampleApplication::mScrollCallback;
 
+std::mutex GlfwSampleApplication::mContextMutex;
+
 void glfwError(int error, const char *desc)
 {
 	PROFILE_FUNCTION
@@ -90,19 +92,25 @@ void GlfwSampleApplication::run()
 	for (;;)
 	{
 		PROFILE_BLOCK(frame, "Frame");
-		
+
+        LockContext();
 		glfwPollEvents();
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)return;
 		if (glfwWindowShouldClose(window) == GL_TRUE)return;
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		renderCube();
+        ReleaseContext();
+
 		this->runFunction();
 
 		PROFILE_START("Swap buffers");
+        LockContext();
 		glfwSwapBuffers(window);
+        ReleaseContext();
+
 		PROFILE_END
 	}
 }
@@ -117,6 +125,7 @@ void GlfwSampleApplication::renderCube()
 
 	glDisable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -252,4 +261,15 @@ void GlfwSampleApplication::mScroll(GLFWwindow *wnd, double xo, double yo)
 void GlfwSampleApplication::setScrollCallback(std::function< void(double, double, double, double, int) > callback)
 {
 	mScrollCallback = callback;
+}
+
+void GlfwSampleApplication::LockContext()
+{
+    mContextMutex.lock();
+    glfwMakeContextCurrent(window);
+}
+
+void GlfwSampleApplication::ReleaseContext()
+{
+    mContextMutex.unlock();
 }

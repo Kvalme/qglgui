@@ -32,6 +32,7 @@
 #include "GLFW/glfw3.h"
 
 #include <functional>
+#include <mutex>
 
 class GlfwSampleApplication
 {
@@ -43,6 +44,9 @@ public:
 	void setKeyboardCallback(std::function<void(int, int, int, int)> callback);
 	void setCharCallback(std::function<void(unsigned int)> callback);
 	void setScrollCallback(std::function<void(double, double, double, double, int)> callback);
+
+    static void LockContext();
+    static void ReleaseContext();
 	
 private:
 	void renderCube();
@@ -59,6 +63,8 @@ private:
 	static void mKey(GLFWwindow *wnd, int key, int scancode, int action, int mods);
 	static void mChar(GLFWwindow *wnd, unsigned int c);
 	static void mScroll(GLFWwindow *wnd, double x, double y);
+
+    static std::mutex mContextMutex;
 	
 };
 
