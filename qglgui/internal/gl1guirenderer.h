@@ -58,6 +58,7 @@ protected:
 		bool mIsRemoveOnRender;
 		bool mIsTextureChanged;
 		unsigned char *mTextureBuffer;
+		bool mIsQmlWindow;
 
 		WindowRenderInformation();
 		WindowRenderInformation(UIWindow *window, unsigned int winId);

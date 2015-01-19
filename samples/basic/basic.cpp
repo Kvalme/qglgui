@@ -90,7 +90,7 @@ void initGui(int w, int h)
 {
 	PROFILE_FUNCTION
 
-	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h));
+	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h), GlfwSampleApplication::makeOffscreenCurrent);
 	gui->RegisterWindowFactory(createWindow);
 	gui->RegisterRenderer(CreateRenderer(RENDERER_TYPE::GL1));
 	gui->SetWindowTheme("../../../windowdecorations", "kant");

@@ -30,6 +30,7 @@
 #pragma once
 
 #include <qpa/qplatformopenglcontext.h>
+#include <functional>
 
 namespace QGL
 {
@@ -37,6 +38,7 @@ namespace QGL
 class UIOpenGLContext : public QPlatformOpenGLContext
 {
 public:
+	UIOpenGLContext(std::function<void(void)> makeOffscreenCurrent);
 	virtual QFunctionPointer getProcAddress(const QByteArray &procName);
 	virtual void doneCurrent();
 	virtual bool makeCurrent(QPlatformSurface *surface);
@@ -47,6 +49,7 @@ public:
 	virtual ~UIOpenGLContext();
 private:
 	void *mGlLibrary;
+	static std::function<void(void)> mMakeOffscreenCurrent;
 };
 
 }

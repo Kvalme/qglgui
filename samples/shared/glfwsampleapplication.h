@@ -47,10 +47,13 @@ public:
 
     static void LockContext();
     static void ReleaseContext();
+
+	static void makeOffscreenCurrent();
 	
 private:
 	void renderCube();
 	static GLFWwindow *window;
+	static GLFWwindow *offscreenWindow;
 	std::function<void(void)> runFunction;
 	static std::function<void(double, double, int, int)> mMouseMoveCallback;
 	static std::function<void(double, double, int, int, int)> mMouseButtonCallback;

@@ -33,6 +33,7 @@
 #include "libcppprofiler/src/cppprofiler.h"
 
 GLFWwindow *GlfwSampleApplication::window = nullptr;
+GLFWwindow *GlfwSampleApplication::offscreenWindow = nullptr;
 std::function<void(double, double, int, int)> GlfwSampleApplication::mMouseMoveCallback;
 std::function<void(double, double, int, int, int)> GlfwSampleApplication::mMouseButtonCallback;
 std::function<void(int, int, int, int)> GlfwSampleApplication::mKeyboardCallback;
@@ -68,6 +69,18 @@ bool GlfwSampleApplication::init(int width, int height, std::function<void(void)
 	if (!window)
 	{
 		std::cerr << "Unable to create glfw window." << std::endl;
+		return false;
+	}
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	glfwWindowHint(GLFW_RESIZABLE, 0);
+	glfwWindowHint(GLFW_VISIBLE, 0);
+
+	offscreenWindow = glfwCreateWindow(width, height, "Sample Application", nullptr, window);
+	if (!offscreenWindow)
+	{
+		std::cerr << "Unable to create glfw offscreenWindow." << std::endl;
 		return false;
 	}
 
@@ -273,3 +286,9 @@ void GlfwSampleApplication::ReleaseContext()
 {
     mContextMutex.unlock();
 }
+
+void GlfwSampleApplication::makeOffscreenCurrent()
+{
+	glfwMakeContextCurrent(offscreenWindow);
+}
+

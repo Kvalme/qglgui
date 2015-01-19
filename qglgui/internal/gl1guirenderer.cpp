@@ -37,6 +37,8 @@
 
 #include "qglgui/internal/qtplugin/uiwindow.h"
 
+#include <iostream>
+
 using namespace QGL;
 
 Gl1GuiRenderer::Gl1GuiRenderer()
@@ -136,6 +138,13 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 	glLoadIdentity();
 	glOrtho(viewport.x(), viewport.width(), viewport.height(), viewport.y(), -1, 1);
 
+	if (window.mIsQmlWindow)
+	{
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+		glScalef(1.0, -1.0, 1.0);
+	}
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -170,6 +179,13 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 	glVertex3f(xe, ys, z_pos);
 
 	glEnd();
+
+	if (window.mIsQmlWindow)
+	{
+		glMatrixMode(GL_TEXTURE);
+		glLoadIdentity();
+	}
+
 }
 
 void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *window)
@@ -178,6 +194,7 @@ void Gl1GuiRenderer::UpdateTexture(Gl1GuiRenderer::WindowRenderInformation *wind
 
 	if (!window->mIsTextureChanged)return;
 	if (!window->mTextureBuffer)return;
+	if (window->mIsQmlWindow)return;
 
 	if (glIsTexture(window->mTexId) == GL_FALSE)
 	{
@@ -199,12 +216,21 @@ void Gl1GuiRenderer::GuiCreateWindow(unsigned int winId, UIWindow *wnd)
 {
 	PROFILE_FUNCTION
 
+	std::cerr<<__FUNCTION__<<std::endl;
+
 	std::lock_guard<std::mutex> guard(mRenderMutex);
 
 	assert(wnd);
 	assert(mWindows.find(winId) == mWindows.end());
 
 	WindowRenderInformation wri(wnd, winId);
+	if (wnd->IsQMLWindow())
+	{
+		wri.mIsTextureChanged = false;
+		wri.mTexId = wnd->GetTextureId();
+		wri.mIsQmlWindow = true;
+	}
+
 
 	mWindows.insert(std::make_pair(winId, wri));
 }
@@ -248,7 +274,8 @@ Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation() :
 	mTexId(0),
 	mIsRemoveOnRender(false),
 	mIsTextureChanged(true),
-	mTextureBuffer(nullptr)
+	mTextureBuffer(nullptr),
+	mIsQmlWindow(false)
 {
 	PROFILE_FUNCTION
 }
@@ -259,7 +286,8 @@ Gl1GuiRenderer::WindowRenderInformation::WindowRenderInformation(UIWindow *windo
 	mTexId(0),
 	mIsRemoveOnRender(false),
 	mIsTextureChanged(true),
-	mTextureBuffer(nullptr)
+	mTextureBuffer(nullptr),
+	mIsQmlWindow(false)
 {
 	PROFILE_FUNCTION
 }

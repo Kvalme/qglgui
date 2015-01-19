@@ -41,7 +41,7 @@ BasicQtApp::BasicQtApp(QWidget *parent) :
 	
 	QApplication::setStyle("windows");
 
-    on_selectedSample_currentIndexChanged("QtQuick2");
+	on_selectedSample_currentIndexChanged("QtQuick2");
 }
 
 BasicQtApp::~BasicQtApp()
@@ -80,6 +80,8 @@ void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 		QtQuick2ApplicationViewer *app = new QtQuick2ApplicationViewer;
 		app->setMainQmlFile("main.qml");
 		app->showExpanded();
+		app->setPosition(QPoint(10.0, 500.0));
+		app->setFlags();
 		mCurrent = nullptr;
 	}
 

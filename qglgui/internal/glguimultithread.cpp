@@ -37,11 +37,11 @@
 
 using namespace QGL;
 
-GlGuiMultiThread::GlGuiMultiThread(const std::string &fontDir, QRect viewport)
+GlGuiMultiThread::GlGuiMultiThread(const std::string &fontDir, QRect viewport, std::function<void(void)> makeOffscreenCurrent)
 	: GlGuiInternalBase(fontDir)
 {
 	PROFILE_FUNCTION
-	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport));
+	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport, makeOffscreenCurrent));
 	mGuiThreadId = std::this_thread::get_id();
 }
 

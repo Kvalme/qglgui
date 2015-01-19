@@ -33,7 +33,7 @@
 #include "qglgui/internal/glguimultithread.h"
 #include "qglgui/internal/glguisinglethread.h"
 
-std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode, const std::string &fontDir, QRect viewport)
+std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode, const std::string &fontDir, QRect viewport, std::function<void(void)> makeOffscreenCurrent)
 {
 	PROFILE_FUNCTION
 
@@ -41,10 +41,10 @@ std::shared_ptr< QGL::GlGui > QGL::GlGui::Create(QGL::GlGui::THREADING_MODE mode
 	switch (mode)
 	{
 		case THREADING_MODE::MULTI:
-			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiMultiThread(fontDir, viewport));
+			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiMultiThread(fontDir, viewport, makeOffscreenCurrent));
 			break;
 		case THREADING_MODE::SINGLE:
-			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiSingleThread(fontDir, viewport));
+			instance = std::shared_ptr<GlGuiInternalBase>(new GlGuiSingleThread(fontDir, viewport, makeOffscreenCurrent));
 			break;
 	}
 

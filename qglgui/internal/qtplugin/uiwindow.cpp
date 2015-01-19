@@ -83,7 +83,9 @@ UIWindow::UIWindow(QWindow *window) :
     QQuickWindow *quickWindow = qobject_cast<QQuickWindow*>(window);
     if (quickWindow)
     {
+		mIsQMLWindow = true;
 		UIOpenGLContext *context = new UIOpenGLContext;
+		context->makeCurrent(0);
 		void (*genFramebuffers)(int, GLuint*);
 		void (*bindFramebuffer)(GLenum, GLuint);
 		void (*genRenderbuffers)(int, GLuint*);
@@ -100,12 +102,12 @@ UIWindow::UIWindow(QWindow *window) :
 		framebufferRenderbuffer = (void(*)(GLenum, GLenum, GLenum, GLuint))context->getProcAddress("glFramebufferRenderbuffer");
 		framebufferTexture2D =(void(*)(GLenum, GLenum, GLenum, GLuint, GLint))context->getProcAddress("glFramebufferTexture2D");
 
-		GLuint fb, colorRb, depthStencilRb;
+		GLuint fb, depthStencilRb;
 		(*genFramebuffers)(1, &fb);
 		(*bindFramebuffer)(GL_FRAMEBUFFER, fb);
 
-		glGenTextures(1, &colorRb);
-		glBindTexture(GL_TEXTURE_2D, colorRb);
+		glGenTextures(1, &mTextureId);
+		glBindTexture(GL_TEXTURE_2D, mTextureId);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -113,18 +115,17 @@ UIWindow::UIWindow(QWindow *window) :
 		//NULL means reserve texture memory, but texels are undefined
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, geom.width(), geom.height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
 
-		(*framebufferTexture2D)(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorRb, 0);
+		(*framebufferTexture2D)(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0);
 
 		(*genRenderbuffers)(1, &depthStencilRb);
 		(*bindRenderbuffer)(GL_RENDERBUFFER, depthStencilRb);
 		(*renderbufferStorage)(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, geom.width(), geom.height());
 		(*framebufferRenderbuffer)(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencilRb);
-		
+
 		std::cerr<<"Set render target:"<<geom.width()<<":"<<geom.height()<<std::endl;
 		quickWindow->setRenderTarget(fb, QSize(geom.width(), geom.height()));
 
 		(*bindFramebuffer)(GL_FRAMEBUFFER, 0);
-
     }
 }
 

@@ -46,7 +46,7 @@ class UIIntegration;
 class UIWorker
 {
 public:
-	UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport);
+	UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport, std::function<void(void)> makeOffscreenCurrent);
 	~UIWorker();
 
 	void Update();

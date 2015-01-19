@@ -36,12 +36,12 @@
 
 using namespace QGL;
 
-GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir, QRect viewport)
+GlGuiSingleThread::GlGuiSingleThread(const std::string &fontDir, QRect viewport, std::function<void(void)> makeOffscreenCurrent)
 	: GlGuiInternalBase(fontDir)
 {
 	PROFILE_FUNCTION
 
-	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport));
+	uiWorker = std::shared_ptr<UIWorker>(new UIWorker(this, fontDir, viewport, makeOffscreenCurrent));
 }
 
 GlGuiSingleThread::~GlGuiSingleThread()

@@ -43,21 +43,21 @@ using namespace QGL;
 
 Q_IMPORT_PLUGIN(QGLIntegrationPlugin);
 
-UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport)
+UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect viewport, std::function<void(void)> makeOffscreenCurrent)
 {
 	PROFILE_FUNCTION
 
 	this->gui = gui;
 
-	int argc = 0;
-	char **argv = nullptr;
+	static int argc = 0;
+	static char **argv = nullptr;
 
 	qputenv("QT_QPA_FONTDIR", fontDir.c_str());
 	qputenv("QT_QPA_PLATFORM", "QGL");
 
 	QCoreApplication::setAttribute(Qt::AA_DontUseNativeMenuBar, true);
 
-	mPlatform = new UIIntegration(this->gui, viewport);
+	mPlatform = new UIIntegration(this->gui, viewport, makeOffscreenCurrent);
 	QGuiApplicationPrivate::platform_theme = new QPlatformTheme;
 	
 	app = new QApplication(argc, argv);

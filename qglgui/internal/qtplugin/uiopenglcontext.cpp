@@ -39,6 +39,14 @@ using namespace QGL;
 
 void *useProgram;
 
+std::function<void(void)> UIOpenGLContext::mMakeOffscreenCurrent;
+
+UIOpenGLContext::UIOpenGLContext(std::function< void(void) > makeOffscreenCurrent)
+{
+	mMakeOffscreenCurrent = makeOffscreenCurrent;
+}
+
+
 QFunctionPointer UIOpenGLContext::getProcAddress(const QByteArray &procName)
 {
 	PROFILE_FUNCTION
@@ -60,12 +68,8 @@ bool UIOpenGLContext::makeCurrent(QPlatformSurface *surface)
 {
 	PROFILE_FUNCTION
     std::cerr<<__FUNCTION__<<std::endl;
-	GlfwSampleApplication::LockContext();
 
-	void (*bindFramebuffer)(GLenum, GLuint);
-	bindFramebuffer = (void(*)(GLenum, GLuint))getProcAddress("glBindFramebuffer");
-	(*bindFramebuffer)(GL_FRAMEBUFFER, 1);
-
+	mMakeOffscreenCurrent();
 	return true;
 }
 
@@ -80,7 +84,9 @@ void UIOpenGLContext::swapBuffers(QPlatformSurface *surface)
 	bindFramebuffer = (void(*)(GLenum, GLuint))getProcAddress("glBindFramebuffer");
 	(*bindFramebuffer)(GL_FRAMEBUFFER, 0);
 
-    GlfwSampleApplication::ReleaseContext();
+	glFlush();
+
+//    GlfwSampleApplication::ReleaseContext();
 }
 
 QSurfaceFormat UIOpenGLContext::format() const

@@ -87,7 +87,7 @@ QPlatformIntegration *QGLIntegrationPlugin::create(const QString &system, const 
 
 #include "uiintegration.moc"
 
-UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
+UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport, std::function<void(void)> makeOffscreenCurrent)
 {
 	PROFILE_FUNCTION
 
@@ -110,7 +110,9 @@ UIIntegration::UIIntegration(GlGuiInternalBase *gui, QRect viewport)
 	instance = this;
 	mDefaultViewport = viewport;
 	guiThreadId = std::this_thread::get_id();
-	mContext = new UIOpenGLContext;
+	mMakeOffscreenCurrent = makeOffscreenCurrent;
+	mContext = new UIOpenGLContext(mMakeOffscreenCurrent);
+
 }
 
 QAbstractEventDispatcher *UIIntegration::createEventDispatcher() const

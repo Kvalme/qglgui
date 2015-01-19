@@ -91,6 +91,9 @@ public:
 	QPoint GetMoveStartPosition() const { return mMoveStartPosition;}
 	bool IsMoving() const { return mIsMoving;}
 
+	unsigned int GetTextureId() const { return mTextureId;}
+	bool IsQMLWindow() const { return mIsQMLWindow;}
+
 private:
 	void setFrameMarginsEnabled(bool enabled);
 	void setGeometryImpl(const QRect &rect);
@@ -112,6 +115,9 @@ private:
 	bool mIsDecorationUpdateNeeded = true;
 	bool mIsMoving = false;
 	QPoint mMoveStartPosition;
+
+	unsigned int mTextureId = 0;
+	bool mIsQMLWindow = false;
 };
 
 }

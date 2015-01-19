@@ -39,7 +39,7 @@ class UIWorker;
 class GlGuiSingleThread : public GlGuiInternalBase
 {
 public:
-	GlGuiSingleThread(const std::string &fontDir, QRect viewport);
+	GlGuiSingleThread(const std::string &fontDir, QRect viewport, std::function<void(void)> makeOffscreenCurrent);
 	virtual ~GlGuiSingleThread();
 	
 	virtual int CreateScreen(QRect viewport);

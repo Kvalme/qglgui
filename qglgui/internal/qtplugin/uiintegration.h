@@ -44,7 +44,7 @@ class UIScreen;
 class UIIntegration: public QPlatformIntegration
 {
 public:
-	UIIntegration(QGL::GlGuiInternalBase *gui, QRect viewport);
+	UIIntegration(QGL::GlGuiInternalBase *gui, QRect viewport, std::function<void(void)> makeOffscreenCurrent);
 	~UIIntegration();
 
 	void init();
@@ -70,7 +70,7 @@ public:
 	static UIIntegration *instance;
 	
 	static std::thread::id guiThreadId;
-
+	
 private:
 	QAbstractEventDispatcher *event_dispatcher;
 	QPlatformFontDatabase *font_database;
@@ -80,6 +80,7 @@ private:
 	std::vector<UIScreen *> mScreens;
 	QRect mDefaultViewport;
 	UIOpenGLContext *mContext;
+	std::function<void(void)> mMakeOffscreenCurrent;
 };
 
 class ContextPlugin : public QSGContextPlugin

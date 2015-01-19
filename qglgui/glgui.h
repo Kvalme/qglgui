@@ -62,7 +62,7 @@ public:
 	 * @param viewport viewport for primary screen GUI that will be used as screen size.
 	 * @return pointer to created gui
 	 */
-	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir, QRect viewport);
+	static std::shared_ptr<GlGui> Create(THREADING_MODE mode, const std::string &fontDir, QRect viewport, std::function<void(void)> makeOffscreenCurrent);
 	
 	/**
 	 * Creates QT screen.

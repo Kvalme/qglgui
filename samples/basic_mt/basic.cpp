@@ -85,7 +85,7 @@ void GuiThread(int w, int h)
 	PROFILE_FUNCTION
 	
 	//GlGui should be created in new thread to operate correctly.
-	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h));
+	gui = GlGui::Create(threadingMode, "../../../fonts", QRect(0, 0, w, h), &(GlfwSampleApplication::makeOffscreenCurrent));
 	
 	while(!doExit)
 	{
@@ -119,7 +119,7 @@ int main()
 	PROFILE_FUNCTION
 	
 	GlfwSampleApplication app;
-	int w = 1024, h = 768;
+	int w = 800, h = 600;
 	if (!app.init(w, h, run))return 1;
 
 	initGui(w, h);
