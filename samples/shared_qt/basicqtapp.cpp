@@ -81,7 +81,6 @@ void BasicQtApp::on_selectedSample_currentIndexChanged(const QString &text)
 		app->setMainQmlFile("main.qml");
 		app->showExpanded();
 		app->setPosition(QPoint(10.0, 500.0));
-		app->setFlags();
 		mCurrent = nullptr;
 	}
 

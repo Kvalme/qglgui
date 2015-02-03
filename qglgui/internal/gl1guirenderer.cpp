@@ -151,7 +151,11 @@ void Gl1GuiRenderer::RenderWindow(const Gl1GuiRenderer::WindowRenderInformation 
 	if (glIsTexture(window.mTexId) == GL_FALSE) return;
 	glBindTexture(GL_TEXTURE_2D, window.mTexId);
 
-	QRect geometry = window.mWindow->window()->frameGeometry();
+	QRect geometry;
+    if (window.mIsQmlWindow)
+        geometry = window.mWindow->window()->geometry();
+    else
+        geometry = window.mWindow->window()->frameGeometry();
 
 	float xs = geometry.x();
 	float ys = geometry.y();
