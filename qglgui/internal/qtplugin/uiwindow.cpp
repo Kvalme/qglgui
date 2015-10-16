@@ -113,18 +113,19 @@ UIWindow::UIWindow(QWindow *window) :
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		//NULL means reserve texture memory, but texels are undefined
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, geom.width(), geom.height(), 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, geom.width(), geom.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
 		(*framebufferTexture2D)(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureId, 0);
 
 		(*genRenderbuffers)(1, &depthStencilRb);
 		(*bindRenderbuffer)(GL_RENDERBUFFER, depthStencilRb);
-		(*renderbufferStorage)(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, geom.width(), geom.height());
+		(*renderbufferStorage)(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, geom.width(), geom.height());
 		(*framebufferRenderbuffer)(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencilRb);
 
 		std::cerr<<"Set render target:"<<geom.width()<<":"<<geom.height()<<std::endl;
 		quickWindow->setRenderTarget(fb, QSize(geom.width(), geom.height()));
-
+        glFlush();
+        glFinish();
 		(*bindFramebuffer)(GL_FRAMEBUFFER, 0);
     }
 }

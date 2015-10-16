@@ -27,7 +27,6 @@
  */
 
 #include "qglgui/glguirenderer.h"
-#include "internal/gl1guirenderer.h"
 
 #include "libcppprofiler/src/cppprofiler.h"
 
@@ -40,7 +39,8 @@ GlGuiRenderer * QGL::CreateRenderer(RENDERER_TYPE type)
 	switch (type)
 	{
 		case RENDERER_TYPE::GL1:
-			return new Gl1GuiRenderer;
+			throw std::runtime_error("GL2 renderer is no implemented");
+			break;
 		case RENDERER_TYPE::GL2:
 			throw std::runtime_error("GL2 renderer is no implemented");
 			break;

@@ -28,7 +28,6 @@
 
 #pragma once
 #include <qpa/qplatformintegration.h>
-#include <../qtdeclarative-opensource-src-5.2.1/src/quick/scenegraph/qsgcontextplugin_p.h>
 #include <qplugin.h>
 
 #include <thread>
@@ -82,19 +81,4 @@ private:
 	UIOpenGLContext *mContext;
 	std::function<void(void)> mMakeOffscreenCurrent;
 };
-
-class ContextPlugin : public QSGContextPlugin
-{
-	Q_OBJECT
-
-	Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QSGContextFactoryInterface" FILE "customcontext.json")
-
-public:
-	ContextPlugin(QObject *parent = 0);
-
-	QStringList keys() const;
-	QSGContext *create(const QString &key) const;
-	QQuickTextureFactory *createTextureFactoryFromImage(const QImage &image);
-};
-
 }

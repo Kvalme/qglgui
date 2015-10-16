@@ -4,14 +4,21 @@ INCLUDE(CPack)
 
 cmake_minimum_required(VERSION 2.8.9)
 
+if (DEFINED TOOLCHAIN_OUT_OF_SYSROOT_INCLUDE_DIRS)
+    include_directories(${TOOLCHAIN_OUT_OF_SYSROOT_INCLUDE_DIRS})
+endif()
+if (DEFINED TOOLCHAIN_OUT_OF_SYSROOT_LIBRARY_DIRS)
+    link_directories(${TOOLCHAIN_OUT_OF_SYSROOT_LIBRARY_DIRS})
+endif()
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/CMake/modules)
 
-set(CMAKE_C_FLAGS_DEBUG "-fPIC -DPIC -Wall -Werror -Og -g3 -DDEBUG -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
-set(CMAKE_C_FLAGS_RELEASE "-fPIC -DPIC -Wall -Werror -O3 -DNDEBUG -mfpmath=sse,387 -msse2 -msse3 -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
-set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 -fPIC -DPIC -Wall -Werror -Og -g3 -DDEBUG -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
-set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11 -fPIC -DPIC -Wall -Werror -O3 -DNDEBUG -mfpmath=sse,387 -msse2 -msse3 -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -fPIC -DPIC -Wall -Werror -Og -g3 -DDEBUG -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fPIC -DPIC -Wall -Werror -O3 -DNDEBUG -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++11 -fPIC -DPIC -Wall -Werror -Og -g3 -DDEBUG -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++11 -fPIC -DPIC -Wall -Werror -O3 -DNDEBUG -DPROFILING_FILENAME_PREFIX=\\\"QGLGUI\\\" -DQT_STATICPLUGIN")
 
-find_package(OpenGL REQUIRED)
+#find_package(OpenGL REQUIRED)
 find_package(Qt5Core 5.2 REQUIRED)
 find_package(Qt5Gui 5.2 REQUIRED)
 find_package(Qt5Widgets 5.2 REQUIRED)
@@ -36,16 +43,16 @@ endif (ENABLE_PROFILING)
 
 add_subdirectory(qglgui)
 
-if (BUILD_SAMPLES)
+#if (BUILD_SAMPLES)
 	
-	find_package(glfw3)
+#	find_package(glfw3-wl)
 	
-	if (NOT GLFW3_FOUND)
-		message(WARNING "GLFW3 not found. Samples will not be build.")
-	else ()
-		add_subdirectory(samples)
-	endif (NOT GLFW3_FOUND)
-endif (BUILD_SAMPLES)
+#	if (NOT GLFW3_FOUND)
+#		message(WARNING "GLFW3 not found. Samples will not be build.")
+#	else ()
+#		add_subdirectory(samples)
+#	endif (NOT GLFW3_FOUND)
+#endif (BUILD_SAMPLES)
 
 
 

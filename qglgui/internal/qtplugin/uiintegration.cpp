@@ -64,8 +64,6 @@ std::thread::id UIIntegration::guiThreadId;
 
 #include <iostream>
 
-Q_IMPORT_PLUGIN(ContextPlugin)
-
 class QGLIntegrationPlugin : public QPlatformIntegrationPlugin
 {
 	Q_OBJECT
@@ -216,28 +214,4 @@ QPlatformOpenGLContext *UIIntegration::createPlatformOpenGLContext(QOpenGLContex
 {
 	std::cerr<<__FUNCTION__<<std::endl;
 	return mContext;
-}
-
-ContextPlugin::ContextPlugin(QObject *parent): QSGContextPlugin(parent)
-{
-	std::cerr<<__FUNCTION__<<std::endl;
-
-}
-
-QSGContext *ContextPlugin::create(const QString &key) const
-{
-	std::cerr<<__FUNCTION__<<std::endl;
-	return 0;
-}
-
-QQuickTextureFactory *ContextPlugin::createTextureFactoryFromImage(const QImage &image)
-{
-	std::cerr<<__FUNCTION__<<std::endl;
-	return QSGContextPlugin::createTextureFactoryFromImage(image);
-}
-
-QStringList ContextPlugin::keys() const
-{
-	std::cerr<<__FUNCTION__<<std::endl;
-	return QStringList() << QLatin1String("customcontext");
 }

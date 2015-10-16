@@ -46,28 +46,27 @@ UIOpenGLContext::UIOpenGLContext(std::function< void(void) > makeOffscreenCurren
 	mMakeOffscreenCurrent = makeOffscreenCurrent;
 }
 
-
 QFunctionPointer UIOpenGLContext::getProcAddress(const QByteArray &procName)
 {
 	PROFILE_FUNCTION
 
 	void *fun = dlsym(mGlLibrary, procName.constData());
-	std::cerr<<"Requested function:"<<procName.constData()<<" have pointer:"<<fun<<std::endl;
+//	std::cerr<<"Requested function:"<<procName.constData()<<" have pointer:"<<fun<<std::endl;
 	return (QFunctionPointer)fun;
 }
 
 void UIOpenGLContext::doneCurrent()
 {
 	PROFILE_FUNCTION
-	std::cerr<<__FUNCTION__<<std::endl;
+//	std::cerr<<__FUNCTION__<<std::endl;
 
-	GlfwSampleApplication::ReleaseContext();
+//	GlfwSampleApplication::ReleaseContext();
 }
 
 bool UIOpenGLContext::makeCurrent(QPlatformSurface *surface)
 {
 	PROFILE_FUNCTION
-    std::cerr<<__FUNCTION__<<std::endl;
+	//    std::cerr<<__FUNCTION__<<std::endl;
 
 	mMakeOffscreenCurrent();
 	return true;
@@ -76,8 +75,9 @@ bool UIOpenGLContext::makeCurrent(QPlatformSurface *surface)
 void UIOpenGLContext::swapBuffers(QPlatformSurface *surface)
 {
 	PROFILE_FUNCTION
-	std::cerr<<__FUNCTION__<<std::endl;
-	void(*prog)(GLuint) = (void(*)(GLuint))useProgram;
+	//	std::cerr<<__FUNCTION__<<std::endl;
+
+    void(*prog)(GLuint) = (void(*)(GLuint))useProgram;
     prog(0);
 
 	void (*bindFramebuffer)(GLenum, GLuint);
@@ -85,6 +85,7 @@ void UIOpenGLContext::swapBuffers(QPlatformSurface *surface)
 	(*bindFramebuffer)(GL_FRAMEBUFFER, 0);
 
 	glFlush();
+    glFinish();
 
 //    GlfwSampleApplication::ReleaseContext();
 }
@@ -100,14 +101,14 @@ QSurfaceFormat UIOpenGLContext::format() const
 	fmt.setBlueBufferSize(8);
 	fmt.setAlphaBufferSize(8);
 	fmt.setStencilBufferSize(8);
-	fmt.setRenderableType(QSurfaceFormat::OpenGL);
+	fmt.setRenderableType(QSurfaceFormat::OpenGLES);
 	
 	return fmt;
 }
 
 UIOpenGLContext::UIOpenGLContext()
 {
-	mGlLibrary = dlopen("libGL.so", RTLD_NOW);
+	mGlLibrary = dlopen("/usr/lib/libGLESv2.so.2.0.0", RTLD_NOW);
 	if (!mGlLibrary) throw std::runtime_error("Unable to open libGL.so");
     useProgram = dlsym(mGlLibrary, "glUseProgram");
 }
