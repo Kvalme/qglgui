@@ -30,6 +30,7 @@
 
 #include <string>
 #include <QMargins>
+#include <QPoint>
 
 class QWindow;
 class QPaintDevice;

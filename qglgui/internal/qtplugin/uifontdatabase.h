@@ -44,7 +44,7 @@ public:
 	virtual QStringList fallbacksForFamily(const QString &family, QFont::Style style, QFont::StyleHint styleHint, QChar::Script script) const;
 	virtual QString fontDir() const;
 	virtual QFontEngine *fontEngine(const QByteArray &fontData, qreal pixelSize, QFont::HintingPreference hintingPreference);
-	virtual QFontEngine *fontEngine(const QFontDef &fontDef, QChar::Script script, void *handle);
+	virtual QFontEngine *fontEngine(const QFontDef &fontDef, void *handle);
 	virtual QFontEngineMulti *fontEngineMulti(QFontEngine *fontEngine, QChar::Script script);
 	virtual bool fontsAlwaysScalable() const;
 	virtual void populateFontDatabase();

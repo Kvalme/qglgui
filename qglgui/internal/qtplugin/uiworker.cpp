@@ -49,8 +49,8 @@ UIWorker::UIWorker(GlGuiInternalBase *gui, const std::string &fontDir, QRect vie
 
 	this->gui = gui;
 
-	int argc = 0;
-	char **argv = nullptr;
+	static int argc = 0;
+	static char **argv = nullptr;
 
 	qputenv("QT_QPA_FONTDIR", fontDir.c_str());
 	qputenv("QT_QPA_PLATFORM", "QGL");

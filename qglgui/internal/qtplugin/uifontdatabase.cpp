@@ -93,11 +93,11 @@ QString UIFontDatabase::fontDir() const
 	return mFontDatabase->fontDir();
 }
 
-QFontEngine *UIFontDatabase::fontEngine(const QFontDef &fontDef, QChar::Script script, void *handle)
+QFontEngine *UIFontDatabase::fontEngine(const QFontDef &fontDef, void *handle)
 {
 	PROFILE_FUNCTION
 
-	return mFontDatabase->fontEngine(fontDef, script, handle);
+	return mFontDatabase->fontEngine(fontDef, handle);
 }
 
 QFontEngine *UIFontDatabase::fontEngine(const QByteArray &fontData, qreal pixelSize, QFont::HintingPreference hintingPreference)

@@ -13,5 +13,9 @@ set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Wi
 set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Core_PRIVATE_INCLUDE_DIRS}")
 set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Gui_PRIVATE_INCLUDE_DIRS}")
 set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${_qt5Gui_install_prefix}/include/qt5/QtPlatformSupport/")
-set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${_qt5Gui_install_prefix}/include/qt5/QtPlatformSupport/${Qt5Gui_VERSION_STRING}")
-set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${_qt5Gui_install_prefix}/include/qt5/QtPlatformSupport/${Qt5Gui_VERSION_STRING}/QtPlatformSupport")
+
+string(REPLACE "QtGui" "QtPlatformSupport" QT5PlatformPrivate "${Qt5Gui_PRIVATE_INCLUDE_DIRS}")
+
+set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES "${QT5PlatformPrivate}") #"${_qt5Gui_install_prefix}/include/qt5/QtPlatformSupport/${Qt5Gui_VERSION_STRING}")
+#set_property(TARGET qglgui_qtplugin APPEND PROPERTY INCLUDE_DIRECTORIES #"${_qt5Gui_install_prefix}/include/qt5/QtPlatformSupport/${Qt5Gui_VERSION_STRING}/QtPlatformSupport")
+#message(FATAL_ERROR "${QT5PlatformPrivate}")
