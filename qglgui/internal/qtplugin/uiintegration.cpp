@@ -57,7 +57,7 @@ UIIntegration *UIIntegration::instance = nullptr;
 class QGLIntegrationPlugin : public QPlatformIntegrationPlugin
 {
 	Q_OBJECT
-	Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QPA.QPlatformIntegrationFactoryInterface.5.2" FILE "QGL.json")
+	Q_PLUGIN_METADATA(IID QPlatformIntegrationFactoryInterface_iid FILE "QGL.json")
 public:
 	QPlatformIntegration *create(const QString &, const QStringList &);
 };
