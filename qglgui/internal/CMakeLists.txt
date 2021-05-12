@@ -9,9 +9,15 @@ if (QGL_ENABLE_GL1_RENDERER)
 endif (QGL_ENABLE_GL1_RENDERER)
 
 add_library(qglgui_internal OBJECT ${QGLGUI_INTERNAL_SOURCES})
-set_property(TARGET qglgui_internal APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Core_INCLUDE_DIRS}")
-set_property(TARGET qglgui_internal APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Gui_INCLUDE_DIRS}")
-set_property(TARGET qglgui_internal APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Widgets_INCLUDE_DIRS}")
-set_property(TARGET qglgui_internal APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Core_PRIVATE_INCLUDE_DIRS}")
-set_property(TARGET qglgui_internal APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Gui_PRIVATE_INCLUDE_DIRS}")
-set_property(TARGET qglgui_internal APPEND PROPERTY INCLUDE_DIRECTORIES "${Qt5Svg_INCLUDE_DIRS}")
+target_include_directories(qglgui_internal
+    PUBLIC "${Qt5Core_INCLUDE_DIRS}"
+    PUBLIC "${Qt5Gui_INCLUDE_DIRS}"
+    PUBLIC "${Qt5Widgets_INCLUDE_DIRS}"
+    PUBLIC "${Qt5Core_PRIVATE_INCLUDE_DIRS}"
+    PUBLIC "${Qt5Gui_PRIVATE_INCLUDE_DIRS}"
+    PUBLIC "${Qt5Svg_INCLUDE_DIRS}"
+    PUBLIC "${_qt5Gui_install_prefix}/include/qt5/QtPlatformSupport/"
+    PUBLIC "${Qt5FontDatabaseSupport_PRIVATE_INCLUDE_DIRS}"
+    PUBLIC "${Qt5EventDispatcherSupport_PRIVATE_INCLUDE_DIRS}"
+)
+target_compile_definitions(qglgui_internal PUBLIC QT_NO_DEPRECATED_WARNINGS)

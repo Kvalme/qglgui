@@ -30,12 +30,15 @@
 
 #include "libcppprofiler/src/cppprofiler.h"
 
+#include "qglgui/internal/qtplugin/uiwindow.h"
+
+#undef GL_GLEXT_VERSION
+
 #include <GL/gl.h>
 #include <assert.h>
 #include <QWindow>
 #include <QScreen>
 
-#include "qglgui/internal/qtplugin/uiwindow.h"
 
 using namespace QGL;
 

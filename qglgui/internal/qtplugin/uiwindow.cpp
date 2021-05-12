@@ -297,14 +297,14 @@ bool UIWindow::setMouseGrabEnabled(bool grab)
 	return true;
 }
 
-void UIWindow::windowEvent(QEvent *event)
+bool UIWindow::windowEvent(QEvent *event)
 {
 	PROFILE_FUNCTION
 	
-	QPlatformWindow::windowEvent(event);
+	return QPlatformWindow::windowEvent(event);
 }
 
-bool UIWindow::startSystemResize(const QPoint &pos, Qt::Corner corner)
+bool UIWindow::startSystemResize(Qt::Edges edges)
 {
 	PROFILE_FUNCTION
 
@@ -312,7 +312,7 @@ bool UIWindow::startSystemResize(const QPoint &pos, Qt::Corner corner)
 
 	setMouseGrabEnabled(true);
 
-	return QPlatformWindow::startSystemResize(pos, corner);
+	return QPlatformWindow::startSystemResize(edges);
 }
 
 void UIWindow::propagateSizeHints()

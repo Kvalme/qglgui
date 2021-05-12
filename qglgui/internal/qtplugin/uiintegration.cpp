@@ -34,7 +34,7 @@
 #include "uifontdatabase.h"
 
 #if defined(Q_OS_UNIX)
-#include <QtPlatformSupport/private/qgenericunixeventdispatcher_p.h>
+#include <QtEventDispatcherSupport/private/qgenericunixeventdispatcher_p.h>
 #elif defined(Q_OS_WIN)
 #include <QtCore/private/qeventdispatcher_win_p.h>
 #endif
@@ -111,7 +111,7 @@ int UIIntegration::addScreen(QRect viewport, float dpix, float dpiy)
 {
 	UIScreen *s = new UIScreen(viewport, dpix, dpiy);
 	mScreens.push_back(s);
-	screenAdded(s);
+    QWindowSystemInterface::handleScreenAdded(s);
 	return mScreenId++;
 }
 
@@ -119,11 +119,16 @@ UIIntegration::~UIIntegration()
 {
 	PROFILE_FUNCTION
 
-//	delete event_dispatcher;
+	for (UIScreen * s : mScreens)
+    {
+        QWindowSystemInterface::handleScreenRemoved(s);
+        delete s;
+    }
+
+    //	delete event_dispatcher;
 	delete font_database;
 	delete services_;
 
-	for (UIScreen * s : mScreens) delete s;
 }
 
 QPlatformBackingStore *UIIntegration::createPlatformBackingStore(QWindow *window) const

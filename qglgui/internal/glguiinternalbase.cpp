@@ -144,7 +144,7 @@ void GlGuiInternalBase::InjectCharacterEvent(QChar character)
 {
 	PROFILE_FUNCTION
 
-	QWindowSystemInterface::handleKeyEvent(NULL, QEvent::KeyPress, Qt::Key::Key_A, 0, character);
+	QWindowSystemInterface::handleKeyEvent(NULL, QEvent::KeyPress, Qt::Key::Key_A, Qt::KeyboardModifier::NoModifier, character);
 }
 
 void GlGuiInternalBase::InjectKeyboardEvent(QEvent::Type eventType, Qt::Key key, Qt::KeyboardModifiers modifiers)

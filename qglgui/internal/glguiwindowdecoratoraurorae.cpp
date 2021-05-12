@@ -93,7 +93,7 @@ bool GlUIWindowDecoratorAurorae::LoadGeneral(QSettings &settings)
 	mInactiveTextColor = SplitColor(settings.value("InactiveTextColor").toStringList());
 	QString hAlignment = settings.value("TitleAlignment").toString();
 	QString vAlignment = settings.value("TitleVerticalAlignment").toString();
-	mTitleAlignment = 0;
+    mTitleAlignment = Qt::AlignmentFlag::AlignLeft;
 
 	if (hAlignment == "Center") mTitleAlignment = Qt::AlignHCenter;
 	else if (hAlignment == "Left") mTitleAlignment = Qt::AlignLeft;

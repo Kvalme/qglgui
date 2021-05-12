@@ -16,6 +16,8 @@ find_package(Qt5Core 5.2 REQUIRED)
 find_package(Qt5Gui 5.2 REQUIRED)
 find_package(Qt5Widgets 5.2 REQUIRED)
 find_package(Qt5Svg 5.2 REQUIRED)
+find_package(Qt5FontDatabaseSupport 5.2 REQUIRED)
+find_package(Qt5EventDispatcherSupport 5.2 REQUIRED)
 find_package(Freetype REQUIRED)
 
 

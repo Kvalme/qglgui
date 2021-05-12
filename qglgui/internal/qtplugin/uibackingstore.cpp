@@ -168,8 +168,7 @@ bool UIBackingStore::scroll(const QRegion &area, int dx, int dy)
 
 	if (image.isNull()) return false;
 
-	const QVector<QRect> rects = area.rects();
-	for (const QRect & rect : rects)
+	for (const QRect & rect : area)
 	{
 		qt_scrollRectInImage(image, rect, QPoint(dx, dy));
 	}

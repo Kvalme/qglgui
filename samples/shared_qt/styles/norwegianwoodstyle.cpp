@@ -75,8 +75,8 @@ void NorwegianWoodStyle::polish(QPalette &palette)
     setTexture(palette, QPalette::Mid, midImage);
     setTexture(palette, QPalette::Window, backgroundImage);
 
-    QBrush brush = palette.background();
-    brush.setColor(brush.color().dark());
+    QBrush brush = palette.window();
+    brush.setColor(brush.color().darker());
 
     palette.setBrush(QPalette::Disabled, QPalette::WindowText, brush);
     palette.setBrush(QPalette::Disabled, QPalette::Text, brush);
@@ -175,7 +175,7 @@ void NorwegianWoodStyle::drawPrimitive(PrimitiveElement element,
                     qstyleoption_cast<const QStyleOptionButton *>(option);
             if (buttonOption
                     && (buttonOption->features & QStyleOptionButton::Flat)) {
-                brush = option->palette.background();
+                brush = option->palette.window();
                 darker = (option->state & (State_Sunken | State_On));
             } else {
                 if (option->state & (State_Sunken | State_On)) {
@@ -251,7 +251,7 @@ void NorwegianWoodStyle::drawPrimitive(PrimitiveElement element,
             painter->setPen(bottomPen);
             painter->drawPath(roundRect);
 
-            painter->setPen(option->palette.foreground().color());
+            painter->setPen(option->palette.windowText().color());
             painter->setClipping(false);
             painter->drawPath(roundRect);
 

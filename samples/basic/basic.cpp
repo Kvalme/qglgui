@@ -110,7 +110,7 @@ int main()
 	PROFILE_FUNCTION
 	
 	GlfwSampleApplication app;
-	int w = 1024, h = 768;
+	int w = 1920, h = 1080;
 	if (!app.init(w, h, run))return 1;
 
 	initGui(w, h);

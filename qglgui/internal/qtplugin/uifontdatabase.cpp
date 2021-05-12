@@ -32,7 +32,7 @@
 #if defined(Q_OS_MAC)
 #include <qpa/qplatformfontdatabase.h>
 #else
-#include <QtPlatformSupport/private/qgenericunixfontdatabase_p.h>
+#include <QtFontDatabaseSupport/private/qgenericunixfontdatabase_p.h>
 #endif
 #elif defined(Q_OS_WIN)
 #include <QtPlatformSupport/private/qbasicfontdatabase_p.h>

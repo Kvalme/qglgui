@@ -55,7 +55,7 @@ public:
 	void requestActivateWindow();
 	bool setKeyboardGrabEnabled(bool grab);
 	bool setMouseGrabEnabled(bool grab);
-	void windowEvent(QEvent *event);
+	bool windowEvent(QEvent *event);
 
 	WId winId() const
 	{
@@ -78,7 +78,7 @@ public:
 		return z_level;
 	}
 
-	bool startSystemResize(const QPoint &pos, Qt::Corner corner);
+	bool startSystemResize(Qt::Edges edges);
 
 	void propagateSizeHints();
 	
